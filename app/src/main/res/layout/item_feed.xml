@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    android:id="@+id/feedCardView"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    app:cardCornerRadius="@dimen/item_corner_radius"
+    android:layout_width="@dimen/feed_item_width"
+    android:layout_height="@dimen/feed_item_height"
+    android:layout_margin="@dimen/item_margin"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/feedImageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</androidx.cardview.widget.CardView>
