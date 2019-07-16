@@ -1,16 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-    android:id="@+id/feedCardView"
+
+<androidx.constraintlayout.widget.ConstraintLayout android:layout_height="match_parent"
+    android:layout_width="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    app:cardCornerRadius="@dimen/item_corner_radius"
-    android:layout_width="@dimen/feed_item_width"
-    android:layout_height="@dimen/feed_item_height"
-    android:layout_margin="@dimen/item_margin"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <ImageView
+        android:foreground="@drawable/gradient"
         android:id="@+id/feedImageView"
+        android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:contentDescription="@string/decription_feed_image" />
 
-</androidx.cardview.widget.CardView>
+    <TextView
+        android:id="@+id/feedTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="18dp"
+        android:layout_marginEnd="18dp"
+        android:layout_marginBottom="28dp"
+        android:textColor="@color/colorWhite"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toBottomOf="@+id/feedImageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="가나봐라 봐라봐라 하지나 마라" />
+
+    <TextView
+        android:id="@+id/feedTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:textColor="@color/colorWhite"
+        app:layout_constraintBottom_toTopOf="@+id/feedTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/feedTitle"
+        tools:text="3시간전" />
+
+    <TextView
+        android:background="@color/colorTransparentBlack"
+        android:ellipsize="end"
+        android:id="@+id/feedDescription"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/text_view_margin"
+        android:layout_marginEnd="@dimen/text_view_margin"
+        android:layout_marginStart="@dimen/text_view_margin"
+        android:layout_marginTop="@dimen/text_view_margin"
+        android:layout_width="wrap_content"
+        android:maxLines="5"
+        android:paddingBottom="4dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:paddingTop="4dp"
+        android:textColor="@color/colorWhite"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.34"
+        tools:text="가나봐라 봐라봐라 하지나 마라" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
