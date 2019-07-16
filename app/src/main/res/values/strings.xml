@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">RssLiveSlider</string>
     <string name="see_all_contents">전체 콘텐츠 보기</string>
-    <string name="decription_feed_image">feed image</string>
+    <string name="description_feed_image">feed image</string>
 </resources>
