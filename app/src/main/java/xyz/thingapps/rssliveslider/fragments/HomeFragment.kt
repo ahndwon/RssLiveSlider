@@ -21,8 +21,12 @@ class HomeFragment : Fragment() {
         val adapter = FragmentListAdapter(childFragmentManager)
 
         adapter.fragments = listOf(
+            ChannelFragment.newInstance("Channel", Dummies.rssItems),
+            ChannelFragment.newInstance("Channel", Dummies.rssItems),
+            ChannelFragment.newInstance("Channel", Dummies.rssItems),
+            ChannelFragment.newInstance("Channel", Dummies.rssItems),
+            ChannelFragment.newInstance("Channel", Dummies.rssItems),
                 ChannelFragment.newInstance("Channel", Dummies.rssItems)
-
         )
 
         view.homeRecyclerView.adapter = adapter
