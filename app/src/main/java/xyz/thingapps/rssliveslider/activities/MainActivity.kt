@@ -31,16 +31,7 @@ class MainActivity : AppCompatActivity() {
             .replace(R.id.frameContainer, HomeFragment())
             .commit()
 
-        val rssApi = provideNasaApi()
-        val rssCall = rssApi.getVodCast()
-        rssCall.enqueue({
-            val statusCode = it.code()
-            if(statusCode == 200) {
-                Log.i("rss", it.body().toString())
-            }
-        }, {
-            Log.i("rss","error : ", it)
-        })
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -53,8 +44,7 @@ class MainActivity : AppCompatActivity() {
             ?.debounce(500, TimeUnit.MILLISECONDS)
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe {
-
-                Log.d("MainActivity", "SEARCH===$it")
+                Log.d("MainActivity", "search : $it")
             }
             ?.addTo(disposeBag)
 
@@ -63,7 +53,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
+        when (item.itemId) {
             R.id.search -> {
 
             }
