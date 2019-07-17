@@ -7,24 +7,29 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import io.reactivex.Flowable
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_channel.view.*
 import xyz.thingapps.rssliveslider.R
 import xyz.thingapps.rssliveslider.adapters.ItemListAdapter
+import xyz.thingapps.rssliveslider.api.dao.Cast
 import xyz.thingapps.rssliveslider.models.RssItem
+import xyz.thingapps.rssliveslider.utils.viewModelFactory
+import xyz.thingapps.rssliveslider.viewmodels.CastViewModel
 import java.util.concurrent.TimeUnit
 
 
 class ChannelFragment : Fragment() {
-
-    private var dispose: Disposable? = null
     private var progressDispose: Disposable? = null
-
+    private var dispose: Disposable? = null
+    private lateinit var cast: Observable<Cast>
+    private lateinit var viewModel: CastViewModel
 
     companion object {
         const val TAG = "ChannelFragment"
@@ -39,7 +44,26 @@ class ChannelFragment : Fragment() {
                 arguments = bundle
             }
         }
+
+        fun newInstance(title: String, cast: Observable<Cast>): ChannelFragment {
+            return ChannelFragment().apply {
+                val bundle = Bundle()
+                bundle.putString(FRAGMENT_TITLE, title)
+                this.cast = cast
+                arguments = bundle
+            }
+        }
     }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel = ViewModelProviders.of(
+            this,
+            viewModelFactory {
+                CastViewModel(cast)
+            }).get(CastViewModel::class.java)
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
