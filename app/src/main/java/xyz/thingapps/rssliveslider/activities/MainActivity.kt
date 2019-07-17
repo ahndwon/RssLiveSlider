@@ -12,9 +12,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.activity_main.*
 import xyz.thingapps.rssliveslider.R
-import xyz.thingapps.rssliveslider.api.provideNasaApi
 import xyz.thingapps.rssliveslider.fragments.HomeFragment
-import xyz.thingapps.rssliveslider.utils.enqueue
 import java.util.concurrent.TimeUnit
 
 
