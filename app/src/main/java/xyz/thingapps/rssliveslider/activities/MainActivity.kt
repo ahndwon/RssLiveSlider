@@ -55,12 +55,10 @@ class MainActivity : AppCompatActivity() {
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe { search ->
                 Log.d("MainActivity", "search : $search")
-//                viewModel.castList
+                viewModel.castList
 //                    .observeOn(AndroidSchedulers.mainThread())
-//                    .flatMap {
-//                        it.flatMap {
+//                    .filter {
 //
-//                        }
 //                    }
 
 //                    .subscribe { castList ->

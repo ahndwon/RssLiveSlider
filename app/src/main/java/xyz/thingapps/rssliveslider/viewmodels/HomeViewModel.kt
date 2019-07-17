@@ -3,14 +3,17 @@ package xyz.thingapps.rssliveslider.viewmodels
 import androidx.lifecycle.ViewModel
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.addTo
 import xyz.thingapps.rssliveslider.api.dao.Cast
 import xyz.thingapps.rssliveslider.api.provideJtbcApi
 import xyz.thingapps.rssliveslider.api.provideNasaApi
 
 class HomeViewModel : ViewModel() {
     private val disposeBag = CompositeDisposable()
-    //    var castList: Observable<ArrayList<Observable<Cast>>> = Observable.just(ArrayList())
-    var castList: ArrayList<Observable<Cast>> = ArrayList()
+    //        var castList: Observable<ArrayList<Observable<Cast>>> = Observable.just(ArrayList())
+    var castList: Observable<ArrayList<Cast>> = Observable.just(ArrayList())
+
+//    var castList: ArrayList<Observable<Cast>> = ArrayList()
 
     private fun getVodCast() = addToList(provideNasaApi().getVodCast())
 
@@ -42,7 +45,14 @@ class HomeViewModel : ViewModel() {
     }
 
     private fun addToList(cast: Observable<Cast>) {
-        castList.add(cast)
+        castList.subscribe { arrayList ->
+            cast.subscribe {
+                arrayList.add(it)
+            }
+        }.addTo(disposeBag)
+
+//        castList.add(cast)
+
 //        castList.subscribe({
 //            it.add(cast)
 //        },
