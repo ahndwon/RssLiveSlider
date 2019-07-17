@@ -9,55 +9,39 @@ import xyz.thingapps.rssliveslider.api.provideJtbcApi
 import xyz.thingapps.rssliveslider.api.provideNasaApi
 
 class HomeViewModel : ViewModel() {
+    private val disposeBag = CompositeDisposable()
     var castList: Observable<ArrayList<Observable<Cast>>> = Observable.just(ArrayList())
 
-    fun getVodCast(disposeBag: CompositeDisposable) {
-        val cast = provideNasaApi().getVodCast()
-        addToList(cast, disposeBag)
+    private fun getVodCast() = addToList(provideNasaApi().getVodCast())
+
+    private fun getBreakingNews() = addToList(provideNasaApi().getBreakingNews())
+
+    private fun getImageOfDay() = addToList(provideNasaApi().getImageOfDay())
+
+    private fun getOnTheStation() = addToList(provideNasaApi().getOnTheStation())
+
+    private fun getKepler() = addToList(provideNasaApi().getKepler())
+
+    private fun getChandra() = addToList(provideNasaApi().getChandra())
+
+    private fun getShuttleStation() = addToList(provideNasaApi().getShuttleStation())
+
+    private fun getSolarSystem() = addToList(provideNasaApi().getSolarSystem())
+
+    fun getNewsFlash() = addToList(provideJtbcApi().getNewsFlashCast())
+
+    fun getData() {
+        getVodCast()
+        getBreakingNews()
+        getImageOfDay()
+        getOnTheStation()
+        getKepler()
+        getChandra()
+        getShuttleStation()
+        getSolarSystem()
     }
 
-    fun getBreakingNews(disposeBag: CompositeDisposable) {
-        val cast = provideNasaApi().getBreakingNews()
-        addToList(cast, disposeBag)
-    }
-
-    fun getImageOfDay(disposeBag: CompositeDisposable) {
-        val cast = provideNasaApi().getImageOfDay()
-        addToList(cast, disposeBag)
-    }
-
-    fun getOnTheStation(disposeBag: CompositeDisposable) {
-        val cast = provideNasaApi().getOnTheStation()
-        addToList(cast, disposeBag)
-    }
-
-    fun getKepler(disposeBag: CompositeDisposable) {
-        val cast = provideNasaApi().getKepler()
-        addToList(cast, disposeBag)
-    }
-
-    fun getChandra(disposeBag: CompositeDisposable) {
-        val cast = provideNasaApi().getChandra()
-        addToList(cast, disposeBag)
-    }
-
-    fun getShuttleStation(disposeBag: CompositeDisposable) {
-        val cast = provideNasaApi().getShuttleStation()
-        addToList(cast, disposeBag)
-    }
-
-    fun getSolarSystem(disposeBag: CompositeDisposable) {
-        val cast = provideNasaApi().getSolarSystem()
-        addToList(cast, disposeBag)
-    }
-
-    fun getNewsFlash(disposeBag: CompositeDisposable) {
-        val cast = provideJtbcApi().getNewsFlashCast()
-        addToList(cast, disposeBag)
-//        castList = Observable.just(listOf(cast))
-    }
-
-    private fun addToList(cast: Observable<Cast>, disposeBag: CompositeDisposable) {
+    private fun addToList(cast: Observable<Cast>) {
         castList.subscribe({
             it.add(cast)
         },
@@ -65,5 +49,10 @@ class HomeViewModel : ViewModel() {
                 e.printStackTrace()
             })
             .addTo(disposeBag)
+    }
+
+    override fun onCleared() {
+        disposeBag.dispose()
+        super.onCleared()
     }
 }

@@ -12,29 +12,29 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import io.reactivex.Flowable
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.fragment_channel.view.*
 import xyz.thingapps.rssliveslider.R
 import xyz.thingapps.rssliveslider.adapters.ItemListAdapter
-import xyz.thingapps.rssliveslider.api.dao.Cast
 import xyz.thingapps.rssliveslider.models.RssItem
-import xyz.thingapps.rssliveslider.utils.viewModelFactory
-import xyz.thingapps.rssliveslider.viewmodels.CastViewModel
+import xyz.thingapps.rssliveslider.viewmodels.HomeViewModel
 import java.util.concurrent.TimeUnit
 
 
 class ChannelFragment : Fragment() {
-    private var progressDispose: Disposable? = null
-    private var dispose: Disposable? = null
-    private lateinit var cast: Observable<Cast>
-    private lateinit var viewModel: CastViewModel
+    private var autoPlayDisposable: Disposable? = null
+    private var progressDisposable: Disposable? = null
+    private val disposeBag = CompositeDisposable()
+    private lateinit var viewModel: HomeViewModel
 
     companion object {
         const val TAG = "ChannelFragment"
         const val FRAGMENT_TITLE = "fragment_title"
         const val FRAGMENT_ITEMS = "fragment_items"
+        const val FRAGMENT_INDEX = "fragment_index"
 
         fun newInstance(title: String, items: ArrayList<RssItem>): ChannelFragment {
             return ChannelFragment().apply {
@@ -45,11 +45,11 @@ class ChannelFragment : Fragment() {
             }
         }
 
-        fun newInstance(title: String, cast: Observable<Cast>): ChannelFragment {
+        fun newInstance(title: String, index: Int): ChannelFragment {
             return ChannelFragment().apply {
                 val bundle = Bundle()
                 bundle.putString(FRAGMENT_TITLE, title)
-                this.cast = cast
+                bundle.putInt(FRAGMENT_INDEX, index)
                 arguments = bundle
             }
         }
@@ -57,11 +57,14 @@ class ChannelFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProviders.of(
-            this,
-            viewModelFactory {
-                CastViewModel(cast)
-            }).get(CastViewModel::class.java)
+//        viewModel = ViewModelProviders.of(
+//            this,
+//            viewModelFactory {
+//                CastViewModel(cast)
+//            }).get(CastViewModel::class.java)
+        activity?.let {
+            viewModel = ViewModelProviders.of(it).get(HomeViewModel::class.java)
+        }
     }
 
 
@@ -71,13 +74,30 @@ class ChannelFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_channel, container, false)
         val title = arguments?.getString(FRAGMENT_TITLE)
+        val index = arguments?.getInt(FRAGMENT_INDEX, 0) ?: 0
         val images = arguments?.getParcelableArrayList<RssItem>(FRAGMENT_ITEMS) ?: ArrayList()
 
         Log.d(TAG, "images : $images")
+        val adapter = ItemListAdapter()
+
+        viewModel.castList.subscribe({
+            it.elementAt(index)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ cast ->
+                    Log.d(TAG, "cast : $cast")
+                    Log.d(TAG, "cast.items size : ${cast.items.size}")
+                    view.fragmentTitle.text = cast.title
+                    adapter.items = cast.items
+                    adapter.notifyDataSetChanged()
+                    autoScroll(view.recyclerView, view.slideProgressBar, adapter.items.size, 2000)
+                }, { e ->
+                    Log.d(TAG, "e : ", e)
+                })
+        }, { e ->
+            Log.d(TAG, "e : ", e)
+        }).addTo(disposeBag)
 
         view.fragmentTitle.text = title
-        val adapter = ItemListAdapter()
-        adapter.items = images
         val snapHelper = PagerSnapHelper()
 
         view.recyclerView.apply {
@@ -107,8 +127,8 @@ class ChannelFragment : Fragment() {
 
 
                             if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
-                                dispose?.dispose()
-                                progressDispose?.dispose()
+                                autoPlayDisposable?.dispose()
+                                progressDisposable?.dispose()
                                 view.slideProgressBar.visibility = View.GONE
                             }
                         }
@@ -117,7 +137,7 @@ class ChannelFragment : Fragment() {
             }
         }
         snapHelper.attachToRecyclerView(view.recyclerView)
-        autoScroll(view.recyclerView, view.slideProgressBar, images.size, 2000)
+
 
 
         return view
@@ -126,6 +146,7 @@ class ChannelFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         stopAutoScroll()
+        disposeBag.dispose()
     }
 
     private fun autoScroll(
@@ -134,33 +155,34 @@ class ChannelFragment : Fragment() {
         listSize: Int,
         intervalInMillis: Long
     ) {
-        dispose?.let {
+        autoPlayDisposable?.let {
             if (!it.isDisposed) return
         }
 
-        progressDispose?.let {
+        progressDisposable?.let {
             if (!it.isDisposed) return
         }
 
-        dispose = Flowable.interval(intervalInMillis, TimeUnit.MILLISECONDS)
+        Log.d(TAG, "listSize : $listSize")
+
+        autoPlayDisposable = Flowable.interval(intervalInMillis, TimeUnit.MILLISECONDS)
             .map { (it + 1) % listSize }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 recyclerView.smoothScrollToPosition(it.toInt())
             }
 
-        progressDispose = Flowable.interval(intervalInMillis / 100, TimeUnit.MILLISECONDS)
+        progressDisposable = Flowable.interval(intervalInMillis / 100, TimeUnit.MILLISECONDS)
             .map { it % 100 }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 progressBar.progress = it.toInt()
-                println("progress" + it.toInt())
             }
     }
 
     private fun stopAutoScroll() {
-        dispose?.let(Disposable::dispose)
-        progressDispose?.let(Disposable::dispose)
+        autoPlayDisposable?.let(Disposable::dispose)
+        progressDisposable?.let(Disposable::dispose)
     }
 
 }

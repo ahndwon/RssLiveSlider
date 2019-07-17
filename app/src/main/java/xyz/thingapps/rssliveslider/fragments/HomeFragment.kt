@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_home.view.*
 import xyz.thingapps.rssliveslider.R
 import xyz.thingapps.rssliveslider.adapters.FragmentListAdapter
-import xyz.thingapps.rssliveslider.utils.Dummies
 import xyz.thingapps.rssliveslider.viewmodels.HomeViewModel
 
 class HomeFragment : Fragment() {
@@ -27,12 +26,14 @@ class HomeFragment : Fragment() {
         val adapter = FragmentListAdapter(childFragmentManager)
 
         adapter.fragments = listOf(
-            ChannelFragment.newInstance("Channel", Dummies.rssItems)
-//                ChannelFragment.newInstance("Channel", Dummies.rssItems),
-//                ChannelFragment.newInstance("Channel", Dummies.rssItems),
-//                ChannelFragment.newInstance("Channel", Dummies.rssItems),
-//                ChannelFragment.newInstance("Channel", Dummies.rssItems),
-//                ChannelFragment.newInstance("Channel", Dummies.rssItems)
+            ChannelFragment.newInstance("Channel", 0),
+            ChannelFragment.newInstance("Channel", 1),
+            ChannelFragment.newInstance("Channel", 2),
+            ChannelFragment.newInstance("Channel", 3),
+            ChannelFragment.newInstance("Channel", 4),
+            ChannelFragment.newInstance("Channel", 5),
+            ChannelFragment.newInstance("Channel", 6),
+            ChannelFragment.newInstance("Channel", 7)
         )
 
         view.homeRecyclerView.adapter = adapter
@@ -46,8 +47,7 @@ class HomeFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         activity?.let {
             viewModel = ViewModelProviders.of(it).get(HomeViewModel::class.java)
-            viewModel.getRss()
+            viewModel.getData()
         }
-
     }
 }
