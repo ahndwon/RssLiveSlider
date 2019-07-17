@@ -9,6 +9,7 @@ data class RssItem(val title: String = "",
                    val pubdate: String = "",
                    val image: String = "",
                    val guid: String = "") : Parcelable {
+
     constructor(parcel: Parcel) : this(
             parcel.readString() ?: "",
             parcel.readString() ?: "",
