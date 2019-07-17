@@ -80,29 +80,42 @@ class ChannelFragment : Fragment() {
         Log.d(TAG, "images : $images")
         val adapter = ItemListAdapter()
 
-        viewModel.castList.subscribe({
-            it.elementAt(index)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ cast ->
-                    Log.d(TAG, "cast : $cast")
-                    Log.d(TAG, "cast.items size : ${cast.items.size}")
-                    view.fragmentTitle.text = cast.title
-                    adapter.items = cast.items
-                    adapter.notifyDataSetChanged()
-                    autoScroll(view.recyclerView, view.slideProgressBar, adapter.items.size, 2000)
-                }, { e ->
-                    Log.d(TAG, "e : ", e)
-                })
-        }, { e ->
-            Log.d(TAG, "e : ", e)
-        }).addTo(disposeBag)
+        viewModel.castList[index]
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ cast ->
+                view.fragmentTitle.text = cast.title
+                adapter.items = cast.items
+                adapter.notifyDataSetChanged()
+                autoScroll(view.recyclerView, view.slideProgressBar, adapter.items.size, 2000)
+            }, { e ->
+                Log.d(TAG, "e : ", e)
+            })
+            .addTo(disposeBag)
+
+//        viewModel.castList.subscribe({
+//            it.elementAt(index)
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe({ cast ->
+//                    Log.d(TAG, "cast : $cast")
+//                    Log.d(TAG, "cast.items size : ${cast.items.size}")
+//                    view.fragmentTitle.text = cast.title
+//                    adapter.items = cast.items
+//                    adapter.notifyDataSetChanged()
+//                    autoScroll(view.recyclerView, view.slideProgressBar, adapter.items.size, 2000)
+//                }, { e ->
+//                    Log.d(TAG, "e : ", e)
+//                })
+//        }, { e ->
+//            Log.d(TAG, "e : ", e)
+//        }).addTo(disposeBag)
 
         view.fragmentTitle.text = title
         val snapHelper = PagerSnapHelper()
 
         view.recyclerView.apply {
             this.adapter = adapter
-            this.layoutManager = LinearLayoutManager(view.context, LinearLayoutManager.HORIZONTAL, false)
+            this.layoutManager =
+                LinearLayoutManager(view.context, LinearLayoutManager.HORIZONTAL, false)
 
             this.adapter?.itemCount?.let { itemCount ->
                 if (itemCount > 1) {

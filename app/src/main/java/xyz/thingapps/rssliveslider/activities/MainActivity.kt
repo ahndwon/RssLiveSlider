@@ -8,6 +8,7 @@ import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
 import com.jakewharton.rxbinding3.widget.queryTextChanges
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
@@ -43,22 +44,38 @@ class MainActivity : AppCompatActivity() {
         val searchItem = menu.findItem(R.id.search)
         val searchView = searchItem.actionView as? SearchView
 
+        val sourceObservable = Observable.range(1, 10)
+
+//        val filteredObservable = sourceObservable.filter {
+////
+////        }
+
         searchView?.queryTextChanges()
             ?.debounce(500, TimeUnit.MILLISECONDS)
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe { search ->
                 Log.d("MainActivity", "search : $search")
-                viewModel.castList
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe { castList ->
-                        castList.forEach { observableCast ->
-                            observableCast.filter { cast ->
-                                cast.title.contains(search)
-                            }.subscribe {
+//                viewModel.castList
+//                    .observeOn(AndroidSchedulers.mainThread())
+//                    .flatMap {
+//                        it.flatMap {
+//
+//                        }
+//                    }
 
-                            }
-                        }
-                    }
+//                    .subscribe { castList ->
+//                        castList.flatMap { it ->
+//                            it
+//                        }
+//
+//                        castList.forEach { observableCast ->
+//                            observableCast.filter { cast ->
+//                                cast.title.contains(search)
+//                            }.subscribe {
+//
+//                            }
+//                        }
+//                    }
             }
             ?.addTo(disposeBag)
 
