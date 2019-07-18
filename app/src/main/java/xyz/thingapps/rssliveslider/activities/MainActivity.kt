@@ -11,9 +11,11 @@ import com.jakewharton.rxbinding3.widget.queryTextChanges
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.Observables
 import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.activity_main.*
 import xyz.thingapps.rssliveslider.R
+import xyz.thingapps.rssliveslider.api.dao.Cast
 import xyz.thingapps.rssliveslider.fragments.HomeFragment
 import xyz.thingapps.rssliveslider.viewmodels.HomeViewModel
 import java.util.concurrent.TimeUnit
@@ -44,39 +46,58 @@ class MainActivity : AppCompatActivity() {
         val searchItem = menu.findItem(R.id.search)
         val searchView = searchItem.actionView as? SearchView
 
-        val sourceObservable = Observable.range(1, 10)
-
-//        val filteredObservable = sourceObservable.filter {
-////
-////        }
-
-        searchView?.queryTextChanges()
+        val searchObservable = searchView?.queryTextChanges()
             ?.debounce(500, TimeUnit.MILLISECONDS)
-            ?.observeOn(AndroidSchedulers.mainThread())
-            ?.subscribe { search ->
-                Log.d("MainActivity", "search : $search")
-                viewModel.castList
-//                    .observeOn(AndroidSchedulers.mainThread())
-//                    .filter {
-//
-//                    }
 
-//                    .subscribe { castList ->
-//                        castList.flatMap { it ->
-//                            it
-//                        }
-//
-//                        castList.forEach { observableCast ->
-//                            observableCast.filter { cast ->
-//                                cast.title.contains(search)
-//                            }.subscribe {
-//
-//                            }
-//                        }
-//                    }
-            }
-            ?.addTo(disposeBag)
+        viewModel.castList.observeOn(AndroidSchedulers.mainThread())
+            .subscribe { arrayList ->
+                val observableCastList = Observable.zip(arrayList) {
+                    it.toList() as List<Cast>
+                }
 
+                searchObservable?.let {
+                    Observables.combineLatest(observableCastList, searchObservable)
+                        .subscribe { pair ->
+                            val list = pair.first
+                            val search = pair.second
+
+                            Log.d("MainActivitySearch", "search : $search")
+
+                            val newList = list.filter { cast ->
+                                cast.title.contains(search)
+                            }.map {
+                                Observable.just(it)
+                            }
+
+                            Log.d("MainActivitySearch", "newList : $newList")
+
+//                        viewModel.castList. = Observable.just(ArrayList(newList))
+                        }
+                }
+            }.addTo(disposeBag)
+
+//        val observableCastList = Observable.zip(viewModel.castList) {
+//            it.toList() as List<Cast>
+//        }
+//
+//        searchObservable?.let {
+//            Observables.combineLatest(observableCastList, searchObservable).subscribe { pair ->
+//                val list = pair.first
+//                val search = pair.second
+//
+//                Log.d("MainActivitySearch", "search : $search")
+//
+//                val newList = list.filter { cast ->
+//                    cast.title.contains(search)
+//                }.map {
+//                    Observable.just(it)
+//                }
+//
+//                Log.d("MainActivitySearch", "newList : $newList")
+//
+//                viewModel.castList = ArrayList(newList)
+//            }
+//        }
 
         return true
     }
