@@ -7,6 +7,7 @@ import io.reactivex.rxkotlin.Observables
 import xyz.thingapps.rssliveslider.api.dao.Cast
 import xyz.thingapps.rssliveslider.api.provideJtbcApi
 import xyz.thingapps.rssliveslider.api.provideNasaApi
+import java.util.concurrent.TimeUnit
 
 class HomeViewModel : ViewModel() {
     private val disposeBag = CompositeDisposable()
@@ -66,7 +67,9 @@ class HomeViewModel : ViewModel() {
                 Observable.just(shuttleStation),
                 Observable.just(solar)
             )
-        }
+        }.repeatWhen { o -> o.concatMap { v -> Observable.timer(1000, TimeUnit.MILLISECONDS) } }
+            .distinctUntilChanged()
+
     }
 
     private fun addToList(cast: Observable<Cast>) {

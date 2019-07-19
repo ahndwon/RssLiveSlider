@@ -1,6 +1,9 @@
 package xyz.thingapps.rssliveslider.api.dao
 
 import com.tickaroo.tikxml.annotation.*
+import io.reactivex.subjects.PublishSubject
+
+
 
 @Xml(name = "rss")
 data class Cast(
@@ -8,7 +11,11 @@ data class Cast(
     @Path("channel") @PropertyElement val description : String = "",
     @Path("channel") @PropertyElement val link : String = "",
     @Path("channel") @Element val items: List<Item> = mutableListOf()
-)
+) {
+    private val changeObservable = PublishSubject.create<Cast>()
+
+
+}
 
 @Xml(name = "item")
 data class Item(

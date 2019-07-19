@@ -49,14 +49,41 @@ class MainActivity : AppCompatActivity() {
         val searchObservable = searchView?.queryTextChanges()
             ?.debounce(500, TimeUnit.MILLISECONDS)
 
+        viewModel.castList.subscribe {
+            Log.d("MainActivitySearch", "castList change notified: ${it.size}")
+        }.addTo(disposeBag)
+
+
+//        searchView?.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
+//            override fun onQueryTextSubmit(p0: String?): Boolean {
+//                Log.d("MainActivitySearch", "searchView clicked")
+//
+//                viewModel.castList = viewModel.castList.filter {
+//                    it[0].blockingSingle().title.contains("Day")
+//                }
+//
+//
+//
+//                return true
+//            }
+//
+//            override fun onQueryTextChange(p0: String?): Boolean {
+//                return false
+//            }
+//
+//        })
+
+
         viewModel.castList.observeOn(AndroidSchedulers.mainThread())
             .subscribe { arrayList ->
                 val observableCastList = Observable.zip(arrayList) {
+                    @Suppress("UNCHECKED_CAST")
                     it.toList() as List<Cast>
                 }
 
                 searchObservable?.let {
                     Observables.combineLatest(observableCastList, searchObservable)
+                        .observeOn(AndroidSchedulers.mainThread())
                         .subscribe { pair ->
                             val list = pair.first
                             val search = pair.second
@@ -65,11 +92,14 @@ class MainActivity : AppCompatActivity() {
 
                             val newList = list.filter { cast ->
                                 cast.title.contains(search)
-                            }.map {
-                                Observable.just(it)
                             }
 
-                            Log.d("MainActivitySearch", "newList : $newList")
+                            Log.d("MainActivitySearch", "newList.size : ${newList.size}")
+
+                            val newnewList = newList.map {
+                                Observable.just(it)
+                            }
+                            viewModel.castList = Observable.just(ArrayList(newnewList))
 
 //                        viewModel.castList. = Observable.just(ArrayList(newList))
                         }

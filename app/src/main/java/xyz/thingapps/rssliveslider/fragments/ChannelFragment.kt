@@ -110,9 +110,13 @@ class ChannelFragment : Fragment() {
 
         // Observable<ArrayList<Observable<Cast>>>
         viewModel.castList.subscribe({
+            Log.d("MainActivitySearch", "channel castList Subscribe: ${it.size}")
+
             it.elementAt(index)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ cast ->
+                    Log.d("MainActivitySearch", "channel element Subscribe: ${cast.title}")
+
                     Log.d(TAG, "cast : $cast")
                     Log.d(TAG, "cast.items size : ${cast.items.size}")
                     view.fragmentTitle.text = cast.title
