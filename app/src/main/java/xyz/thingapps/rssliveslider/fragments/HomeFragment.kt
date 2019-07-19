@@ -25,16 +25,19 @@ class HomeFragment : Fragment() {
 
         val adapter = FragmentListAdapter(childFragmentManager)
 
-        adapter.fragments = listOf(
-            ChannelFragment.newInstance("Channel", 0),
-            ChannelFragment.newInstance("Channel", 1),
-            ChannelFragment.newInstance("Channel", 2),
-            ChannelFragment.newInstance("Channel", 3),
-            ChannelFragment.newInstance("Channel", 4),
-            ChannelFragment.newInstance("Channel", 5),
-            ChannelFragment.newInstance("Channel", 6),
-            ChannelFragment.newInstance("Channel", 7)
-        )
+
+//        adapter.fragments = listOf(
+//            ChannelFragment.newInstance("Channel", 0),
+//            ChannelFragment.newInstance("Channel", 1),
+//            ChannelFragment.newInstance("Channel", 2),
+//            ChannelFragment.newInstance("Channel", 3),
+//            ChannelFragment.newInstance("Channel", 4),
+//            ChannelFragment.newInstance("Channel", 5),
+//            ChannelFragment.newInstance("Channel", 6),
+//            ChannelFragment.newInstance("Channel", 7)
+//        )
+
+        adapter.fragments = viewModel.fragmentList
 
         view.homeRecyclerView.adapter = adapter
         view.homeRecyclerView.layoutManager = LinearLayoutManager(view.context)
@@ -48,6 +51,7 @@ class HomeFragment : Fragment() {
         activity?.let {
             viewModel = ViewModelProviders.of(it).get(HomeViewModel::class.java)
             viewModel.getData()
+            view?.homeRecyclerView?.adapter?.notifyDataSetChanged()
         }
     }
 }

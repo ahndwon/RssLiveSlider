@@ -1,5 +1,6 @@
 package xyz.thingapps.rssliveslider.viewmodels
 
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
@@ -7,10 +8,11 @@ import io.reactivex.rxkotlin.Observables
 import xyz.thingapps.rssliveslider.api.dao.Cast
 import xyz.thingapps.rssliveslider.api.provideJtbcApi
 import xyz.thingapps.rssliveslider.api.provideNasaApi
-import java.util.concurrent.TimeUnit
 
 class HomeViewModel : ViewModel() {
     private val disposeBag = CompositeDisposable()
+
+    var fragmentList = ArrayList<Fragment>()
 
     var castList: Observable<ArrayList<Observable<Cast>>> = Observable.just(ArrayList())
 //    var castList: Observable<ArrayList<Cast>> = Observable.just(ArrayList())
@@ -67,8 +69,10 @@ class HomeViewModel : ViewModel() {
                 Observable.just(shuttleStation),
                 Observable.just(solar)
             )
-        }.repeatWhen { o -> o.concatMap { v -> Observable.timer(1000, TimeUnit.MILLISECONDS) } }
-            .distinctUntilChanged()
+        }
+//            .repeatWhen { o -> o.concatMap { v -> Observable.timer(1000, TimeUnit.MILLISECONDS) } }
+//            .distinctUntilChanged()
+        
 
     }
 
