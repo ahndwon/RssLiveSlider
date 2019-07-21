@@ -36,15 +36,6 @@ class ChannelFragment : Fragment() {
         const val FRAGMENT_ITEMS = "fragment_items"
         const val FRAGMENT_INDEX = "fragment_index"
 
-        fun newInstance(title: String, items: ArrayList<RssItem>): ChannelFragment {
-            return ChannelFragment().apply {
-                val bundle = Bundle()
-                bundle.putString(FRAGMENT_TITLE, title)
-                bundle.putParcelableArrayList(FRAGMENT_ITEMS, items)
-                arguments = bundle
-            }
-        }
-
         fun newInstance(title: String, index: Int): ChannelFragment {
             return ChannelFragment().apply {
                 val bundle = Bundle()
@@ -57,11 +48,7 @@ class ChannelFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        viewModel = ViewModelProviders.of(
-//            this,
-//            viewModelFactory {
-//                CastViewModel(cast)
-//            }).get(CastViewModel::class.java)
+
         activity?.let {
             viewModel = ViewModelProviders.of(it).get(HomeViewModel::class.java)
         }
@@ -80,55 +67,25 @@ class ChannelFragment : Fragment() {
         Log.d(TAG, "images : $images")
         val adapter = ItemListAdapter()
 
-        // Observable<ArrayList<Cast>>
-//        viewModel.castList
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe({
-//                val cast = it[index]
-//                Log.d(TAG, "cast : $cast")
-//                Log.d(TAG, "cast.items size : ${cast.items.size}")
-//                view.fragmentTitle.text = cast.title
-//                adapter.items = cast.items
-//                adapter.notifyDataSetChanged()
-//                autoScroll(view.recyclerView, view.slideProgressBar, adapter.items.size, 2000)
-//            }, { e ->
-//                Log.d(TAG, "e : ", e)
-//            }).addTo(disposeBag)
+        val cast = viewModel.castList[index]
+        view.fragmentTitle.text = cast.title
+        adapter.items = cast.items
+        adapter.notifyDataSetChanged()
+        autoScroll(view.recyclerView, view.slideProgressBar, adapter.items.size, 2000)
 
-        // ArrayList<Observable<Cast>>
-//        viewModel.castList[index]
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe({ cast ->
-//                view.fragmentTitle.text = cast.title
-//                adapter.items = cast.items
-//                adapter.notifyDataSetChanged()
-//                autoScroll(view.recyclerView, view.slideProgressBar, adapter.items.size, 2000)
-//            }, { e ->
-//                Log.d(TAG, "e : ", e)
-//            })
-//            .addTo(disposeBag)
+        viewModel.castListPublisher.observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ castList ->
+                Log.d(TAG, "publisher changed ")
 
-        // Observable<ArrayList<Observable<Cast>>>
-        viewModel.castList.subscribe({
-            Log.d("MainActivitySearch", "channel castList Subscribe: ${it.size}")
-
-            it.elementAt(index)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ cast ->
-                    Log.d("MainActivitySearch", "channel element Subscribe: ${cast.title}")
-
-                    Log.d(TAG, "cast : $cast")
-                    Log.d(TAG, "cast.items size : ${cast.items.size}")
-                    view.fragmentTitle.text = cast.title
-                    adapter.items = cast.items
-                    adapter.notifyDataSetChanged()
-                    autoScroll(view.recyclerView, view.slideProgressBar, adapter.items.size, 2000)
-                }, { e ->
-                    Log.d(TAG, "e : ", e)
-                })
-        }, { e ->
-            Log.d(TAG, "e : ", e)
-        }).addTo(disposeBag)
+                val cast = castList[index]
+                view.fragmentTitle.text = cast.title
+                adapter.items = cast.items
+                adapter.notifyDataSetChanged()
+                autoScroll(view.recyclerView, view.slideProgressBar, adapter.items.size, 2000)
+            }, { e ->
+                Log.d(TAG, "e : ", e)
+            })
+            .addTo(disposeBag)
 
         view.fragmentTitle.text = title
         val snapHelper = PagerSnapHelper()
@@ -171,8 +128,6 @@ class ChannelFragment : Fragment() {
             }
         }
         snapHelper.attachToRecyclerView(view.recyclerView)
-
-
 
         return view
     }
