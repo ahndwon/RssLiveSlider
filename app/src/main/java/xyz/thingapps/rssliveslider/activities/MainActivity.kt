@@ -42,12 +42,26 @@ class MainActivity : AppCompatActivity() {
         searchView?.queryTextChanges()
             ?.debounce(500, TimeUnit.MILLISECONDS)
             ?.subscribe({ search ->
-                viewModel.castList = viewModel.castList.filter {
-                    it.title.contains(search)
+                viewModel.getData {
+                    viewModel.castList = viewModel.castList.filter {
+                        it.title.contains(search)
+                    }
                 }
             }, { e ->
                 e.printStackTrace()
             })?.addTo(disposeBag)
+
+        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(menuItem: MenuItem?): Boolean {
+                return true
+            }
+
+            override fun onMenuItemActionCollapse(menuItem: MenuItem?): Boolean {
+                viewModel.getData()
+                return true
+            }
+
+        })
 
         return true
     }

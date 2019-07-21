@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.fragment_home.view.*
 import xyz.thingapps.rssliveslider.R
 import xyz.thingapps.rssliveslider.adapters.FragmentListAdapter
@@ -28,8 +29,6 @@ class HomeFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
         fragmentAdapter = FragmentListAdapter(childFragmentManager)
-
-        view.homeRecyclerView.adapter = fragmentAdapter
         view.homeRecyclerView.layoutManager = LinearLayoutManager(view.context)
 
         return view
@@ -46,8 +45,8 @@ class HomeFragment : Fragment() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     fragmentAdapter.fragments = viewModel.channelList
-                    fragmentAdapter.notifyDataSetChanged()
-                }
+                    view?.homeRecyclerView?.adapter = fragmentAdapter
+                }.addTo(disposeBag)
         }
     }
 

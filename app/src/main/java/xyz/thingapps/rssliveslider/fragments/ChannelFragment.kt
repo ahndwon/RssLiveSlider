@@ -19,7 +19,7 @@ import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.fragment_channel.view.*
 import xyz.thingapps.rssliveslider.R
 import xyz.thingapps.rssliveslider.adapters.ItemListAdapter
-import xyz.thingapps.rssliveslider.models.RssItem
+import xyz.thingapps.rssliveslider.api.dao.Cast
 import xyz.thingapps.rssliveslider.viewmodels.HomeViewModel
 import java.util.concurrent.TimeUnit
 
@@ -29,11 +29,11 @@ class ChannelFragment : Fragment() {
     private var progressDisposable: Disposable? = null
     private val disposeBag = CompositeDisposable()
     private lateinit var viewModel: HomeViewModel
+    private var index = -1
 
     companion object {
         const val TAG = "ChannelFragment"
         const val FRAGMENT_TITLE = "fragment_title"
-        const val FRAGMENT_ITEMS = "fragment_items"
         const val FRAGMENT_INDEX = "fragment_index"
 
         fun newInstance(title: String, index: Int): ChannelFragment {
@@ -46,54 +46,55 @@ class ChannelFragment : Fragment() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
 
         activity?.let {
             viewModel = ViewModelProviders.of(it).get(HomeViewModel::class.java)
         }
+        val adapter = ItemListAdapter()
+        view?.recyclerView?.adapter = adapter
+
+        setupItems(adapter, viewModel.castList[index])
+
+        viewModel.castListPublisher.observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ castList ->
+                setupItems(adapter, castList[index])
+            }, { e ->
+                Log.d(TAG, "e : ", e)
+            })
+            .addTo(disposeBag)
     }
 
+    private fun setupItems(adapter: ItemListAdapter, cast: Cast) {
+        view?.fragmentTitle?.text = cast.title
+        adapter.items = cast.items
+        adapter.notifyDataSetChanged()
+        view?.let { view ->
+            autoScroll(view.recyclerView, view.slideProgressBar, adapter.items.size, 2000)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_channel, container, false)
+
         val title = arguments?.getString(FRAGMENT_TITLE)
-        val index = arguments?.getInt(FRAGMENT_INDEX, 0) ?: 0
-        val images = arguments?.getParcelableArrayList<RssItem>(FRAGMENT_ITEMS) ?: ArrayList()
-
-        Log.d(TAG, "images : $images")
-        val adapter = ItemListAdapter()
-
-        val cast = viewModel.castList[index]
-        view.fragmentTitle.text = cast.title
-        adapter.items = cast.items
-        adapter.notifyDataSetChanged()
-        autoScroll(view.recyclerView, view.slideProgressBar, adapter.items.size, 2000)
-
-        viewModel.castListPublisher.observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ castList ->
-                Log.d(TAG, "publisher changed ")
-
-                val cast = castList[index]
-                view.fragmentTitle.text = cast.title
-                adapter.items = cast.items
-                adapter.notifyDataSetChanged()
-                autoScroll(view.recyclerView, view.slideProgressBar, adapter.items.size, 2000)
-            }, { e ->
-                Log.d(TAG, "e : ", e)
-            })
-            .addTo(disposeBag)
+        index = arguments?.getInt(FRAGMENT_INDEX, 0) ?: -1
 
         view.fragmentTitle.text = title
-        val snapHelper = PagerSnapHelper()
 
-        view.recyclerView.apply {
-            this.adapter = adapter
+        setupRecyclerView(view.recyclerView)
+
+        return view
+    }
+
+    private fun setupRecyclerView(recyclerView: RecyclerView) {
+        recyclerView.apply {
             this.layoutManager =
-                LinearLayoutManager(view.context, LinearLayoutManager.HORIZONTAL, false)
+                LinearLayoutManager(recyclerView.context, LinearLayoutManager.HORIZONTAL, false)
 
             this.adapter?.itemCount?.let { itemCount ->
                 if (itemCount > 1) {
@@ -120,16 +121,15 @@ class ChannelFragment : Fragment() {
                             if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
                                 autoPlayDisposable?.dispose()
                                 progressDisposable?.dispose()
-                                view.slideProgressBar.visibility = View.GONE
+                                view?.slideProgressBar?.visibility = View.GONE
                             }
                         }
                     })
                 }
             }
         }
-        snapHelper.attachToRecyclerView(view.recyclerView)
 
-        return view
+        PagerSnapHelper().attachToRecyclerView(recyclerView)
     }
 
     override fun onDestroy() {
@@ -151,8 +151,6 @@ class ChannelFragment : Fragment() {
         progressDisposable?.let {
             if (!it.isDisposed) return
         }
-
-        Log.d(TAG, "listSize : $listSize")
 
         autoPlayDisposable = Flowable.interval(intervalInMillis, TimeUnit.MILLISECONDS)
             .map { (it + 1) % listSize }
