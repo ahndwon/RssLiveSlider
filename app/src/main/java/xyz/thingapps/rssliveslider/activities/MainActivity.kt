@@ -1,24 +1,27 @@
 package xyz.thingapps.rssliveslider.activities
 
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProviders
 import com.jakewharton.rxbinding3.widget.queryTextChanges
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.activity_main.*
 import xyz.thingapps.rssliveslider.R
 import xyz.thingapps.rssliveslider.fragments.HomeFragment
+import xyz.thingapps.rssliveslider.viewmodels.HomeViewModel
 import java.util.concurrent.TimeUnit
 
 
 class MainActivity : AppCompatActivity() {
 
     private val disposeBag = CompositeDisposable()
+    private val viewModel: HomeViewModel by lazy {
+        ViewModelProviders.of(this@MainActivity).get(HomeViewModel::class.java)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,8 +31,6 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.frameContainer, HomeFragment())
             .commit()
-
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -40,12 +41,27 @@ class MainActivity : AppCompatActivity() {
 
         searchView?.queryTextChanges()
             ?.debounce(500, TimeUnit.MILLISECONDS)
-            ?.observeOn(AndroidSchedulers.mainThread())
-            ?.subscribe {
-                Log.d("MainActivity", "search : $it")
-            }
-            ?.addTo(disposeBag)
+            ?.subscribe({ search ->
+                viewModel.getData {
+                    viewModel.castList = viewModel.castList.filter {
+                        it.title.contains(search)
+                    }
+                }
+            }, { e ->
+                e.printStackTrace()
+            })?.addTo(disposeBag)
 
+        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(menuItem: MenuItem?): Boolean {
+                return true
+            }
+
+            override fun onMenuItemActionCollapse(menuItem: MenuItem?): Boolean {
+                viewModel.getData()
+                return true
+            }
+
+        })
 
         return true
     }

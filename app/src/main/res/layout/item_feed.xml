@@ -7,8 +7,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <ImageView
-        android:foreground="@drawable/gradient"
         android:id="@+id/feedImageView"
+        android:foreground="@drawable/gradient"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         android:contentDescription="@string/description_feed_image" />
@@ -40,9 +40,9 @@
         tools:text="3시간전" />
 
     <TextView
+        android:id="@+id/feedDescription"
         android:background="@color/colorTransparentBlack"
         android:ellipsize="end"
-        android:id="@+id/feedDescription"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/text_view_margin"
         android:layout_marginEnd="@dimen/text_view_margin"
