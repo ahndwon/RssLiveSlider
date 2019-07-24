@@ -28,6 +28,7 @@ class ChannelFragment : Fragment() {
     private var autoPlayDisposable: Disposable? = null
     private var progressDisposable: Disposable? = null
     private val disposeBag = CompositeDisposable()
+    private val animationDisposeBag = CompositeDisposable()
     private lateinit var viewModel: HomeViewModel
     private var index = -1
 
@@ -57,6 +58,8 @@ class ChannelFragment : Fragment() {
 
         setupItems(adapter, viewModel.castList[index])
 
+        view?.recyclerView?.let { setupRecyclerView(it) }
+
         viewModel.castListPublisher.observeOn(AndroidSchedulers.mainThread())
             .subscribe({ castList ->
                 setupItems(adapter, castList[index])
@@ -85,8 +88,6 @@ class ChannelFragment : Fragment() {
         index = arguments?.getInt(FRAGMENT_INDEX, 0) ?: -1
 
         view.fragmentTitle.text = title
-
-        setupRecyclerView(view.recyclerView)
 
         return view
     }
@@ -119,8 +120,8 @@ class ChannelFragment : Fragment() {
 
 
                             if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
-                                autoPlayDisposable?.dispose()
-                                progressDisposable?.dispose()
+
+                                stopAutoScroll()
                                 view?.slideProgressBar?.visibility = View.GONE
                             }
                         }
@@ -154,22 +155,27 @@ class ChannelFragment : Fragment() {
 
         autoPlayDisposable = Flowable.interval(intervalInMillis, TimeUnit.MILLISECONDS)
             .map { (it + 1) % listSize }
+            .onBackpressureBuffer()
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
+            .subscribe({
                 recyclerView.smoothScrollToPosition(it.toInt())
-            }
+            }, { e ->
+                e.printStackTrace()
+            }).addTo(animationDisposeBag)
 
         progressDisposable = Flowable.interval(intervalInMillis / 100, TimeUnit.MILLISECONDS)
             .map { it % 100 }
+            .onBackpressureBuffer()
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
+            .subscribe({
                 progressBar.progress = it.toInt()
-            }
+            }, { e ->
+                e.printStackTrace()
+            }).addTo(animationDisposeBag)
     }
 
     private fun stopAutoScroll() {
-        autoPlayDisposable?.let(Disposable::dispose)
-        progressDisposable?.let(Disposable::dispose)
+        animationDisposeBag.dispose()
     }
 
 }
