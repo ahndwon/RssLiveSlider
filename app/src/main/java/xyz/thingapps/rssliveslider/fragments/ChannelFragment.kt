@@ -30,6 +30,7 @@ class ChannelFragment : Fragment() {
     private val disposeBag = CompositeDisposable()
     private val currentFragmentDisposeBag = CompositeDisposable()
     private var animationDisposeBag = CompositeDisposable()
+    private var currentFeed: Int = 0
 
     private lateinit var viewModel: HomeViewModel
     private var index = -1
@@ -91,10 +92,10 @@ class ChannelFragment : Fragment() {
                         )
                     }
                 } else {
-                    stopAutoScroll()
                     view?.let { view ->
-                        view.recyclerView.smoothScrollToPosition(0)
-                        view.slideProgressBar.visibility = View.GONE
+                        stopAutoScroll(view)
+                        currentFeed =
+                            (view.recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
                     }
                 }
 
@@ -151,8 +152,12 @@ class ChannelFragment : Fragment() {
 
                             if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
 
-                                stopAutoScroll()
-                                view?.slideProgressBar?.visibility = View.INVISIBLE
+                                view?.let {
+                                    stopAutoScroll(it)
+                                    currentFeed =
+                                        (it.recyclerView?.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition() + 1
+                                }
+
                             }
                         }
                     })
@@ -165,7 +170,7 @@ class ChannelFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        stopAutoScroll()
+        view?.let { stopAutoScroll(it) }
         disposeBag.dispose()
     }
 
@@ -178,8 +183,9 @@ class ChannelFragment : Fragment() {
         autoPlayDisposable?.let { if (!it.isDisposed) return }
         progressDisposable?.let { if (!it.isDisposed) return }
 
+
         autoPlayDisposable = Flowable.interval(intervalInMillis, TimeUnit.MILLISECONDS)
-            .map { (it + 1) % listSize }
+            .map { (it + 1 + currentFeed) % listSize }
             .onBackpressureBuffer()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
@@ -203,10 +209,11 @@ class ChannelFragment : Fragment() {
 
     }
 
-    private fun stopAutoScroll() {
+    private fun stopAutoScroll(view: View) {
         animationDisposeBag.dispose()
         animationDisposeBag = CompositeDisposable()
 
+        view.slideProgressBar.visibility = View.INVISIBLE
 
     }
 
