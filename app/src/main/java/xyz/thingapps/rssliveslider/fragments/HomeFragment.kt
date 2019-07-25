@@ -14,11 +14,11 @@ import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.fragment_home.view.*
 import xyz.thingapps.rssliveslider.R
 import xyz.thingapps.rssliveslider.adapters.FragmentListAdapter
-import xyz.thingapps.rssliveslider.viewmodels.HomeViewModel
+import xyz.thingapps.rssliveslider.viewmodels.RssViewModel
 
 class HomeFragment : Fragment() {
 
-    private lateinit var viewModel: HomeViewModel
+    private lateinit var viewModel: RssViewModel
     private lateinit var fragmentAdapter: FragmentListAdapter
     private val disposeBag = CompositeDisposable()
 
@@ -38,7 +38,7 @@ class HomeFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         activity?.let {
-            viewModel = ViewModelProviders.of(it).get(HomeViewModel::class.java)
+            viewModel = ViewModelProviders.of(it).get(RssViewModel::class.java)
             viewModel.getData()
 
             viewModel.castListPublisher
