@@ -5,7 +5,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
-import io.reactivex.subjects.PublishSubject
 import xyz.thingapps.rssliveslider.R
 import xyz.thingapps.rssliveslider.viewholders.FragmentViewHolder
 
@@ -13,13 +12,6 @@ class FragmentListAdapter(private val fragmentManager: FragmentManager)
     : RecyclerView.Adapter<FragmentViewHolder>() {
     var fragments: List<Fragment> = emptyList()
 
-    var currentFragment: Int = 0
-        set(value) {
-            field = value
-            currentFragmentPublisher.onNext(value)
-        }
-
-    var currentFragmentPublisher = PublishSubject.create<Int>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FragmentViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -38,7 +30,7 @@ class FragmentListAdapter(private val fragmentManager: FragmentManager)
 
     override fun onBindViewHolder(holder: FragmentViewHolder, position: Int) {
         fragmentManager.beginTransaction()
-                .replace(holder.itemView.id, fragments[position])
+            .replace(holder.itemView.id, fragments[position], position.toString())
                 .commit()
 
     }

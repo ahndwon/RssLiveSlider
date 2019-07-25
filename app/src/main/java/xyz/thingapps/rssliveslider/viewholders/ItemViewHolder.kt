@@ -3,27 +3,32 @@ package xyz.thingapps.rssliveslider.viewholders
 import android.text.Spannable
 import android.text.SpannableString
 import android.view.View
-import android.view.ViewTreeObserver
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.item_feed.view.*
 import xyz.thingapps.rssliveslider.api.dao.Item
 import xyz.thingapps.rssliveslider.utils.PaddingBackgroundColorSpan
 
 
 class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
-    fun bind(item: Item) {
+    fun bind(item: Item, position: Int, itemCount: Int) {
+
         with(view) {
             feedTitle.text = item.title
             feedTime.text = item.pubDate
             feedDescription.text = item.description
 
+            val feedPositionText = "${position + 1}/$itemCount"
+            feedPosition.text = feedPositionText
+
             item.media?.let { media ->
                 if (media.type.contains("image"))
-                    Glide.with(view.context).load(media.url)
+                    Glide.with(context).load(media.url)
                         .centerCrop()
-                        .into(view.feedImageView)
+                        .into(feedImageView)
             }
 
             val padding = 20
@@ -39,37 +44,30 @@ class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
             feedDescription.setShadowLayer(padding.toFloat(), 0.0F, 0.0F, 0)
             feedDescription.setPadding(padding, padding - 10, padding, padding - 10)
 
+            var spanText = feedDescription.text
 
-            feedDescription.text =
-                feedDescription.text.toString().createSpan(paddingBackgroundColorSpan)
-
-
-            val viewTreeObserver = feedDescription.viewTreeObserver
-            viewTreeObserver.addOnGlobalLayoutListener(object :
-                ViewTreeObserver.OnGlobalLayoutListener {
-                override fun onGlobalLayout() {
-                    feedDescription.viewTreeObserver.removeOnGlobalLayoutListener(this)
-
-                    if (feedDescription.lineCount > feedDescription.maxLines) {
+            Single.just(feedDescription).subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    if (it.lineCount > it.maxLines) {
                         val endOfLastLine =
-                            feedDescription.layout.getLineEnd(feedDescription.maxLines - 1)
-                        val spanText =
-                            feedDescription.text.subSequence(
+                            it.layout.getLineEnd(it.maxLines - 1)
+
+                        spanText =
+                            it.text.subSequence(
                                 0,
                                 endOfLastLine - 3
                             ).toString() + " ..."
 
-
-                        feedDescription.text = spanText.createSpan(paddingBackgroundColorSpan)
-
                     }
 
-                }
-            })
+                    it.text = spanText.toString().createSpan(paddingBackgroundColorSpan)
+
+                }, {
+                })
         }
     }
 
-    fun String.createSpan(spans: Any): Spannable {
+    private fun String.createSpan(spans: Any): Spannable {
         val span = SpannableString(this)
 
         span.setSpan(

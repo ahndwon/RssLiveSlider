@@ -15,16 +15,16 @@
 
     <TextView
         android:id="@+id/feedTitle"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="18dp"
-        android:layout_marginEnd="18dp"
+        android:layout_marginEnd="12dp"
         android:layout_marginBottom="28dp"
         android:textColor="@color/colorWhite"
-        android:textSize="22sp"
 
+        android:textSize="22sp"
         app:layout_constraintBottom_toBottomOf="@+id/feedImageView"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/feedPosition"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="가나봐라 봐라봐라 하지나 마라" />
 
@@ -58,8 +58,22 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.44"
+        app:layout_constraintVertical_bias="0.48"
         tools:text="가나봐라 봐라봐라 하지나 마라" />
+
+    <TextView
+        android:id="@+id/feedPosition"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
+        android:textColor="@color/colorWhite"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/feedTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="1/10" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

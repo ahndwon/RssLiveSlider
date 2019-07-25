@@ -28,7 +28,9 @@ class ChannelFragment : Fragment() {
     private var autoPlayDisposable: Disposable? = null
     private var progressDisposable: Disposable? = null
     private val disposeBag = CompositeDisposable()
-    private val animationDisposeBag = CompositeDisposable()
+    private val currentFragmentDisposeBag = CompositeDisposable()
+    private var animationDisposeBag = CompositeDisposable()
+
     private lateinit var viewModel: HomeViewModel
     private var index = -1
 
@@ -67,15 +69,42 @@ class ChannelFragment : Fragment() {
                 Log.d(TAG, "e : ", e)
             })
             .addTo(disposeBag)
+
+        if (tag?.toInt() == 0) {
+            view?.let { view ->
+                autoScroll(
+                    view.recyclerView, view.slideProgressBar, adapter.items.size, 2000
+                )
+            }
+        }
+
+        val parentFragment = parentFragment as HomeFragment
+
+        parentFragment.currentFragmentPublisher.observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                if (it == tag?.toInt()) {
+                    view?.let { view ->
+                        autoScroll(
+                            view.recyclerView, view.slideProgressBar,
+                            adapter.items.size,
+                            2000
+                        )
+                    }
+                } else {
+                    stopAutoScroll()
+                    view?.let { view ->
+                        view.recyclerView.smoothScrollToPosition(0)
+                        view.slideProgressBar.visibility = View.GONE
+                    }
+                }
+
+            }.addTo(currentFragmentDisposeBag)
     }
 
     private fun setupItems(adapter: ItemListAdapter, cast: Cast) {
         view?.fragmentTitle?.text = cast.title
         adapter.items = cast.items
         adapter.notifyDataSetChanged()
-        view?.let { view ->
-            autoScroll(view.recyclerView, view.slideProgressBar, adapter.items.size, 2000)
-        }
     }
 
     override fun onCreateView(
@@ -88,6 +117,7 @@ class ChannelFragment : Fragment() {
         index = arguments?.getInt(FRAGMENT_INDEX, 0) ?: -1
 
         view.fragmentTitle.text = title
+
 
         return view
     }
@@ -122,7 +152,7 @@ class ChannelFragment : Fragment() {
                             if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
 
                                 stopAutoScroll()
-                                view?.slideProgressBar?.visibility = View.GONE
+                                view?.slideProgressBar?.visibility = View.INVISIBLE
                             }
                         }
                     })
@@ -145,13 +175,8 @@ class ChannelFragment : Fragment() {
         listSize: Int,
         intervalInMillis: Long
     ) {
-        autoPlayDisposable?.let {
-            if (!it.isDisposed) return
-        }
-
-        progressDisposable?.let {
-            if (!it.isDisposed) return
-        }
+        autoPlayDisposable?.let { if (!it.isDisposed) return }
+        progressDisposable?.let { if (!it.isDisposed) return }
 
         autoPlayDisposable = Flowable.interval(intervalInMillis, TimeUnit.MILLISECONDS)
             .map { (it + 1) % listSize }
@@ -159,6 +184,7 @@ class ChannelFragment : Fragment() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 recyclerView.smoothScrollToPosition(it.toInt())
+
             }, { e ->
                 e.printStackTrace()
             }).addTo(animationDisposeBag)
@@ -169,13 +195,19 @@ class ChannelFragment : Fragment() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 progressBar.progress = it.toInt()
+                progressBar.visibility = View.VISIBLE
+
             }, { e ->
                 e.printStackTrace()
             }).addTo(animationDisposeBag)
+
     }
 
     private fun stopAutoScroll() {
         animationDisposeBag.dispose()
+        animationDisposeBag = CompositeDisposable()
+
+
     }
 
 }
