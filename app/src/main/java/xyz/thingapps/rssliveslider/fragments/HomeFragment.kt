@@ -32,8 +32,8 @@ class HomeFragment : Fragment() {
         view.homeRecyclerView.layoutManager = LinearLayoutManager(view.context)
 
         return view
-    }
 
+    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)

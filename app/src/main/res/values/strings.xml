@@ -3,4 +3,8 @@
     <string name="see_all_contents">전체 콘텐츠 보기</string>
     <string name="description_feed_image">feed image</string>
     <string name="title_search">search</string>
+    <string name="description_filter_image">filter image</string>
+    <string name="description_clear_filter">clear filter</string>
+    <string name="filter_sorted_by_title">sorted by title</string>
+    <string name="filter_all_rss">All RSS</string>
 </resources>
