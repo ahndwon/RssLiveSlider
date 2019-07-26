@@ -6,7 +6,8 @@ import xyz.thingapps.rssliveslider.R
 import xyz.thingapps.rssliveslider.api.dao.Item
 import xyz.thingapps.rssliveslider.viewholders.ItemViewHolder
 
-class ItemListAdapter : RecyclerView.Adapter<ItemViewHolder>() {
+class ItemListAdapter(var currentChannel: Int, private val tag: Int) :
+    RecyclerView.Adapter<ItemViewHolder>() {
     var items: List<Item> = emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
@@ -24,7 +25,12 @@ class ItemListAdapter : RecyclerView.Adapter<ItemViewHolder>() {
         val item = items[position]
         holder.bind(item, position, items.size)
 
-
     }
 
+    override fun onViewAttachedToWindow(holder: ItemViewHolder) {
+        if (currentChannel == tag) {
+
+        }
+        holder.animate()
+    }
 }

@@ -53,10 +53,13 @@ class ChannelFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        val parentFragment = parentFragment as HomeFragment
+
         activity?.let {
             viewModel = ViewModelProviders.of(it).get(HomeViewModel::class.java)
         }
-        val adapter = ItemListAdapter()
+
+        val adapter = ItemListAdapter(0, tag?.toInt() ?: 0)
         view?.recyclerView?.adapter = adapter
 
         setupItems(adapter, viewModel.castList[index])
@@ -74,23 +77,23 @@ class ChannelFragment : Fragment() {
         if (tag?.toInt() == 0) {
             view?.let { view ->
                 autoScroll(
-                    view.recyclerView, view.slideProgressBar, adapter.items.size, 2000
+                    view.recyclerView, view.slideProgressBar, adapter.items.size, 4000
                 )
             }
         }
-
-        val parentFragment = parentFragment as HomeFragment
 
         parentFragment.currentFragmentPublisher.observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 if (it == tag?.toInt()) {
                     view?.let { view ->
                         autoScroll(
-                            view.recyclerView, view.slideProgressBar,
+                            view.recyclerView,
+                            view.slideProgressBar,
                             adapter.items.size,
-                            2000
+                            4000
                         )
                     }
+                    adapter.currentChannel = it
                 } else {
                     view?.let { view ->
                         stopAutoScroll(view)
@@ -119,9 +122,9 @@ class ChannelFragment : Fragment() {
 
         view.fragmentTitle.text = title
 
-
         return view
     }
+
 
     private fun setupRecyclerView(recyclerView: RecyclerView) {
         recyclerView.apply {

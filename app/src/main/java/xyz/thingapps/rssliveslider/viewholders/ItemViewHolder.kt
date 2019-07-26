@@ -3,21 +3,40 @@ package xyz.thingapps.rssliveslider.viewholders
 import android.text.Spannable
 import android.text.SpannableString
 import android.view.View
+import android.view.animation.AnimationUtils
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.item_feed.view.*
+import xyz.thingapps.rssliveslider.R
 import xyz.thingapps.rssliveslider.api.dao.Item
 import xyz.thingapps.rssliveslider.utils.PaddingBackgroundColorSpan
 
 
 class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
+
+    private var disposeBag = CompositeDisposable()
+    private val padding = 20
+    private val descriptionBackgroundColor =
+        ResourcesCompat.getColor(
+            view.resources,
+            R.color.colorTransparentBlack,
+            null
+        )
+    private val paddingBackgroundColorSpan =
+        PaddingBackgroundColorSpan(descriptionBackgroundColor, padding)
+
     fun bind(item: Item, position: Int, itemCount: Int) {
 
         with(view) {
+
+            dispose()
+
             feedDescription.visibility = View.INVISIBLE
             feedTitle.text = item.title
             feedTime.text = item.pubDate
@@ -33,31 +52,34 @@ class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
                         .into(feedImageView)
             }
 
-            val padding = 20
-            val descriptionBackgroundColor =
-                ResourcesCompat.getColor(
-                    resources,
-                    xyz.thingapps.rssliveslider.R.color.colorTransparentBlack,
-                    null
-                )
-            val paddingBackgroundColorSpan =
-                PaddingBackgroundColorSpan(descriptionBackgroundColor, padding)
-
             feedDescription.setShadowLayer(padding.toFloat(), 0.0F, 0.0F, 0)
             feedDescription.setPadding(padding, padding - 10, padding, padding - 10)
 
 
             Single.just(feedDescription)
-                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    it.text =
+                    feedDescription.text =
                         feedDescription.createEllipsis().createSpan(paddingBackgroundColorSpan)
 
-                    it.visibility = View.VISIBLE
-
                 }, {
-                })
+                }).addTo(disposeBag)
+
         }
+    }
+
+    fun animate() {
+
+        view.feedDescription.visibility = View.VISIBLE
+        view.feedDescription.createAnimation(R.anim.animation_feed_description, 2000)
+        view.feedImageView.createAnimation(R.anim.animation_feed_image, 0)
+
+    }
+
+    private fun dispose() {
+        disposeBag.dispose()
+        disposeBag = CompositeDisposable()
+
     }
 
     private fun String.createSpan(spans: Any): Spannable {
@@ -81,4 +103,13 @@ class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         } else
             this.text.toString()
     }
+
+    private fun View.createAnimation(resource: Int, startOffset: Long) {
+        val animation = AnimationUtils.loadAnimation(this.context, resource)
+        animation.startOffset = startOffset
+        this.startAnimation(animation)
+
+    }
+
 }
+
