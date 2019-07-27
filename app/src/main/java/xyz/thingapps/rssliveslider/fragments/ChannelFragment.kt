@@ -20,7 +20,8 @@ import kotlinx.android.synthetic.main.fragment_channel.view.*
 import xyz.thingapps.rssliveslider.R
 import xyz.thingapps.rssliveslider.adapters.ItemListAdapter
 import xyz.thingapps.rssliveslider.api.dao.Cast
-import xyz.thingapps.rssliveslider.viewmodels.HomeViewModel
+import xyz.thingapps.rssliveslider.viewholders.ItemViewHolder
+import xyz.thingapps.rssliveslider.viewmodels.RssViewModel
 import java.util.concurrent.TimeUnit
 
 
@@ -28,7 +29,11 @@ class ChannelFragment : Fragment() {
     private var autoPlayDisposable: Disposable? = null
     private var progressDisposable: Disposable? = null
     private val disposeBag = CompositeDisposable()
-    private lateinit var viewModel: HomeViewModel
+    private val currentFragmentDisposeBag = CompositeDisposable()
+    private var animationDisposeBag = CompositeDisposable()
+    private var currentFeed: Int = 0
+
+    private lateinit var viewModel: RssViewModel
     private var index = -1
 
     companion object {
@@ -50,12 +55,15 @@ class ChannelFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         activity?.let {
-            viewModel = ViewModelProviders.of(it).get(HomeViewModel::class.java)
+            viewModel = ViewModelProviders.of(it).get(RssViewModel::class.java)
         }
-        val adapter = ItemListAdapter()
+
+        val adapter = ItemListAdapter(0, tag?.toInt() ?: 0)
         view?.recyclerView?.adapter = adapter
 
         setupItems(adapter, viewModel.castList[index])
+
+        view?.recyclerView?.let { setupRecyclerView(it) }
 
         viewModel.castListPublisher.observeOn(AndroidSchedulers.mainThread())
             .subscribe({ castList ->
@@ -64,15 +72,51 @@ class ChannelFragment : Fragment() {
                 Log.d(TAG, "e : ", e)
             })
             .addTo(disposeBag)
+
+        if (tag?.toInt() == 0) {
+            view?.let { view ->
+                autoScroll(
+                    view.recyclerView, view.slideProgressBar, adapter.items.size, 10000
+                )
+            }
+        }
+
+        viewModel.currentFragmentPublisher.observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                adapter.currentChannel = it
+
+                if (it == tag?.toInt()) {
+                    view?.let { view ->
+                        autoScroll(
+                            view.recyclerView,
+                            view.slideProgressBar,
+                            adapter.items.size,
+                            6500
+                        )
+
+                        val currentFeed =
+                            (view.recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                        (view.recyclerView.findViewHolderForLayoutPosition(currentFeed) as ItemViewHolder).animate()
+                    }
+                } else {
+                    view?.let { view ->
+                        stopAutoScroll(view)
+                        currentFeed =
+                            (view.recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+
+                    }
+
+                }
+
+            }, { e ->
+                e.printStackTrace()
+            }).addTo(currentFragmentDisposeBag)
     }
 
     private fun setupItems(adapter: ItemListAdapter, cast: Cast) {
         view?.fragmentTitle?.text = cast.title
         adapter.items = cast.items
         adapter.notifyDataSetChanged()
-        view?.let { view ->
-            autoScroll(view.recyclerView, view.slideProgressBar, adapter.items.size, 10000)
-        }
     }
 
     override fun onCreateView(
@@ -86,47 +130,46 @@ class ChannelFragment : Fragment() {
 
         view.fragmentTitle.text = title
 
-        setupRecyclerView(view.recyclerView)
-
         return view
     }
 
+
     private fun setupRecyclerView(recyclerView: RecyclerView) {
-        recyclerView.apply {
-            this.layoutManager =
-                LinearLayoutManager(recyclerView.context, LinearLayoutManager.HORIZONTAL, false)
+        recyclerView.layoutManager =
+            LinearLayoutManager(recyclerView.context, LinearLayoutManager.HORIZONTAL, false)
 
-            this.adapter?.itemCount?.let { itemCount ->
-                if (itemCount > 1) {
-                    this.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                            super.onScrolled(recyclerView, dx, dy)
-                            val layoutManager = this@apply.layoutManager as LinearLayoutManager
+        recyclerView.adapter?.itemCount?.let { itemCount ->
+            if (itemCount < 2) return@let
 
-                            val firstVisibleItem = layoutManager.findFirstVisibleItemPosition()
+            recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
 
-                            if (firstVisibleItem > 0 && firstVisibleItem % itemCount == 0) {
-                                recyclerView.scrollToPosition(0)
+                    val firstVisibleItem = layoutManager.findFirstVisibleItemPosition()
 
-                            }
-                        }
+                    if (firstVisibleItem > 0 && firstVisibleItem % itemCount == 0) {
+                        recyclerView.scrollToPosition(0)
 
-                        override fun onScrollStateChanged(
-                            recyclerView: RecyclerView,
-                            newState: Int
-                        ) {
-                            super.onScrollStateChanged(recyclerView, newState)
-
-
-                            if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
-                                autoPlayDisposable?.dispose()
-                                progressDisposable?.dispose()
-                                view?.slideProgressBar?.visibility = View.GONE
-                            }
-                        }
-                    })
+                    }
                 }
-            }
+
+                override fun onScrollStateChanged(
+                    recyclerView: RecyclerView,
+                    newState: Int
+                ) {
+                    super.onScrollStateChanged(recyclerView, newState)
+
+
+                    if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                        view?.let {
+                            stopAutoScroll(it)
+                            currentFeed =
+                                (it.recyclerView?.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition() + 1
+                        }
+                    }
+                }
+            })
         }
 
         PagerSnapHelper().attachToRecyclerView(recyclerView)
@@ -134,7 +177,7 @@ class ChannelFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        stopAutoScroll()
+        view?.let { stopAutoScroll(it) }
         disposeBag.dispose()
     }
 
@@ -144,36 +187,41 @@ class ChannelFragment : Fragment() {
         listSize: Int,
         intervalInMillis: Long
     ) {
-        autoPlayDisposable?.let {
-            if (!it.isDisposed) return
-        }
+        autoPlayDisposable?.let { if (!it.isDisposed) return }
+        progressDisposable?.let { if (!it.isDisposed) return }
 
-        progressDisposable?.let {
-            if (!it.isDisposed) return
-        }
 
         autoPlayDisposable = Flowable.interval(intervalInMillis, TimeUnit.MILLISECONDS)
-            .map { (it + 1) % listSize }
+            .map { (it + 1 + currentFeed) % listSize }
+            .onBackpressureBuffer()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 recyclerView.smoothScrollToPosition(it.toInt())
+
             }, { e ->
                 e.printStackTrace()
-            })
+            }).addTo(animationDisposeBag)
 
         progressDisposable = Flowable.interval(intervalInMillis / 100, TimeUnit.MILLISECONDS)
             .map { it % 100 }
+            .onBackpressureBuffer()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 progressBar.progress = it.toInt()
+                progressBar.visibility = View.VISIBLE
+
             }, { e ->
                 e.printStackTrace()
-            })
+            }).addTo(animationDisposeBag)
+
     }
 
-    private fun stopAutoScroll() {
-        autoPlayDisposable?.let(Disposable::dispose)
-        progressDisposable?.let(Disposable::dispose)
+    private fun stopAutoScroll(view: View) {
+        animationDisposeBag.dispose()
+        animationDisposeBag = CompositeDisposable()
+
+        view.slideProgressBar.visibility = View.INVISIBLE
+
     }
 
 }
