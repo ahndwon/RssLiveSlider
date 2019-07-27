@@ -7,9 +7,9 @@ import io.reactivex.subjects.PublishSubject
 
 @Xml(name = "rss")
 data class Cast(
-    @Path("channel") @PropertyElement val title : String = "",
-    @Path("channel") @PropertyElement val description : String = "",
-    @Path("channel") @PropertyElement val link : String = "",
+    @Path("channel") @PropertyElement(writeAsCData = true) val title: String = "",
+    @Path("channel") @PropertyElement(writeAsCData = true) val description: String? = "",
+    @Path("channel") @PropertyElement(writeAsCData = true) val link: String? = "",
     @Path("channel") @Element val items: List<Item> = mutableListOf()
 ) {
     private val changeObservable = PublishSubject.create<Cast>()
@@ -19,12 +19,13 @@ data class Cast(
 
 @Xml(name = "item")
 data class Item(
-    @PropertyElement val title: String = "",
-    @PropertyElement val description: String = "",
-    @PropertyElement val link: String = "",
-    @PropertyElement val guid: String = "",
-    @PropertyElement val pubDate: String = "",
-    @PropertyElement val source: String = "",
+    @PropertyElement(writeAsCData = true) val title: String = "",
+    @PropertyElement(writeAsCData = true) val description: String? = "",
+    @Attribute val img: String? = "",
+    @PropertyElement(writeAsCData = true) val link: String? = "",
+    @PropertyElement(writeAsCData = true) val guid: String? = "",
+    @PropertyElement(writeAsCData = true) val pubDate: String? = "",
+    @PropertyElement(writeAsCData = true) val source: String? = "",
     @Element val media: Media? = Media()
 )
 

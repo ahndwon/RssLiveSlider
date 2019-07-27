@@ -1,9 +1,15 @@
 package xyz.thingapps.rssliveslider.activities
 
 import android.os.Bundle
+import android.util.Patterns
 import android.view.Menu
 import android.view.MenuItem
+import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.SearchView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
 import com.jakewharton.rxbinding3.widget.queryTextChanges
@@ -12,15 +18,16 @@ import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.activity_main.*
 import xyz.thingapps.rssliveslider.R
 import xyz.thingapps.rssliveslider.fragments.HomeFragment
-import xyz.thingapps.rssliveslider.viewmodels.HomeViewModel
+import xyz.thingapps.rssliveslider.utils.validate
+import xyz.thingapps.rssliveslider.viewmodels.RssViewModel
 import java.util.concurrent.TimeUnit
 
 
 class MainActivity : AppCompatActivity() {
 
     private val disposeBag = CompositeDisposable()
-    private val viewModel: HomeViewModel by lazy {
-        ViewModelProviders.of(this@MainActivity).get(HomeViewModel::class.java)
+    private val viewModel: RssViewModel by lazy {
+        ViewModelProviders.of(this@MainActivity).get(RssViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,6 +39,7 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.frameContainer, HomeFragment())
             .commit()
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -61,7 +69,6 @@ class MainActivity : AppCompatActivity() {
                 viewModel.getData()
                 return true
             }
-
         })
 
         return true
@@ -69,11 +76,49 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.search -> {
-
+            android.R.id.home -> {
+                showUrlAddDialog()
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun showUrlAddDialog() {
+        val frameLayout = FrameLayout(this)
+        val params = FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        params.leftMargin = resources.getDimensionPixelSize(R.dimen.dialog_margin)
+        params.rightMargin = resources.getDimensionPixelSize(R.dimen.dialog_margin)
+        val editText = EditText(this)
+        editText.hint = getString(R.string.add_url_hint)
+        editText.layoutParams = params
+        editText.validate(getString(R.string.url_validation_message)) {
+            it.isEmpty() || Patterns.WEB_URL.matcher(it).matches()
+        }
+        frameLayout.addView(editText)
+        AlertDialog.Builder(
+            this
+        ).setTitle(getString(R.string.url_dialog_title))
+            .setCancelable(true)
+            .setView(frameLayout)
+            .setPositiveButton(getString(R.string.alert_dialog_add)) { _, _ ->
+                if (editText.error != null) {
+                    Toast.makeText(
+                        this,
+
+                        getString(R.string.url_validation_message),
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                } else {
+                    viewModel.urlList.add(editText.text.toString())
+                    viewModel.getData()
+                }
+            }
+            .setNegativeButton(getString(R.string.alert_dialog_cancel)) { _, _ -> }
+            .show()
     }
 }
 

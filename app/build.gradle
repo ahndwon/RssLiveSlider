@@ -48,7 +48,9 @@ dependencies {
     implementation "com.tickaroo.tikxml:annotation:$tikxml_version"
     implementation "com.tickaroo.tikxml:core:$tikxml_version"
     implementation "com.tickaroo.tikxml:retrofit-converter:$tikxml_version"
+
     kapt "com.tickaroo.tikxml:processor:$tikxml_version"
+    kapt "com.tickaroo.tikxml:auto-value-tikxml:$tikxml_version"
 
     implementation 'com.github.bumptech.glide:glide:4.9.0'
 

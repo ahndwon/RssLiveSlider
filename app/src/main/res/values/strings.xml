@@ -3,6 +3,12 @@
     <string name="see_all_contents">전체 콘텐츠 보기</string>
     <string name="description_feed_image">feed image</string>
     <string name="title_search">search</string>
+    <string name="alert_dialog_add">Add</string>
+    <string name="alert_dialog_cancel">Cancel</string>
+    <string name="url_validation_message">is not a valid URL.</string>
+    <string name="add_url_hint">https://add-rss-url</string>
+    <string name="url_dialog_title">Add RSS URL</string>
+
     <string name="description_filter_image">filter image</string>
     <string name="description_clear_filter">clear filter</string>
     <string name="filter_sorted_by_title">sorted by title</string>

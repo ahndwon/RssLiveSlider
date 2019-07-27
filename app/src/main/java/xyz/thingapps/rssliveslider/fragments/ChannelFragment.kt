@@ -20,7 +20,7 @@ import kotlinx.android.synthetic.main.fragment_channel.view.*
 import xyz.thingapps.rssliveslider.R
 import xyz.thingapps.rssliveslider.adapters.ItemListAdapter
 import xyz.thingapps.rssliveslider.api.dao.Cast
-import xyz.thingapps.rssliveslider.viewmodels.HomeViewModel
+import xyz.thingapps.rssliveslider.viewmodels.RssViewModel
 import java.util.concurrent.TimeUnit
 
 
@@ -28,7 +28,7 @@ class ChannelFragment : Fragment() {
     private var autoPlayDisposable: Disposable? = null
     private var progressDisposable: Disposable? = null
     private val disposeBag = CompositeDisposable()
-    private lateinit var viewModel: HomeViewModel
+    private lateinit var viewModel: RssViewModel
     private var index = -1
 
     companion object {
@@ -50,7 +50,7 @@ class ChannelFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         activity?.let {
-            viewModel = ViewModelProviders.of(it).get(HomeViewModel::class.java)
+            viewModel = ViewModelProviders.of(it).get(RssViewModel::class.java)
         }
         val adapter = ItemListAdapter()
         view?.recyclerView?.adapter = adapter
@@ -154,6 +154,7 @@ class ChannelFragment : Fragment() {
 
         autoPlayDisposable = Flowable.interval(intervalInMillis, TimeUnit.MILLISECONDS)
             .map { (it + 1) % listSize }
+            .onBackpressureBuffer()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 recyclerView.smoothScrollToPosition(it.toInt())
@@ -161,6 +162,7 @@ class ChannelFragment : Fragment() {
 
         progressDisposable = Flowable.interval(intervalInMillis / 100, TimeUnit.MILLISECONDS)
             .map { it % 100 }
+            .onBackpressureBuffer()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 progressBar.progress = it.toInt()
