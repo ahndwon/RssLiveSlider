@@ -62,8 +62,8 @@ class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
                 .subscribe({
                     feedDescription.text =
                         feedDescription.createEllipsis().createSpan(paddingBackgroundColorSpan)
-
-                }, {
+                }, { e ->
+                    e.printStackTrace()
                 }).addTo(disposeBag)
 
         }
@@ -107,7 +107,6 @@ class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
                 return
             }
         }
-
         val animation = AnimationUtils.loadAnimation(context, resource)
         animation.startOffset = startOffset
 

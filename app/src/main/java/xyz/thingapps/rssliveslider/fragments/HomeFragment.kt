@@ -23,8 +23,6 @@ class HomeFragment : Fragment() {
     private lateinit var fragmentAdapter: FragmentListAdapter
     private val disposeBag = CompositeDisposable()
 
-//    var currentFragmentPublisher = PublishSubject.create<Int>()
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -73,7 +71,6 @@ class HomeFragment : Fragment() {
                 }
             })
         }
-
     }
 
     override fun onDestroy() {

@@ -82,7 +82,7 @@ class ChannelFragment : Fragment() {
         }
 
         viewModel.currentFragmentPublisher.observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
+            .subscribe({
                 adapter.currentChannel = it
 
                 if (it == tag?.toInt()) {
@@ -103,10 +103,14 @@ class ChannelFragment : Fragment() {
                         stopAutoScroll(view)
                         currentFeed =
                             (view.recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+
                     }
+
                 }
 
-            }.addTo(currentFragmentDisposeBag)
+            }, { e ->
+                e.printStackTrace()
+            }).addTo(currentFragmentDisposeBag)
     }
 
     private fun setupItems(adapter: ItemListAdapter, cast: Cast) {
