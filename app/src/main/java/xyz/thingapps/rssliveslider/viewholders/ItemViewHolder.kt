@@ -19,11 +19,11 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.item_feed.view.*
 import xyz.thingapps.rssliveslider.R
-import xyz.thingapps.rssliveslider.api.dao.Item
+import xyz.thingapps.rssliveslider.api.Item
+import xyz.thingapps.rssliveslider.api.Media
 import xyz.thingapps.rssliveslider.utils.PaddingBackgroundColorSpan
 import xyz.thingapps.rssliveslider.utils.ThumbnailTask
 import java.util.concurrent.TimeUnit
-
 
 class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
 
@@ -39,35 +39,32 @@ class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
     private val paddingBackgroundColorSpan =
         PaddingBackgroundColorSpan(descriptionBackgroundColor, padding)
 
-    var isVideo = false
-
+    private var isVideo = false
 
     fun bind(item: Item, position: Int, itemCount: Int) {
         with(view) {
-
             dispose()
+
+            var description = item.description
+
+            item.description?.let { itemDescription ->
+                if (itemDescription.startsWith('<')) {
+                    description = itemDescription.substringAfterLast(">").trimStart()
+
+                    if (itemDescription.contains("src=\"")) {
+                        item.media = Media(
+                            parseImageUrl(itemDescription),
+                            "image"
+                        )
+                    }
+                }
+            }
 
             feedDescription.visibility = View.INVISIBLE
             feedTitle.text = item.title
             feedTime.text = item.pubDate
-            feedDescription.text = item.description
 
-
-            val feedPositionText = "${position + 1}/$itemCount"
-            feedPosition.text = feedPositionText
-
-            feedDescription.setShadowLayer(padding.toFloat(), 0.0F, 0.0F, 0)
-            feedDescription.setPadding(padding, padding - 10, padding, padding - 10)
-
-
-            Single.just(feedDescription)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    feedDescription.text =
-                        feedDescription.createEllipsis().createSpan(paddingBackgroundColorSpan)
-                }, { e ->
-                    e.printStackTrace()
-                }).addTo(disposeBag)
+            description?.let { setupDescription(it, position, itemCount) }
 
             item.media?.let { media ->
                 if (media.type.contains("image")) {
@@ -77,12 +74,29 @@ class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
                     view.feedVideoView.visibility = View.GONE
                 }
 
-
                 if (media.type.contains("video")) {
                     playVideo(media.url)
                 }
             }
         }
+    }
+
+    private fun setupDescription(description: String, position: Int, itemCount: Int) {
+        view.feedDescription.text = description
+        val feedPositionText = "${position + 1}/$itemCount"
+        view.feedPosition.text = feedPositionText
+
+        view.feedDescription.setShadowLayer(padding.toFloat(), 0.0F, 0.0F, 0)
+        view.feedDescription.setPadding(padding, padding - 10, padding, padding - 10)
+
+        Single.just(view.feedDescription)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                view.feedDescription.text =
+                    view.feedDescription.createEllipsis().createSpan(paddingBackgroundColorSpan)
+            }, { e ->
+                e.printStackTrace()
+            }).addTo(disposeBag)
     }
 
     private fun playVideo(url: String) {
@@ -94,6 +108,7 @@ class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
 
         val callback = object : SurfaceHolder.Callback {
             override fun surfaceChanged(p0: SurfaceHolder?, p1: Int, p2: Int, p3: Int) {
+
             }
 
             override fun surfaceDestroyed(p0: SurfaceHolder?) {
@@ -105,9 +120,8 @@ class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
                 mediaPlayer.reset()
 
                 try {
-                    val path = url
                     mediaPlayer.apply {
-                        setDataSource(path)
+                        setDataSource(url)
                         setVolume(0f, 0f)
                         setDisplay(p0)
                         setOnPreparedListener {
@@ -133,6 +147,10 @@ class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         }
 
         view.feedVideoView.holder.addCallback(callback)
+    }
+
+    private fun parseImageUrl(source: String): String {
+        return source.split("src=\"")[1].split("\"")[0]
     }
 
     fun animate() {
