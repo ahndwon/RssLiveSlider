@@ -13,6 +13,7 @@ import xyz.thingapps.rssliveslider.fragments.ChannelFragment
 
 class RssViewModel : ViewModel() {
     private val disposeBag = CompositeDisposable()
+    var currentFragmentPublisher = PublishSubject.create<Int>()
 
     var urlList: ArrayList<String> = arrayListOf(
         "https://rss.joins.com/joins_news_list.xml",
@@ -68,6 +69,7 @@ class RssViewModel : ViewModel() {
                 e.printStackTrace()
             }).addTo(disposeBag)
     }
+
 
     override fun onCleared() {
         disposeBag.dispose()

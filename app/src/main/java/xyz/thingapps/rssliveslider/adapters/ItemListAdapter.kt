@@ -1,5 +1,4 @@
 package xyz.thingapps.rssliveslider.adapters
-
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -7,12 +6,14 @@ import xyz.thingapps.rssliveslider.R
 import xyz.thingapps.rssliveslider.api.dao.Item
 import xyz.thingapps.rssliveslider.viewholders.ItemViewHolder
 
-class ItemListAdapter : RecyclerView.Adapter<ItemViewHolder>() {
+class ItemListAdapter(var currentChannel: Int, private val tag: Int) :
+    RecyclerView.Adapter<ItemViewHolder>() {
     var items: List<Item> = emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_feed, parent, false)
+            .inflate(R.layout.item_feed, parent, false)
+
         return ItemViewHolder(view)
     }
 
@@ -22,7 +23,12 @@ class ItemListAdapter : RecyclerView.Adapter<ItemViewHolder>() {
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val item = items[position]
-        holder.bind(item)
+        holder.bind(item, position, items.size)
     }
 
+    override fun onViewAttachedToWindow(holder: ItemViewHolder) {
+        if (currentChannel == tag) {
+            holder.animate()
+        }
+    }
 }

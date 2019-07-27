@@ -12,6 +12,7 @@ class FragmentListAdapter(private val fragmentManager: FragmentManager)
     : RecyclerView.Adapter<FragmentViewHolder>() {
     var fragments: List<Fragment> = emptyList()
 
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FragmentViewHolder {
         val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.item_fragment, parent, false)
@@ -29,8 +30,9 @@ class FragmentListAdapter(private val fragmentManager: FragmentManager)
 
     override fun onBindViewHolder(holder: FragmentViewHolder, position: Int) {
         fragmentManager.beginTransaction()
-                .replace(holder.itemView.id, fragments[position])
+            .replace(holder.itemView.id, fragments[position], position.toString())
                 .commit()
+
     }
 
 }
