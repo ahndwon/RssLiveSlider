@@ -137,7 +137,7 @@ class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
 
     fun animate() {
         view.feedDescription.visibility = View.VISIBLE
-        view.feedDescription.createAnimation(view.context, R.anim.animation_feed_description, 3000)
+        view.feedDescription.createAnimation(view.context, R.anim.animation_feed_description, 4500)
         if (!isVideo) view.feedImageView.createAnimation(
             view.context,
             R.anim.animation_feed_image,

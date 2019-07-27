@@ -40,6 +40,7 @@ class ChannelFragment : Fragment() {
         const val TAG = "ChannelFragment"
         const val FRAGMENT_TITLE = "fragment_title"
         const val FRAGMENT_INDEX = "fragment_index"
+        const val autoScrollDuration = 10000L
 
         fun newInstance(title: String, index: Int): ChannelFragment {
             return ChannelFragment().apply {
@@ -76,7 +77,7 @@ class ChannelFragment : Fragment() {
         if (tag?.toInt() == 0) {
             view?.let { view ->
                 autoScroll(
-                    view.recyclerView, view.slideProgressBar, adapter.items.size, 10000
+                    view.recyclerView, view.slideProgressBar, adapter.items.size, autoScrollDuration
                 )
             }
         }
@@ -91,7 +92,7 @@ class ChannelFragment : Fragment() {
                             view.recyclerView,
                             view.slideProgressBar,
                             adapter.items.size,
-                            6500
+                            autoScrollDuration
                         )
 
                         val currentFeed =

@@ -17,6 +17,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.activity_main.*
 import xyz.thingapps.rssliveslider.R
+import xyz.thingapps.rssliveslider.fragments.FilterDialogFragment
 import xyz.thingapps.rssliveslider.fragments.HomeFragment
 import xyz.thingapps.rssliveslider.utils.validate
 import xyz.thingapps.rssliveslider.viewmodels.RssViewModel
@@ -26,6 +27,7 @@ import java.util.concurrent.TimeUnit
 class MainActivity : AppCompatActivity() {
 
     private val disposeBag = CompositeDisposable()
+    private val filterDialog = FilterDialogFragment()
     private val viewModel: RssViewModel by lazy {
         ViewModelProviders.of(this@MainActivity).get(RssViewModel::class.java)
     }
@@ -39,6 +41,11 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.frameContainer, HomeFragment())
             .commit()
+
+        filterBar.setOnClickListener {
+            filterDialog.show(supportFragmentManager, FilterDialogFragment.TAG)
+
+        }
     }
 
 
@@ -120,5 +127,6 @@ class MainActivity : AppCompatActivity() {
             .setNegativeButton(getString(R.string.alert_dialog_cancel)) { _, _ -> }
             .show()
     }
+
 }
 
