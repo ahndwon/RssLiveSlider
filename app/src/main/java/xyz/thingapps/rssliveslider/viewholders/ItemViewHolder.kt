@@ -1,5 +1,6 @@
 package xyz.thingapps.rssliveslider.viewholders
 
+import android.content.Context
 import android.text.Spannable
 import android.text.SpannableString
 import android.view.View
@@ -31,8 +32,8 @@ class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
     private val paddingBackgroundColorSpan =
         PaddingBackgroundColorSpan(descriptionBackgroundColor, padding)
 
-    fun bind(item: Item, position: Int, itemCount: Int) {
 
+    fun bind(item: Item, position: Int, itemCount: Int) {
         with(view) {
 
             dispose()
@@ -69,17 +70,14 @@ class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
     }
 
     fun animate() {
-
         view.feedDescription.visibility = View.VISIBLE
-        view.feedDescription.createAnimation(R.anim.animation_feed_description, 2000)
-        view.feedImageView.createAnimation(R.anim.animation_feed_image, 0)
-
+        view.feedDescription.createAnimation(view.context, R.anim.animation_feed_description, 3000)
+        view.feedImageView.createAnimation(view.context, R.anim.animation_feed_image, 0)
     }
 
     private fun dispose() {
         disposeBag.dispose()
         disposeBag = CompositeDisposable()
-
     }
 
     private fun String.createSpan(spans: Any): Spannable {
@@ -95,7 +93,6 @@ class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
 
     private fun TextView.createEllipsis(): String {
         return if (this.lineCount > this.maxLines) {
-
             val endOfLastLine = this.layout.getLineEnd(this.maxLines - 1)
 
             this.text.subSequence(0, endOfLastLine - 6).toString() + " ..."
@@ -104,9 +101,16 @@ class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
             this.text.toString()
     }
 
-    private fun View.createAnimation(resource: Int, startOffset: Long) {
-        val animation = AnimationUtils.loadAnimation(this.context, resource)
+    private fun View.createAnimation(context: Context, resource: Int, startOffset: Long) {
+        this.animation?.let {
+            if (!this.animation.hasEnded() || this.animation.hasStarted()) {
+                return
+            }
+        }
+
+        val animation = AnimationUtils.loadAnimation(context, resource)
         animation.startOffset = startOffset
+
         this.startAnimation(animation)
 
     }

@@ -21,7 +21,8 @@
         android:layout_marginEnd="12dp"
         android:layout_marginBottom="28dp"
         android:textColor="@color/colorWhite"
-
+        android:maxLines="3"
+        android:ellipsize="end"
         android:textSize="22sp"
         app:layout_constraintBottom_toBottomOf="@+id/feedImageView"
         app:layout_constraintEnd_toStartOf="@+id/feedPosition"

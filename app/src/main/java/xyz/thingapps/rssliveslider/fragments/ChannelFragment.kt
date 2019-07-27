@@ -20,6 +20,7 @@ import kotlinx.android.synthetic.main.fragment_channel.view.*
 import xyz.thingapps.rssliveslider.R
 import xyz.thingapps.rssliveslider.adapters.ItemListAdapter
 import xyz.thingapps.rssliveslider.api.dao.Cast
+import xyz.thingapps.rssliveslider.viewholders.ItemViewHolder
 import xyz.thingapps.rssliveslider.viewmodels.HomeViewModel
 import java.util.concurrent.TimeUnit
 
@@ -53,8 +54,6 @@ class ChannelFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val parentFragment = parentFragment as HomeFragment
-
         activity?.let {
             viewModel = ViewModelProviders.of(it).get(HomeViewModel::class.java)
         }
@@ -77,23 +76,28 @@ class ChannelFragment : Fragment() {
         if (tag?.toInt() == 0) {
             view?.let { view ->
                 autoScroll(
-                    view.recyclerView, view.slideProgressBar, adapter.items.size, 4000
+                    view.recyclerView, view.slideProgressBar, adapter.items.size, 6500
                 )
             }
         }
 
-        parentFragment.currentFragmentPublisher.observeOn(AndroidSchedulers.mainThread())
+        viewModel.currentFragmentPublisher.observeOn(AndroidSchedulers.mainThread())
             .subscribe {
+                adapter.currentChannel = it
+
                 if (it == tag?.toInt()) {
                     view?.let { view ->
                         autoScroll(
                             view.recyclerView,
                             view.slideProgressBar,
                             adapter.items.size,
-                            4000
+                            6500
                         )
+
+                        val currentFeed =
+                            (view.recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                        (view.recyclerView.findViewHolderForLayoutPosition(currentFeed) as ItemViewHolder).animate()
                     }
-                    adapter.currentChannel = it
                 } else {
                     view?.let { view ->
                         stopAutoScroll(view)
@@ -127,45 +131,41 @@ class ChannelFragment : Fragment() {
 
 
     private fun setupRecyclerView(recyclerView: RecyclerView) {
-        recyclerView.apply {
-            this.layoutManager =
-                LinearLayoutManager(recyclerView.context, LinearLayoutManager.HORIZONTAL, false)
+        recyclerView.layoutManager =
+            LinearLayoutManager(recyclerView.context, LinearLayoutManager.HORIZONTAL, false)
 
-            this.adapter?.itemCount?.let { itemCount ->
-                if (itemCount > 1) {
-                    this.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                            super.onScrolled(recyclerView, dx, dy)
-                            val layoutManager = this@apply.layoutManager as LinearLayoutManager
+        recyclerView.adapter?.itemCount?.let { itemCount ->
+            if (itemCount < 2) return@let
 
-                            val firstVisibleItem = layoutManager.findFirstVisibleItemPosition()
+            recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
 
-                            if (firstVisibleItem > 0 && firstVisibleItem % itemCount == 0) {
-                                recyclerView.scrollToPosition(0)
+                    val firstVisibleItem = layoutManager.findFirstVisibleItemPosition()
 
-                            }
-                        }
+                    if (firstVisibleItem > 0 && firstVisibleItem % itemCount == 0) {
+                        recyclerView.scrollToPosition(0)
 
-                        override fun onScrollStateChanged(
-                            recyclerView: RecyclerView,
-                            newState: Int
-                        ) {
-                            super.onScrollStateChanged(recyclerView, newState)
-
-
-                            if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
-
-                                view?.let {
-                                    stopAutoScroll(it)
-                                    currentFeed =
-                                        (it.recyclerView?.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition() + 1
-                                }
-
-                            }
-                        }
-                    })
+                    }
                 }
-            }
+
+                override fun onScrollStateChanged(
+                    recyclerView: RecyclerView,
+                    newState: Int
+                ) {
+                    super.onScrollStateChanged(recyclerView, newState)
+
+
+                    if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                        view?.let {
+                            stopAutoScroll(it)
+                            currentFeed =
+                                (it.recyclerView?.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition() + 1
+                        }
+                    }
+                }
+            })
         }
 
         PagerSnapHelper().attachToRecyclerView(recyclerView)

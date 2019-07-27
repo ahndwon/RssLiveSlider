@@ -24,13 +24,16 @@ class ItemListAdapter(var currentChannel: Int, private val tag: Int) :
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val item = items[position]
         holder.bind(item, position, items.size)
-
     }
 
     override fun onViewAttachedToWindow(holder: ItemViewHolder) {
         if (currentChannel == tag) {
+            holder.animate()
 
         }
-        holder.animate()
+
+
     }
+
+
 }

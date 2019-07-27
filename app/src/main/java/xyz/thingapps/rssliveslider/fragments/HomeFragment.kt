@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
-import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.fragment_home.view.*
 import xyz.thingapps.rssliveslider.R
 import xyz.thingapps.rssliveslider.adapters.FragmentListAdapter
@@ -24,8 +23,7 @@ class HomeFragment : Fragment() {
     private lateinit var fragmentAdapter: FragmentListAdapter
     private val disposeBag = CompositeDisposable()
 
-    var currentFragmentPublisher = PublishSubject.create<Int>()
-
+//    var currentFragmentPublisher = PublishSubject.create<Int>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -69,7 +67,9 @@ class HomeFragment : Fragment() {
 
                     val firstVisibleItem = layoutManager.findFirstCompletelyVisibleItemPosition()
 
-                    if (firstVisibleItem != -1) currentFragmentPublisher.onNext(firstVisibleItem)
+                    if (firstVisibleItem != -1) viewModel.currentFragmentPublisher.onNext(
+                        firstVisibleItem
+                    )
                 }
             })
         }

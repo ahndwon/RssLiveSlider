@@ -14,6 +14,8 @@ import xyz.thingapps.rssliveslider.fragments.ChannelFragment
 class HomeViewModel : ViewModel() {
     private val disposeBag = CompositeDisposable()
 
+    var currentFragmentPublisher = PublishSubject.create<Int>()
+
     var castList: List<Cast> = emptyList()
         set(value) {
             setChannels(value)

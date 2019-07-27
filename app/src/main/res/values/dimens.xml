@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="basic_margin">14dp</dimen>
+    <dimen name="basic_margin">8dp</dimen>
     <dimen name="item_margin">8dp</dimen>
     <dimen name="text_view_margin">8dp</dimen>
     <dimen name="item_corner_radius">8dp</dimen>
