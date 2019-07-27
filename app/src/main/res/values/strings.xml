@@ -3,4 +3,5 @@
     <string name="see_all_contents">전체 콘텐츠 보기</string>
     <string name="description_feed_image">feed image</string>
     <string name="title_search">search</string>
+    <string name="description_feed_video">feed video</string>
 </resources>

@@ -71,7 +71,7 @@ class ChannelFragment : Fragment() {
         adapter.items = cast.items
         adapter.notifyDataSetChanged()
         view?.let { view ->
-            autoScroll(view.recyclerView, view.slideProgressBar, adapter.items.size, 2000)
+            autoScroll(view.recyclerView, view.slideProgressBar, adapter.items.size, 10000)
         }
     }
 
@@ -155,16 +155,20 @@ class ChannelFragment : Fragment() {
         autoPlayDisposable = Flowable.interval(intervalInMillis, TimeUnit.MILLISECONDS)
             .map { (it + 1) % listSize }
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
+            .subscribe({
                 recyclerView.smoothScrollToPosition(it.toInt())
-            }
+            }, { e ->
+                e.printStackTrace()
+            })
 
         progressDisposable = Flowable.interval(intervalInMillis / 100, TimeUnit.MILLISECONDS)
             .map { it % 100 }
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
+            .subscribe({
                 progressBar.progress = it.toInt()
-            }
+            }, { e ->
+                e.printStackTrace()
+            })
     }
 
     private fun stopAutoScroll() {

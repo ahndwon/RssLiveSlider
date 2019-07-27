@@ -6,12 +6,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <SurfaceView
+        android:id="@+id/feedVideoView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/description_feed_video"
+        android:foreground="@drawable/gradient" />
+
     <ImageView
         android:id="@+id/feedImageView"
         android:foreground="@drawable/gradient"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:contentDescription="@string/description_feed_image" />
+        android:contentDescription="@string/description_feed_image"
+        android:scaleType="fitXY" />
 
     <TextView
         android:id="@+id/feedTitle"

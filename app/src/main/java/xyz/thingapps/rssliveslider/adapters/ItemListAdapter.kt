@@ -13,6 +13,7 @@ class ItemListAdapter : RecyclerView.Adapter<ItemViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.item_feed, parent, false)
+
         return ItemViewHolder(view)
     }
 
