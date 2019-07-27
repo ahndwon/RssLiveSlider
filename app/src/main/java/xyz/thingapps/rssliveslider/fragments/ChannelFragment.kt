@@ -21,7 +21,7 @@ import xyz.thingapps.rssliveslider.R
 import xyz.thingapps.rssliveslider.adapters.ItemListAdapter
 import xyz.thingapps.rssliveslider.api.dao.Cast
 import xyz.thingapps.rssliveslider.viewholders.ItemViewHolder
-import xyz.thingapps.rssliveslider.viewmodels.HomeViewModel
+import xyz.thingapps.rssliveslider.viewmodels.RssViewModel
 import java.util.concurrent.TimeUnit
 
 
@@ -33,7 +33,7 @@ class ChannelFragment : Fragment() {
     private var animationDisposeBag = CompositeDisposable()
     private var currentFeed: Int = 0
 
-    private lateinit var viewModel: HomeViewModel
+    private lateinit var viewModel: RssViewModel
     private var index = -1
 
     companion object {
@@ -55,7 +55,7 @@ class ChannelFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         activity?.let {
-            viewModel = ViewModelProviders.of(it).get(HomeViewModel::class.java)
+            viewModel = ViewModelProviders.of(it).get(RssViewModel::class.java)
         }
 
         val adapter = ItemListAdapter(0, tag?.toInt() ?: 0)

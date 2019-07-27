@@ -10,4 +10,6 @@
     <dimen name="feed_item_width">300dp</dimen>
     <dimen name="feed_item_height">300dp</dimen>
 
+    <dimen name="dialog_margin">24dp</dimen>
+
 </resources>
