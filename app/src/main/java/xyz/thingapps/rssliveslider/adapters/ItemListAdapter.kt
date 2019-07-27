@@ -29,11 +29,6 @@ class ItemListAdapter(var currentChannel: Int, private val tag: Int) :
     override fun onViewAttachedToWindow(holder: ItemViewHolder) {
         if (currentChannel == tag) {
             holder.animate()
-
         }
-
-
     }
-
-
 }

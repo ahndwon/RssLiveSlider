@@ -76,7 +76,7 @@ class ChannelFragment : Fragment() {
         if (tag?.toInt() == 0) {
             view?.let { view ->
                 autoScroll(
-                    view.recyclerView, view.slideProgressBar, adapter.items.size, 6500
+                    view.recyclerView, view.slideProgressBar, adapter.items.size, 10000
                 )
             }
         }

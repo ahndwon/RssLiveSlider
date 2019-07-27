@@ -1,14 +1,18 @@
 package xyz.thingapps.rssliveslider.viewholders
 
 import android.content.Context
+import android.media.MediaPlayer
 import android.text.Spannable
 import android.text.SpannableString
+import android.util.Log
+import android.view.SurfaceHolder
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -17,6 +21,8 @@ import kotlinx.android.synthetic.main.item_feed.view.*
 import xyz.thingapps.rssliveslider.R
 import xyz.thingapps.rssliveslider.api.dao.Item
 import xyz.thingapps.rssliveslider.utils.PaddingBackgroundColorSpan
+import xyz.thingapps.rssliveslider.utils.ThumbnailTask
+import java.util.concurrent.TimeUnit
 
 
 class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
@@ -29,8 +35,11 @@ class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
             R.color.colorTransparentBlack,
             null
         )
+
     private val paddingBackgroundColorSpan =
         PaddingBackgroundColorSpan(descriptionBackgroundColor, padding)
+
+    var isVideo = false
 
 
     fun bind(item: Item, position: Int, itemCount: Int) {
@@ -43,15 +52,9 @@ class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
             feedTime.text = item.pubDate
             feedDescription.text = item.description
 
+
             val feedPositionText = "${position + 1}/$itemCount"
             feedPosition.text = feedPositionText
-
-            item.media?.let { media ->
-                if (media.type.contains("image"))
-                    Glide.with(context).load(media.url)
-                        .centerCrop()
-                        .into(feedImageView)
-            }
 
             feedDescription.setShadowLayer(padding.toFloat(), 0.0F, 0.0F, 0)
             feedDescription.setPadding(padding, padding - 10, padding, padding - 10)
@@ -66,13 +69,80 @@ class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
                     e.printStackTrace()
                 }).addTo(disposeBag)
 
+            item.media?.let { media ->
+                if (media.type.contains("image")) {
+                    Glide.with(view.context).load(media.url)
+                        .centerCrop()
+                        .into(view.feedImageView)
+                    view.feedVideoView.visibility = View.GONE
+                }
+
+
+                if (media.type.contains("video")) {
+                    playVideo(media.url)
+                }
+            }
         }
+    }
+
+    private fun playVideo(url: String) {
+        isVideo = true
+
+        var mediaPlayer = MediaPlayer()
+
+        ThumbnailTask(url).execute(view.feedImageView)
+
+        val callback = object : SurfaceHolder.Callback {
+            override fun surfaceChanged(p0: SurfaceHolder?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun surfaceDestroyed(p0: SurfaceHolder?) {
+                mediaPlayer.release()
+            }
+
+            override fun surfaceCreated(p0: SurfaceHolder?) {
+                mediaPlayer = MediaPlayer()
+                mediaPlayer.reset()
+
+                try {
+                    val path = url
+                    mediaPlayer.apply {
+                        setDataSource(path)
+                        setVolume(0f, 0f)
+                        setDisplay(p0)
+                        setOnPreparedListener {
+                            it.start()
+
+                            Observable.timer(900, TimeUnit.MILLISECONDS)
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({
+                                    view.feedImageView.visibility = View.GONE
+                                }, { e ->
+                                    e.printStackTrace()
+                                })
+                        }
+
+                        prepareAsync()
+                    }
+
+                } catch (e: Exception) {
+                    Log.i(ItemViewHolder::class.java.name, "video play failed ", e)
+                }
+            }
+
+        }
+
+        view.feedVideoView.holder.addCallback(callback)
     }
 
     fun animate() {
         view.feedDescription.visibility = View.VISIBLE
         view.feedDescription.createAnimation(view.context, R.anim.animation_feed_description, 3000)
-        view.feedImageView.createAnimation(view.context, R.anim.animation_feed_image, 0)
+        if (!isVideo) view.feedImageView.createAnimation(
+            view.context,
+            R.anim.animation_feed_image,
+            0
+        )
     }
 
     private fun dispose() {
