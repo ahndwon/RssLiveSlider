@@ -70,7 +70,6 @@ class RssViewModel : ViewModel() {
             }).addTo(disposeBag)
     }
 
-
     override fun onCleared() {
         disposeBag.dispose()
         super.onCleared()
