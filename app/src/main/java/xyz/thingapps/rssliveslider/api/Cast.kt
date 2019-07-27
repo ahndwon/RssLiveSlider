@@ -1,4 +1,4 @@
-package xyz.thingapps.rssliveslider.api.dao
+package xyz.thingapps.rssliveslider.api
 
 import com.tickaroo.tikxml.annotation.*
 

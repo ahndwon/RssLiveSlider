@@ -19,8 +19,8 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.item_feed.view.*
 import xyz.thingapps.rssliveslider.R
-import xyz.thingapps.rssliveslider.api.dao.Item
-import xyz.thingapps.rssliveslider.api.dao.Media
+import xyz.thingapps.rssliveslider.api.Item
+import xyz.thingapps.rssliveslider.api.Media
 import xyz.thingapps.rssliveslider.utils.PaddingBackgroundColorSpan
 import xyz.thingapps.rssliveslider.utils.ThumbnailTask
 import java.util.concurrent.TimeUnit
@@ -52,7 +52,10 @@ class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
                     description = itemDescription.substringAfterLast(">").trimStart()
 
                     if (itemDescription.contains("src=\"")) {
-                        item.media = Media(parseImageUrl(itemDescription), "image")
+                        item.media = Media(
+                            parseImageUrl(itemDescription),
+                            "image"
+                        )
                     }
                 }
             }

@@ -19,7 +19,7 @@ import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.fragment_channel.view.*
 import xyz.thingapps.rssliveslider.R
 import xyz.thingapps.rssliveslider.adapters.ItemListAdapter
-import xyz.thingapps.rssliveslider.api.dao.Cast
+import xyz.thingapps.rssliveslider.api.Cast
 import xyz.thingapps.rssliveslider.viewholders.ItemViewHolder
 import xyz.thingapps.rssliveslider.viewmodels.RssViewModel
 import java.util.concurrent.TimeUnit

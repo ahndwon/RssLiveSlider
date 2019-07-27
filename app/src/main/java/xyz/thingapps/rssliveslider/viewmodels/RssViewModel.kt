@@ -7,7 +7,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.subjects.PublishSubject
-import xyz.thingapps.rssliveslider.api.dao.Cast
+import xyz.thingapps.rssliveslider.api.Cast
 import xyz.thingapps.rssliveslider.api.provideRssApi
 import xyz.thingapps.rssliveslider.fragments.ChannelFragment
 
