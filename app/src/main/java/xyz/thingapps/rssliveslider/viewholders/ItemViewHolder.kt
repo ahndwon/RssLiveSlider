@@ -25,7 +25,6 @@ import xyz.thingapps.rssliveslider.utils.PaddingBackgroundColorSpan
 import xyz.thingapps.rssliveslider.utils.ThumbnailTask
 import java.util.concurrent.TimeUnit
 
-
 class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
 
     private var disposeBag = CompositeDisposable()
@@ -118,9 +117,8 @@ class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
                 mediaPlayer.reset()
 
                 try {
-                    val path = url
                     mediaPlayer.apply {
-                        setDataSource(path)
+                        setDataSource(url)
                         setVolume(0f, 0f)
                         setDisplay(p0)
                         setOnPreparedListener {
