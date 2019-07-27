@@ -9,4 +9,9 @@
     <string name="url_validation_message">is not a valid URL.</string>
     <string name="add_url_hint">https://add-rss-url</string>
     <string name="url_dialog_title">Add RSS URL</string>
+
+    <string name="description_filter_image">filter image</string>
+    <string name="description_clear_filter">clear filter</string>
+    <string name="filter_sorted_by_title">sorted by title</string>
+    <string name="filter_all_rss">All RSS</string>
 </resources>

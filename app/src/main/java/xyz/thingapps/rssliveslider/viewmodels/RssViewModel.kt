@@ -16,6 +16,8 @@ class RssViewModel : ViewModel() {
     var currentFragmentPublisher = PublishSubject.create<Int>()
 
     var urlList: ArrayList<String> = arrayListOf(
+        "https://rss.joins.com/joins_news_list.xml",
+        "http://www.chosun.com/site/data/rss/rss.xml",
         "https://www.nasa.gov/rss/dyn/TWAN_vodcast.rss",
         "https://www.nasa.gov/rss/dyn/breaking_news.rss",
         "https://www.nasa.gov/rss/dyn/lg_image_of_the_day.rss",
@@ -34,8 +36,13 @@ class RssViewModel : ViewModel() {
         }
 
     var channelList: List<Fragment> = emptyList()
+        set(value) {
+            field = value
+            channelListPublisher.onNext(value)
+        }
 
     var castListPublisher = PublishSubject.create<List<Cast>>()
+    var channelListPublisher = PublishSubject.create<List<Fragment>>()
 
     private fun setChannels(castList: List<Cast>) {
         val fragments = ArrayList<Fragment>()

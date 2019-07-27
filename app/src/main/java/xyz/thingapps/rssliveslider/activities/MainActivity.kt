@@ -39,8 +39,8 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.frameContainer, HomeFragment())
             .commit()
-
     }
+
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.options_menu, menu)
@@ -107,10 +107,14 @@ class MainActivity : AppCompatActivity() {
                 if (editText.error != null) {
                     Toast.makeText(
                         this,
+
                         getString(R.string.url_validation_message),
                         Toast.LENGTH_SHORT
                     )
                         .show()
+                } else {
+                    viewModel.urlList.add(editText.text.toString())
+                    viewModel.getData()
                 }
             }
             .setNegativeButton(getString(R.string.alert_dialog_cancel)) { _, _ -> }

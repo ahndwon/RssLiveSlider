@@ -27,8 +27,12 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        val view = inflater.inflate(R.layout.fragment_home, container, false)
 
-        return inflater.inflate(R.layout.fragment_home, container, false)
+        fragmentAdapter = FragmentListAdapter(childFragmentManager)
+        view.homeRecyclerView.layoutManager = LinearLayoutManager(view.context)
+
+        return view
     }
 
 
@@ -41,7 +45,7 @@ class HomeFragment : Fragment() {
             viewModel = ViewModelProviders.of(it).get(RssViewModel::class.java)
             viewModel.getData()
 
-            viewModel.castListPublisher
+            viewModel.channelListPublisher
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     fragmentAdapter.fragments = viewModel.channelList
