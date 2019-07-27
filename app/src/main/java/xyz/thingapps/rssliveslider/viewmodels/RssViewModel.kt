@@ -13,6 +13,7 @@ import xyz.thingapps.rssliveslider.fragments.ChannelFragment
 
 class RssViewModel : ViewModel() {
     private val disposeBag = CompositeDisposable()
+    var currentFragmentPublisher = PublishSubject.create<Int>()
 
     var urlList: ArrayList<String> = arrayListOf(
         "https://www.nasa.gov/rss/dyn/TWAN_vodcast.rss",
