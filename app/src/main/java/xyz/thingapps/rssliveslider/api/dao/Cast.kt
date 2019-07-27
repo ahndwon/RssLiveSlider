@@ -26,7 +26,7 @@ data class Item(
     @PropertyElement(writeAsCData = true) val guid: String? = "",
     @PropertyElement(writeAsCData = true) val pubDate: String? = "",
     @PropertyElement(writeAsCData = true) val source: String? = "",
-    @Element val media: Media? = Media()
+    @Element var media: Media? = Media()
 )
 
 @Xml(name = "enclosure")
