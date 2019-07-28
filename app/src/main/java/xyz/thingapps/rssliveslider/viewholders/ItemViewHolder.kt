@@ -21,12 +21,12 @@ import kotlinx.android.synthetic.main.item_feed.view.*
 import xyz.thingapps.rssliveslider.R
 import xyz.thingapps.rssliveslider.api.Item
 import xyz.thingapps.rssliveslider.api.Media
+import xyz.thingapps.rssliveslider.api.provideJSoupApi
 import xyz.thingapps.rssliveslider.utils.PaddingBackgroundColorSpan
 import xyz.thingapps.rssliveslider.utils.ThumbnailTask
 import java.util.concurrent.TimeUnit
 
 class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
-
     private var disposeBag = CompositeDisposable()
     private val padding = 20
     private val descriptionBackgroundColor =
@@ -68,9 +68,7 @@ class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
 
             item.media?.let { media ->
                 if (media.type.contains("image")) {
-                    Glide.with(view.context).load(media.url)
-                        .centerCrop()
-                        .into(view.feedImageView)
+                    showFeedImage(media.url)
                     view.feedVideoView.visibility = View.GONE
                 }
 
@@ -78,7 +76,46 @@ class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
                     playVideo(media.url)
                 }
             }
+
+            if (item.media == null) {
+                item.link?.let { link ->
+                    provideJSoupApi().getDocument(link)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({ document ->
+
+                            val urlList = document.select("img").map { element ->
+                                when {
+//                                    element.hasAttr("src") -> element.attr("src")
+                                    element.hasAttr("data-src") -> element.attr("data-src")
+                                    else -> ""
+                                }
+                            }
+
+                            Log.i(
+                                ItemViewHolder::class.java.name,
+                                "urlList : $urlList"
+                            )
+
+                            urlList.max()?.let { longestUrl ->
+                                showFeedImage(longestUrl)
+
+                                Log.i(
+                                    ItemViewHolder::class.java.name,
+                                    "longestUrl : $longestUrl"
+                                )
+                            }
+                        }, { e ->
+                            Log.i(ItemViewHolder::class.java.name, "getDocument error : ", e)
+                        })
+                }
+            }
         }
+    }
+
+    private fun showFeedImage(url: String) {
+        Glide.with(view.context).load(url)
+            .centerCrop()
+            .into(view.feedImageView)
     }
 
     private fun setupDescription(description: String, position: Int, itemCount: Int) {
