@@ -1,7 +1,8 @@
 package xyz.thingapps.rssliveslider.viewmodels
 
+import android.app.Application
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -10,8 +11,9 @@ import io.reactivex.subjects.PublishSubject
 import xyz.thingapps.rssliveslider.api.Cast
 import xyz.thingapps.rssliveslider.api.provideRssApi
 import xyz.thingapps.rssliveslider.fragments.ChannelFragment
+import xyz.thingapps.rssliveslider.tflite.ImageRecognizer
 
-class RssViewModel : ViewModel() {
+class RssViewModel(application: Application) : AndroidViewModel(application) {
     private val disposeBag = CompositeDisposable()
     var currentFragmentPublisher = PublishSubject.create<Int>()
 
@@ -28,11 +30,23 @@ class RssViewModel : ViewModel() {
         "https://www.nasa.gov/rss/dyn/solar_system.rss"
     )
 
+    val recognitionList: ArrayList<String> = ArrayList()
+
     var castList: List<Cast> = emptyList()
         set(value) {
             setChannels(value)
             field = value
             castListPublisher.onNext(value)
+
+            ImageRecognizer(getApplication()).getRecognitions(value[0].items[0].media!!.url)
+                .subscribe({ results ->
+                    val labels = results.map {
+                        it.title
+                    }
+                    recognitionList.addAll(labels)
+                }, {
+
+                }).addTo(disposeBag)
         }
 
     var channelList: List<Fragment> = emptyList()
