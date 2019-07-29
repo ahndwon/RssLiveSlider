@@ -103,9 +103,7 @@ class ChannelFragment : Fragment() {
                         stopAutoScroll(view)
                         currentFeed =
                             (view.recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
-
                     }
-
                 }
 
             }, { e ->
