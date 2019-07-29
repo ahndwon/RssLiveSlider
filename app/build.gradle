@@ -60,6 +60,7 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxkotlin:2.3.0'
     implementation 'com.jakewharton.rxbinding3:rxbinding:3.0.0-alpha2'
 
+    implementation 'com.jakewharton.threetenabp:threetenabp:1.2.1'
 
     implementation 'com.squareup.okhttp3:okhttp:3.12.1'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.12.0'
