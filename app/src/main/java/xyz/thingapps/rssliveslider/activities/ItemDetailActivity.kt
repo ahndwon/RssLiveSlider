@@ -54,6 +54,19 @@ class ItemDetailActivity : AppCompatActivity() {
                 Log.d(ItemDetailActivity::class.java.name, "click button failed : ", e)
             }).addTo(disposeBag)
 
+        shareButton.clicks().throttleFirst(600, TimeUnit.MILLISECONDS)
+            .subscribe({
+                item?.let {
+                    val intent = Intent(Intent.ACTION_SEND)
+                    intent.type = "text/plain"
+                    intent.putExtra(Intent.EXTRA_SUBJECT, item.title)
+                    intent.putExtra(Intent.EXTRA_TEXT, "Check this out - ${item.link}")
+                    startActivity(Intent.createChooser(intent, "Share via"))
+                }
+            }, { e ->
+                Log.d(ItemDetailActivity::class.java.name, "click button failed : ", e)
+            }).addTo(disposeBag)
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
