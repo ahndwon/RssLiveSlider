@@ -21,9 +21,9 @@ import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.item_feed.view.*
 import xyz.thingapps.rssliveslider.R
 import xyz.thingapps.rssliveslider.activities.ItemDetailActivity
-import xyz.thingapps.rssliveslider.api.Item
-import xyz.thingapps.rssliveslider.api.Media
 import xyz.thingapps.rssliveslider.api.provideJSoupApi
+import xyz.thingapps.rssliveslider.models.Item
+import xyz.thingapps.rssliveslider.models.Media
 import xyz.thingapps.rssliveslider.utils.PaddingBackgroundColorSpan
 import xyz.thingapps.rssliveslider.utils.ThumbnailTask
 import java.util.concurrent.TimeUnit
