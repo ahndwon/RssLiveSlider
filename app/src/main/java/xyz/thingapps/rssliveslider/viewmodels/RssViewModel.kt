@@ -35,6 +35,8 @@ class RssViewModel : ViewModel() {
             castListPublisher.onNext(value)
         }
 
+    var castTitleList = mutableListOf<String>()
+
     var channelList: List<Fragment> = emptyList()
         set(value) {
             field = value
@@ -64,12 +66,48 @@ class RssViewModel : ViewModel() {
         }.observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 castList = it
+                castTitleList = (castList.map { cast -> cast.title }).toMutableList()
+                castTitleList.add(0, "All RSS")
                 onSubscribe?.invoke()
             }, { e ->
                 e.printStackTrace()
             }).addTo(disposeBag)
     }
 
+    fun filter(rss: MutableSet<String>, sort: MutableSet<String>) {
+
+        val onSubscribe = {
+            castList = castList.filter {
+                rss.contains(it.title)
+            }
+        }
+
+        getData {
+            if (!rss.contains("All RSS"))
+                onSubscribe.invoke()
+
+            castList = castList.sort(sort)
+        }
+    }
+
+    private fun List<Cast>.sort(sort: MutableSet<String>): List<Cast> {
+        var list = this
+
+        if (sort.contains("Add Ascending")) {
+            list = this.sortedBy { it.createCast }
+        }
+        if (sort.contains("Add Descending")) {
+            list = this.sortedByDescending { it.createCast }
+        }
+        if (sort.contains("Title Ascending")) {
+            list = this.sortedBy { it.title }
+        }
+        if (sort.contains("Title Descending")) {
+            list = this.sortedByDescending { it.title }
+        }
+
+        return list
+    }
 
     override fun onCleared() {
         disposeBag.dispose()

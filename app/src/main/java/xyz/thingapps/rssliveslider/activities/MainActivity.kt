@@ -1,9 +1,11 @@
 package xyz.thingapps.rssliveslider.activities
 
 import android.os.Bundle
+import android.util.Log
 import android.util.Patterns
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.FrameLayout
@@ -12,6 +14,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
+import com.jakewharton.rxbinding3.view.clicks
 import com.jakewharton.rxbinding3.widget.queryTextChanges
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
@@ -37,15 +40,26 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        progressBar.visibility = View.INVISIBLE
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.frameContainer, HomeFragment())
             .commit()
 
-        filterBar.setOnClickListener {
-            filterDialog.show(supportFragmentManager, FilterDialogFragment.TAG)
+        filterBar.clicks().throttleFirst(600, TimeUnit.MILLISECONDS)
+            .subscribe({
+                if (viewModel.castList.isNullOrEmpty()) {
+                    return@subscribe
+                }
 
-        }
+                if (filterDialog.isAdded) {
+                    return@subscribe
+                }
+
+                filterDialog.show(supportFragmentManager, FilterDialogFragment.TAG)
+            }, { e ->
+                Log.d(MainActivity::class.java.name, "e : ", e)
+            }).addTo(disposeBag)
     }
 
 

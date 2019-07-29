@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/filters_form"
+    android:id="@+id/filter"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -14,8 +14,8 @@
         android:layout_marginBottom="8dp"
         android:text="@string/filter" />
 
-
     <RelativeLayout
+        android:id="@+id/rssLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
@@ -37,6 +37,7 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/sortLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -52,8 +53,7 @@
             android:id="@+id/sortSpinner"
             style="@style/AppTheme.FilterSpinner"
             android:layout_centerVertical="true"
-            android:layout_toEndOf="@+id/sortIcon"
-            android:entries="@array/sort_by" />
+            android:layout_toEndOf="@+id/sortIcon" />
     </RelativeLayout>
 
     <!-- Cancel and apply buttons -->

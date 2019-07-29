@@ -12,8 +12,9 @@ data class Cast(
     @Path("channel") @PropertyElement(writeAsCData = true) val link: String? = "",
     @Path("channel") @Element val items: List<Item> = mutableListOf()
 ) {
-    private val changeObservable = PublishSubject.create<Cast>()
 
+    private val changeObservable = PublishSubject.create<Cast>()
+    var createCast: Long = 0
 
 }
 

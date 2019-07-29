@@ -9,13 +9,13 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.dialog_filters.view.*
 import xyz.thingapps.rssliveslider.R
+import xyz.thingapps.rssliveslider.utils.MultiSelectSpinnerAdapter
 import xyz.thingapps.rssliveslider.viewmodels.RssViewModel
 
 
 class FilterDialogFragment : DialogFragment() {
 
     private lateinit var viewModel: RssViewModel
-
 
     companion object {
         const val TAG = "FilterDialogFragment"
@@ -33,13 +33,9 @@ class FilterDialogFragment : DialogFragment() {
             viewModel = ViewModelProviders.of(it).get(RssViewModel::class.java)
         }
 
-        val titleList = viewModel.castList.map {
-            it.title
-        }
-
         val sortList = context?.resources?.getStringArray(R.array.sort_by)?.toList()
 
-        view.channelSpinner.adapter = setArrayAdapter(titleList)
+        view.channelSpinner.adapter = setArrayAdapter(viewModel.castTitleList)
         view.sortSpinner.adapter = sortList?.let { setArrayAdapter(it) }
 
 
@@ -48,20 +44,28 @@ class FilterDialogFragment : DialogFragment() {
         }
 
         view.applyButton.setOnClickListener {
-            //            viewModel.castListPublisher.onNext(
-//            )
+
+            val channelSpinnerAdapter = view.channelSpinner.adapter as MultiSelectSpinnerAdapter
+            val sortSpinnerAdapter = view.sortSpinner.adapter as MultiSelectSpinnerAdapter
+
+
+            viewModel.filter(
+                channelSpinnerAdapter.selectSet,
+                sortSpinnerAdapter.selectSet
+
+            )
             dismiss()
         }
-
 
         return view
     }
 
     private fun setArrayAdapter(list: List<String>): ArrayAdapter<String>? {
-        val adapter = context?.let { ArrayAdapter<String>(it, R.layout.item_spinner, list) }
+        val adapter = context?.let { MultiSelectSpinnerAdapter(it, list) }
         adapter?.setDropDownViewResource(R.layout.item_spinner)
 
         return adapter
     }
+
 
 }

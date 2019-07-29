@@ -17,7 +17,7 @@
         android:fromYScale="1.06"
         android:pivotX="50%"
         android:pivotY="50%"
-        android:startOffset="3000"
+        android:startOffset="4500"
         android:toXScale="1.16"
         android:toYScale="1.16" />
 
@@ -27,7 +27,7 @@
         android:fromYScale="1.16"
         android:pivotX="50%"
         android:pivotY="50%"
-        android:startOffset="5000"
+        android:startOffset="8500"
         android:toXScale="1.17"
         android:toYScale="1.17" />
 </set>
