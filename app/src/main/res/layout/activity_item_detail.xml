@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activities.ItemDetailActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:theme="@style/AppTheme.AppBarOverlay"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?android:actionBarSize"
+            android:layout_gravity="center"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:theme="@style/AppTheme.Toolbar">
+
+        </androidx.appcompat.widget.Toolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <TextView
+        android:id="@+id/titleTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/basic_margin"
+        android:layout_marginStart="@dimen/double_margin"
+        android:layout_marginEnd="@dimen/double_margin"
+        android:layout_marginBottom="@dimen/basic_margin"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        android:theme="@style/AppTheme.Title"
+        app:layout_constraintTop_toBottomOf="@id/appbar"
+        tools:text="헤드라인" />
+
+    <TextView
+        android:id="@+id/itemInfoTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/double_margin"
+        android:layout_marginEnd="@dimen/double_margin"
+        android:layout_marginBottom="@dimen/basic_margin"
+        android:textColor="@color/colorTransparentBlack"
+        android:theme="@style/AppTheme.Body2"
+        app:layout_constraintTop_toBottomOf="@id/titleTextView"
+        tools:text="정보" />
+
+    <ImageView
+        android:id="@+id/itemImageView"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_margin="@dimen/double_margin"
+        android:contentDescription="@string/description_item_image"
+        app:layout_constraintTop_toBottomOf="@id/itemInfoTextView" />
+
+    <TextView
+        android:id="@+id/descriptionTextView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:theme="@style/AppTheme.Body1"
+        android:layout_marginTop="@dimen/basic_margin"
+        android:layout_marginStart="@dimen/double_margin"
+        android:layout_marginEnd="@dimen/double_margin"
+        android:ellipsize="end"
+        app:layout_constraintTop_toBottomOf="@id/itemImageView"
+        app:layout_constraintBottom_toTopOf="@id/buttonLayout"
+        tools:text="설명" />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/buttonLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/shareButton"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:layout_marginTop="@dimen/double_margin"
+            android:layout_marginBottom="@dimen/double_margin"
+            android:layout_marginStart="@dimen/double_margin"
+            android:layout_marginEnd="@dimen/basic_margin"
+            android:background="@drawable/btn_border"
+            android:text="@string/share"
+            style="@style/Widget.AppCompat.Button.Borderless" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/visitButton"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:layout_marginTop="@dimen/double_margin"
+            android:layout_marginBottom="@dimen/double_margin"
+            android:layout_marginStart="@dimen/basic_margin"
+            android:layout_marginEnd="@dimen/double_margin"
+            android:background="@drawable/btn_border"
+            android:text="@string/visit_website"
+            style="@style/Widget.AppCompat.Button.Borderless" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

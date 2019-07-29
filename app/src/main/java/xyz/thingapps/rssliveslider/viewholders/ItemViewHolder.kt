@@ -1,6 +1,7 @@
 package xyz.thingapps.rssliveslider.viewholders
 
 import android.content.Context
+import android.content.Intent
 import android.media.MediaPlayer
 import android.text.Spannable
 import android.text.SpannableString
@@ -19,6 +20,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.item_feed.view.*
 import xyz.thingapps.rssliveslider.R
+import xyz.thingapps.rssliveslider.activities.ItemDetailActivity
 import xyz.thingapps.rssliveslider.api.Item
 import xyz.thingapps.rssliveslider.api.Media
 import xyz.thingapps.rssliveslider.api.provideJSoupApi
@@ -43,6 +45,7 @@ class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
 
     fun bind(item: Item, position: Int, itemCount: Int) {
         with(view) {
+
             dispose()
 
             var description = item.description
@@ -82,7 +85,6 @@ class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
                     provideJSoupApi().getDocument(link)
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe({ document ->
-
                             val urlList = document.select("img").map { element ->
                                 when {
 //                                    element.hasAttr("src") -> element.attr("src")
@@ -99,15 +101,34 @@ class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
                             urlList.max()?.let { longestUrl ->
                                 showFeedImage(longestUrl)
 
+                                item.media = Media(
+                                    parseImageUrl(longestUrl),
+                                    "image"
+                                )
+
+                                this.setOnClickListener {
+                                    val intent = Intent(context, ItemDetailActivity::class.java)
+                                    intent.putExtra(ItemDetailActivity.RSS_ITEM, item)
+                                    context.startActivity(intent)
+                                }
+
                                 Log.i(
                                     ItemViewHolder::class.java.name,
                                     "longestUrl : $longestUrl"
                                 )
                             }
+
+
                         }, { e ->
                             Log.i(ItemViewHolder::class.java.name, "getDocument error : ", e)
                         })
                 }
+            }
+
+            setOnClickListener {
+                val intent = Intent(context, ItemDetailActivity::class.java)
+                intent.putExtra(ItemDetailActivity.RSS_ITEM, item)
+                context.startActivity(intent)
             }
         }
     }
