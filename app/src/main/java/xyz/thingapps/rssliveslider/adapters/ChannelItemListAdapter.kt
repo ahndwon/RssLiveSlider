@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import xyz.thingapps.rssliveslider.R
-import xyz.thingapps.rssliveslider.api.Item
+import xyz.thingapps.rssliveslider.models.Item
 import xyz.thingapps.rssliveslider.viewholders.ChannelItemViewHolder
 
 class ChannelItemListAdapter(var currentChannel: Int, private val tag: Int) :
