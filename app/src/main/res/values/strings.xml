@@ -15,4 +15,6 @@
     <string name="filter_sorted_by_title">sorted by title</string>
     <string name="filter_all_rss">All RSS</string>
     <string name="description_item_image">item image</string>
+    <string name="share">share</string>
+    <string name="visit_website">visit website</string>
 </resources>
