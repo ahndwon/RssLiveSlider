@@ -10,6 +10,10 @@ import io.reactivex.rxkotlin.addTo
 import io.reactivex.subjects.PublishSubject
 import xyz.thingapps.rssliveslider.api.provideRssApi
 import xyz.thingapps.rssliveslider.fragments.ChannelFragment
+import xyz.thingapps.rssliveslider.fragments.FilterDialogFragment.Companion.ADD_ASCENDING
+import xyz.thingapps.rssliveslider.fragments.FilterDialogFragment.Companion.ADD_DESCENDING
+import xyz.thingapps.rssliveslider.fragments.FilterDialogFragment.Companion.TITLE_ASCENDING
+import xyz.thingapps.rssliveslider.fragments.FilterDialogFragment.Companion.TITLE_DESCENDING
 import xyz.thingapps.rssliveslider.models.Cast
 import xyz.thingapps.rssliveslider.sharedApp
 
@@ -17,11 +21,11 @@ class RssViewModel(val app: Application) : AndroidViewModel(app) {
     private val disposeBag = CompositeDisposable()
     var currentFragmentPublisher = PublishSubject.create<Int>()
 
-    var urlList: List<String> = (app.sharedApp.rssUrlList ?: ArrayList()).map {
+    private var urlList: List<String> = (app.sharedApp.rssUrlList ?: ArrayList()).map {
         it.url
     }
 
-    var sortList: List<String> = listOf("Date Ascending")
+    var sort = ADD_ASCENDING
 
     var castList: List<Cast> = emptyList()
         set(value) {
@@ -70,7 +74,8 @@ class RssViewModel(val app: Application) : AndroidViewModel(app) {
             .subscribe({
                 setRssTitle(it)
                 castList = it
-                castTitleList = (castList.map { cast -> cast.title ?: "" }).toMutableList()
+                castTitleList =
+                    (castList.map { cast -> cast.title ?: "" }).reversed().toMutableList()
 
                 onSubscribe?.invoke()
             }, { e ->
@@ -78,40 +83,32 @@ class RssViewModel(val app: Application) : AndroidViewModel(app) {
             }).addTo(disposeBag)
     }
 
-    fun filter(rss: MutableSet<String>, sort: MutableSet<String>) {
-
+    fun filter(rss: MutableSet<String>, sort: String) {
         val onSubscribe = {
             castList = castList.filter {
                 rss.contains(it.title)
             }
         }
+
         getData {
-            if (!rss.contains("All RSS"))
-                onSubscribe.invoke()
-
+            onSubscribe.invoke()
             castList = castList.sort(sort)
-            sortList = sort.toList()
-
+            this.sort = sort
         }
     }
 
-    private fun List<Cast>.sort(sort: MutableSet<String>): List<Cast> {
-        var list = this
+    private fun List<Cast>.sort(sort: String): List<Cast> {
+        return when (sort) {
+            ADD_ASCENDING -> this.sortedBy { it.createdAt }
 
-        if (sort.contains("Add Ascending")) {
-            list = this.sortedBy { it.createdAt }
-        }
-        if (sort.contains("Add Descending")) {
-            list = this.sortedByDescending { it.createdAt }
-        }
-        if (sort.contains("Title Ascending")) {
-            list = this.sortedBy { it.title }
-        }
-        if (sort.contains("Title Descending")) {
-            list = this.sortedByDescending { it.title }
-        }
+            ADD_DESCENDING -> this.sortedByDescending { it.createdAt }
 
-        return list
+            TITLE_ASCENDING -> this.sortedBy { it.title }
+
+            TITLE_DESCENDING -> this.sortedByDescending { it.title }
+
+            else -> this
+        }
     }
 
     private fun setRssTitle(castList: List<Cast>) {

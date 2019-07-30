@@ -93,11 +93,6 @@ class ChannelItemViewHolder(private val view: View) : RecyclerView.ViewHolder(vi
                                 }
                             }
 
-                            Log.i(
-                                ChannelItemViewHolder::class.java.name,
-                                "urlList : $urlList"
-                            )
-
                             urlList.max()?.let { longestUrl ->
                                 showFeedImage(longestUrl)
 
@@ -241,7 +236,7 @@ class ChannelItemViewHolder(private val view: View) : RecyclerView.ViewHolder(vi
         return if (this.lineCount > this.maxLines) {
             val endOfLastLine = this.layout.getLineEnd(this.maxLines - 1)
 
-            this.text.subSequence(0, endOfLastLine - 6).toString() + " ..."
+            this.text.subSequence(0, endOfLastLine - 6).toString() + R.string.ellipsis.toString()
 
         } else
             this.text.toString()
