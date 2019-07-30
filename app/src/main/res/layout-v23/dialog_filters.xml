@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/filter"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        style="@style/AppTheme.Title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="@string/filter" />
+
+    <RelativeLayout
+        android:id="@+id/rssLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/channelIcon"
+            style="@style/AppTheme.FilterIcon"
+            android:layout_centerVertical="true"
+            android:tint="@color/greySecondary"
+            android:padding="1.5dp"
+            app:srcCompat="@drawable/ic_rss_white"
+            android:contentDescription="@string/description_channel_icon" />
+
+        <Spinner
+            android:id="@+id/channelSpinner"
+            style="@style/AppTheme.FilterSpinner"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/channelIcon"
+            android:spinnerMode="dropdown" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/sortLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/sortIcon"
+            style="@style/AppTheme.FilterIcon"
+            android:layout_centerVertical="true"
+            android:tint="@color/greySecondary"
+            app:srcCompat="@drawable/ic_sort_white_24px"
+            android:contentDescription="@string/description_sort_icon_image" />
+
+        <Spinner
+            android:id="@+id/sortSpinner"
+            style="@style/AppTheme.FilterSpinner"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/sortIcon"
+            android:spinnerMode="dropdown" />
+    </RelativeLayout>
+
+    <!-- Cancel and apply buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/cancelButton"
+            style="@style/Base.Widget.AppCompat.Button.Borderless"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@android:string/cancel"
+            android:textColor="@color/greySecondary"
+            android:theme="@style/ThemeOverlay.FilterButton" />
+
+
+        <Button
+            android:id="@+id/applyButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/apply"
+            android:theme="@style/ThemeOverlay.FilterButton" />
+
+    </LinearLayout>
+
+</LinearLayout>
+

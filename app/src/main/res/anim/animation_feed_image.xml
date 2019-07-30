@@ -3,33 +3,33 @@
     android:fillAfter="true"
     android:interpolator="@android:anim/linear_interpolator">
     <scale
-        android:duration="3000"
+        android:duration="4500"
         android:fromXScale="1"
         android:fromYScale="1"
         android:pivotX="50%"
         android:pivotY="50%"
-        android:toXScale="1.05"
-        android:toYScale="1.05" />
+        android:toXScale="1.06"
+        android:toYScale="1.06" />
 
     <scale
-        android:duration="2000"
-        android:fromXScale="1.05"
-        android:fromYScale="1.05"
+        android:duration="4000"
+        android:fromXScale="1.06"
+        android:fromYScale="1.06"
         android:pivotX="50%"
         android:pivotY="50%"
-        android:startOffset="3000"
-        android:toXScale="1.12"
-        android:toYScale="1.12" />
+        android:startOffset="4500"
+        android:toXScale="1.16"
+        android:toYScale="1.16" />
 
     <scale
         android:duration="1500"
-        android:fromXScale="1.12"
-        android:fromYScale="1.12"
+        android:fromXScale="1.16"
+        android:fromYScale="1.16"
         android:pivotX="50%"
         android:pivotY="50%"
-        android:startOffset="5000"
-        android:toXScale="1.15"
-        android:toYScale="1.15" />
+        android:startOffset="8500"
+        android:toXScale="1.17"
+        android:toYScale="1.17" />
 </set>
 
 

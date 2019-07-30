@@ -1,7 +1,6 @@
 package xyz.thingapps.rssliveslider.viewmodels
 
 import android.app.Application
-import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.AndroidViewModel
 import io.reactivex.Observable
@@ -22,12 +21,16 @@ class RssViewModel(val app: Application) : AndroidViewModel(app) {
         it.url
     }
 
+    var sortList: List<String> = listOf("Date Ascending")
+
     var castList: List<Cast> = emptyList()
         set(value) {
             setChannels(value)
             field = value
             castListPublisher.onNext(value)
         }
+
+    var castTitleList = mutableListOf<String>()
 
     var channelList: List<Fragment> = emptyList()
         set(value) {
@@ -67,10 +70,48 @@ class RssViewModel(val app: Application) : AndroidViewModel(app) {
             .subscribe({
                 setRssTitle(it)
                 castList = it
+                castTitleList = (castList.map { cast -> cast.title ?: "" }).toMutableList()
+
                 onSubscribe?.invoke()
             }, { e ->
                 e.printStackTrace()
             }).addTo(disposeBag)
+    }
+
+    fun filter(rss: MutableSet<String>, sort: MutableSet<String>) {
+
+        val onSubscribe = {
+            castList = castList.filter {
+                rss.contains(it.title)
+            }
+        }
+        getData {
+            if (!rss.contains("All RSS"))
+                onSubscribe.invoke()
+
+            castList = castList.sort(sort)
+            sortList = sort.toList()
+
+        }
+    }
+
+    private fun List<Cast>.sort(sort: MutableSet<String>): List<Cast> {
+        var list = this
+
+        if (sort.contains("Add Ascending")) {
+            list = this.sortedBy { it.createdAt }
+        }
+        if (sort.contains("Add Descending")) {
+            list = this.sortedByDescending { it.createdAt }
+        }
+        if (sort.contains("Title Ascending")) {
+            list = this.sortedBy { it.title }
+        }
+        if (sort.contains("Title Descending")) {
+            list = this.sortedByDescending { it.title }
+        }
+
+        return list
     }
 
     private fun setRssTitle(castList: List<Cast>) {
@@ -83,8 +124,6 @@ class RssViewModel(val app: Application) : AndroidViewModel(app) {
                 isChange = true
             }
         }
-
-        Log.d(RssViewModel::class.java.name, "setRssTitle: $rssUrlList")
 
         if (isChange) app.sharedApp.rssUrlList = rssUrlList
     }
