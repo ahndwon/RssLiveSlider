@@ -15,7 +15,6 @@ import kotlinx.android.synthetic.main.activity_search.*
 import xyz.thingapps.rssliveslider.R
 import xyz.thingapps.rssliveslider.adapters.SearchGroupListAdapter
 import xyz.thingapps.rssliveslider.models.Cast
-import xyz.thingapps.rssliveslider.utils.showKeyboard
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -30,16 +29,11 @@ class SearchActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayShowTitleEnabled(false)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        searchView.requestFocus()
-        this@SearchActivity.showKeyboard()
+        setupActionBar()
 
         val castList: ArrayList<Cast> =
             intent?.getParcelableArrayListExtra(CAST_LIST) ?: ArrayList()
 
-        Log.d(SearchActivity::class.java.name, "castList : $castList")
         val adapter = SearchGroupListAdapter()
         adapter.onItemClick = { item ->
             val intent = Intent(this@SearchActivity, ItemDetailActivity::class.java)
@@ -77,7 +71,14 @@ class SearchActivity : AppCompatActivity() {
             }, { e ->
                 e.printStackTrace()
             })?.addTo(disposeBag)
+    }
 
+    private fun setupActionBar() {
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        searchView.isIconifiedByDefault = false
+        searchView.requestFocus()
     }
 
 

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.SearchActivity">
+    tools:context=".activities.SettingsActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
@@ -18,30 +18,14 @@
             android:layout_width="match_parent"
             android:layout_height="?android:actionBarSize"
             android:layout_gravity="center"
-            app:titleMarginStart="0dp"
-            app:contentInsetStartWithNavigation="0dp"
-            app:contentInsetEndWithActions="0dp"
-            app:contentInsetStart="0dp"
-            app:contentInsetEnd="0dp"
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/AppTheme.PopupOverlay"
-            app:theme="@style/AppTheme.Toolbar">
-
-            <SearchView
-                android:id="@+id/searchView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:focusable="true"
-                app:searchIcon="@null"
-                app:iconifiedByDefault="false"
-                app:queryHint="@string/hint_search" />
-
-        </androidx.appcompat.widget.Toolbar>
+            app:theme="@style/AppTheme.Toolbar" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/searchRecyclerView"
+        android:id="@+id/rssRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@color/white"
