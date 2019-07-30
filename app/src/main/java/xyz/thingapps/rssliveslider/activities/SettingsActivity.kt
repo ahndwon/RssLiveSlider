@@ -123,8 +123,8 @@ class SettingsActivity : AppCompatActivity() {
     private fun showDeleteDialog(onDelete: (() -> Unit)) {
         AlertDialog.Builder(
             this
-        ).setTitle("Delete RSS")
-            .setMessage("Would you like to delete this RSS?")
+        ).setTitle(getString(R.string.title_delete_rss))
+            .setMessage(getString(R.string.message_delete_rss))
             .setCancelable(true)
             .setPositiveButton(getString(R.string.delete)) { _, _ ->
                 onDelete.invoke()
