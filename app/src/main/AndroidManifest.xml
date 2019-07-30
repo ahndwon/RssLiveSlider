@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activities.SettingsActivity"></activity>
+        <activity android:name=".activities.SettingsActivity" />
         <activity android:name=".activities.SearchActivity" />
         <activity android:name=".activities.AllContentsActivity" />
         <activity android:name=".activities.WebViewActivity" />

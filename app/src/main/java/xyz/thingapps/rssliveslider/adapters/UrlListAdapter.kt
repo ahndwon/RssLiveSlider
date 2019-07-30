@@ -10,12 +10,15 @@ import xyz.thingapps.rssliveslider.viewholders.RssUrlViewHolder
 class UrlListAdapter :
     RecyclerView.Adapter<RssUrlViewHolder>() {
     var items: List<RssUrl> = emptyList()
+    var onDeleteClick: ((Int) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RssUrlViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_rss_url, parent, false)
 
-        return RssUrlViewHolder(view)
+        return RssUrlViewHolder(view).apply {
+            this.onDeleteClick = this@UrlListAdapter.onDeleteClick
+        }
     }
 
     override fun getItemCount(): Int {
@@ -23,6 +26,6 @@ class UrlListAdapter :
     }
 
     override fun onBindViewHolder(holder: RssUrlViewHolder, position: Int) {
-        holder.bind(items[position])
+        holder.bind(items[position], position)
     }
 }

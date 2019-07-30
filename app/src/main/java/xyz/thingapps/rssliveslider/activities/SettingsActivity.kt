@@ -26,9 +26,19 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
         setupActionBar()
+        setupRecyclerView()
+    }
 
+    private fun setupRecyclerView() {
         val adapter = UrlListAdapter()
         adapter.items = sharedApp.rssUrlList?.toList() ?: emptyList()
+        adapter.onDeleteClick = { position ->
+            showDeleteDialog {
+                val urlList = sharedApp.rssUrlList ?: ArrayList()
+                urlList.removeAt(position)
+                sharedApp.rssUrlList = urlList
+            }
+        }
         rssRecyclerView.adapter = adapter
         rssRecyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
     }
@@ -76,21 +86,31 @@ class SettingsActivity : AppCompatActivity() {
                 if (editText.error != null) {
                     Toast.makeText(
                         this,
-
                         getString(R.string.url_validation_message),
                         Toast.LENGTH_SHORT
                     )
                         .show()
                 } else {
-//                    viewModel.urlList.add(editText.text.toString())
                     sharedApp.addRssUrl(
                         RssUrl(
                             editText.text.toString(),
                             Instant.now().toEpochMilli()
                         )
                     )
-//                    viewModel.getData()
                 }
+            }
+            .setNegativeButton(getString(R.string.alert_dialog_cancel)) { _, _ -> }
+            .show()
+    }
+
+    private fun showDeleteDialog(onDelete: (() -> Unit)) {
+        AlertDialog.Builder(
+            this
+        ).setTitle("Delete RSS")
+            .setMessage("Would you like to delete this RSS?")
+            .setCancelable(true)
+            .setPositiveButton(getString(R.string.delete)) { _, _ ->
+                onDelete.invoke()
             }
             .setNegativeButton(getString(R.string.alert_dialog_cancel)) { _, _ -> }
             .show()
