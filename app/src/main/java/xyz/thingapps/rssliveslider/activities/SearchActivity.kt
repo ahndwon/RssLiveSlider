@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.jakewharton.rxbinding3.widget.queryTextChanges
@@ -14,6 +15,7 @@ import kotlinx.android.synthetic.main.activity_search.*
 import xyz.thingapps.rssliveslider.R
 import xyz.thingapps.rssliveslider.adapters.SearchGroupListAdapter
 import xyz.thingapps.rssliveslider.models.Cast
+import xyz.thingapps.rssliveslider.viewmodels.SearchViewModel
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -21,24 +23,27 @@ class SearchActivity : AppCompatActivity() {
 
     val adapter = SearchGroupListAdapter()
     private val disposeBag = CompositeDisposable()
+    private lateinit var viewModel: SearchViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
         setupActionBar()
 
-        val castList: ArrayList<Cast> =
-            intent?.getParcelableArrayListExtra(CAST_LIST) ?: ArrayList()
+        viewModel = ViewModelProviders.of(this).get(SearchViewModel::class.java)
+        viewModel.imageRecognizer.setClassifier(this)
+        viewModel.castList = intent?.getParcelableArrayListExtra(CAST_LIST) ?: ArrayList()
+        viewModel.setImageRecognitions()
 
         setupAdapter()
         setupRecyclerView()
 
-        setSearch(castList)
+        setSearch(viewModel.castList)
     }
 
     private fun setSearch(castList: ArrayList<Cast>) {
         searchView?.queryTextChanges()
-            ?.debounce(500, TimeUnit.MILLISECONDS)
+            ?.debounce(QUERY_TIMEOUT, TimeUnit.MILLISECONDS)
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe({ search ->
                 if (search.isBlank()) return@subscribe
@@ -99,5 +104,6 @@ class SearchActivity : AppCompatActivity() {
 
     companion object {
         const val CAST_LIST = "cast_list"
+        const val QUERY_TIMEOUT = 500L
     }
 }
