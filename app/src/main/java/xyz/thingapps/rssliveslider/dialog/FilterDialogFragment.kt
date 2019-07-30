@@ -19,6 +19,10 @@ class FilterDialogFragment : DialogFragment() {
 
     companion object {
         const val TAG = "FilterDialogFragment"
+        const val ADD_ASCENDING = "Add Ascending"
+        const val ADD_DESCENDING = "Add Descending"
+        const val TITLE_ASCENDING = "Title Ascending"
+        const val TITLE_DESCENDING = "Title Descending"
     }
 
     override fun onCreateView(
@@ -34,10 +38,18 @@ class FilterDialogFragment : DialogFragment() {
 
         val sortList = context?.resources?.getStringArray(R.array.sort_by)?.toList()
         val filterRssList = viewModel.castList.map { it.title ?: "" }
-        val filterSortList = viewModel.sortList
 
-        view.channelSpinner.adapter = setAdapter(viewModel.castTitleList, filterRssList)
-        view.sortSpinner.adapter = sortList?.let { setAdapter(it, filterSortList) }
+        view.channelSpinner.adapter =
+            context?.let { MultiSelectSpinnerAdapter(it, viewModel.castTitleList, filterRssList) }
+        view.sortSpinner.adapter = sortList?.let {
+            context?.let { context ->
+                ArrayAdapter<String>(
+                    context,
+                    R.layout.item_spinner,
+                    it
+                )
+            }
+        }
 
         view.cancelButton.setOnClickListener {
             dismiss()
@@ -45,11 +57,10 @@ class FilterDialogFragment : DialogFragment() {
 
         view.applyButton.setOnClickListener {
             val channelSpinnerAdapter = view.channelSpinner.adapter as MultiSelectSpinnerAdapter
-            val sortSpinnerAdapter = view.sortSpinner.adapter as MultiSelectSpinnerAdapter
 
             viewModel.filter(
                 channelSpinnerAdapter.selectSet,
-                sortSpinnerAdapter.selectSet
+                view.sortSpinner.selectedItem.toString()
 
             )
             dismiss()
@@ -57,10 +68,5 @@ class FilterDialogFragment : DialogFragment() {
 
         return view
     }
-
-    private fun setAdapter(list: List<String>, filterList: List<String>): ArrayAdapter<String>? {
-        return context?.let { MultiSelectSpinnerAdapter(it, list, filterList) }
-    }
-
 
 }

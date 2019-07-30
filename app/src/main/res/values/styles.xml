@@ -81,7 +81,7 @@
     </style>
 
     <style name="ThemeOverlay.FilterButton" parent="ThemeOverlay.AppCompat.Dark">
-        <item name="colorButtonNormal">@color/colorPrimary</item>
+        <item name="colorButtonNormal">@color/colorAccent</item>
     </style>
 
 </resources>
