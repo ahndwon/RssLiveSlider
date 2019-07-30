@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <androidx.constraintlayout.widget.ConstraintLayout android:layout_height="match_parent"
     android:layout_width="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -28,7 +27,7 @@
         android:layout_marginStart="18dp"
         android:layout_marginEnd="12dp"
         android:layout_marginBottom="28dp"
-        android:textColor="@color/colorWhite"
+        android:textColor="@color/white"
         android:ellipsize="end"
         android:maxLines="3"
         android:textSize="22sp"
@@ -42,7 +41,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:textColor="@color/colorWhite"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/feedTitle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -61,7 +60,7 @@
         android:ellipsize="end"
         android:maxLines="3"
         android:singleLine="false"
-        android:textColor="@color/colorWhite"
+        android:textColor="@color/white"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/feedTime"
         app:layout_constraintEnd_toEndOf="parent"
@@ -76,13 +75,24 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="16dp"
-        android:textColor="@color/colorWhite"
+        android:textColor="@color/white"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@+id/feedTitle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="1/10" />
+
+    <ProgressBar
+        android:id="@+id/feedVideoProgressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/feedImageView"
+        app:layout_constraintEnd_toEndOf="@+id/feedImageView"
+        app:layout_constraintStart_toStartOf="@+id/feedImageView"
+        app:layout_constraintTop_toTopOf="@+id/feedImageView" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -30,11 +30,13 @@ class HomeFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
         fragmentAdapter = FragmentListAdapter(childFragmentManager)
-        view.homeRecyclerView.layoutManager = LinearLayoutManager(view.context)
+        view.homeRecyclerView.layoutManager =
+            LinearLayoutManager(view.context, RecyclerView.VERTICAL, true).apply {
+                stackFromEnd = true
+            }
 
         return view
     }
-
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -47,10 +49,34 @@ class HomeFragment : Fragment() {
 
             viewModel.channelListPublisher
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
+                .subscribe({
                     fragmentAdapter.fragments = viewModel.channelList
                     view?.homeRecyclerView?.adapter = fragmentAdapter
-                }.addTo(disposeBag)
+
+
+                    viewModel.channelList.forEach { fragment ->
+
+                        val index = viewModel.channelList.indexOf(fragment)
+
+                        val fragmentViewHolder =
+                            view?.homeRecyclerView?.findViewHolderForLayoutPosition(index)
+
+                        fragmentViewHolder?.let { holder ->
+                            childFragmentManager.beginTransaction()
+                                .replace(
+                                    holder.itemView.id,
+                                    viewModel.channelList[index],
+                                    index.toString()
+                                )
+                                .commit()
+                        }
+
+                    }
+
+
+                }, { e ->
+                    e.printStackTrace()
+                }).addTo(disposeBag)
         }
 
         view?.homeRecyclerView?.let { setupRecyclerView(it) }
@@ -59,8 +85,6 @@ class HomeFragment : Fragment() {
 
     private fun setupRecyclerView(recyclerView: RecyclerView) {
         recyclerView.apply {
-            this.layoutManager = LinearLayoutManager(recyclerView.context)
-
             this.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     super.onScrollStateChanged(recyclerView, newState)

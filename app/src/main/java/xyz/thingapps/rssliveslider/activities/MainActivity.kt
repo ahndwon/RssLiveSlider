@@ -1,24 +1,21 @@
 package xyz.thingapps.rssliveslider.activities
 
+import android.content.Intent
 import android.os.Bundle
-import android.util.Patterns
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.FrameLayout
-import android.widget.SearchView
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
-import com.jakewharton.rxbinding3.widget.queryTextChanges
+import com.jakewharton.rxbinding3.view.clicks
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.activity_main.*
 import xyz.thingapps.rssliveslider.R
+import xyz.thingapps.rssliveslider.dialog.FilterDialogFragment
 import xyz.thingapps.rssliveslider.fragments.HomeFragment
-import xyz.thingapps.rssliveslider.utils.validate
+import xyz.thingapps.rssliveslider.models.Cast
 import xyz.thingapps.rssliveslider.viewmodels.RssViewModel
 import java.util.concurrent.TimeUnit
 
@@ -26,6 +23,7 @@ import java.util.concurrent.TimeUnit
 class MainActivity : AppCompatActivity() {
 
     private val disposeBag = CompositeDisposable()
+    private val filterDialog = FilterDialogFragment()
     private val viewModel: RssViewModel by lazy {
         ViewModelProviders.of(this@MainActivity).get(RssViewModel::class.java)
     }
@@ -35,92 +33,83 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_search)
+
+        viewModel.imageRecognizer.setClassifier(this)
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.frameContainer, HomeFragment())
             .commit()
+
+        filterBar.clicks().throttleFirst(600, TimeUnit.MILLISECONDS)
+            .subscribe({
+                if (viewModel.castList.isNullOrEmpty()) {
+                    return@subscribe
+                }
+
+                if (filterDialog.isAdded) {
+                    return@subscribe
+                }
+
+                filterDialog.show(supportFragmentManager, FilterDialogFragment.TAG)
+            }, { e ->
+                Log.d(MainActivity::class.java.name, "e : ", e)
+            }).addTo(disposeBag)
+
+
+        buttonClearFilter.setOnClickListener {
+            viewModel.getData()
+            viewModel.sort = "Date Ascending"
+
+        }
+
+        viewModel.castListPublisher.observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ castList ->
+                val currentRssText =
+                    if (viewModel.castTitleList.size == castList.size) "All RSS"
+                    else castList.map { it.title }.reversed().joinToString(separator = ", ")
+
+                textCurrentSearch.text = currentRssText
+                textCurrentSortBy.text = viewModel.sort
+            }, { e ->
+                Log.d(MainActivity::class.java.name, "e : ", e)
+            })
+            .addTo(disposeBag)
     }
+
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.options_menu, menu)
-        setupSearchView(menu)
-
+        menuInflater.inflate(R.menu.rss_menu, menu)
         return true
-    }
-
-    private fun setupSearchView(menu: Menu) {
-        val searchItem = menu.findItem(R.id.search)
-        val searchView = searchItem.actionView as? SearchView
-
-        searchView?.queryTextChanges()
-            ?.debounce(500, TimeUnit.MILLISECONDS)
-            ?.subscribe({ search ->
-                viewModel.getData {
-                    viewModel.castList = viewModel.castList.filter {
-                        it.title.contains(search)
-                    }
-                }
-            }, { e ->
-                e.printStackTrace()
-            })?.addTo(disposeBag)
-
-        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
-            override fun onMenuItemActionExpand(menuItem: MenuItem?): Boolean {
-                return true
-            }
-
-            override fun onMenuItemActionCollapse(menuItem: MenuItem?): Boolean {
-                viewModel.getData()
-                return true
-            }
-        })
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                showUrlAddDialog()
+                val list = ArrayList<Cast>()
+                list.addAll(viewModel.castList)
+                val intent = Intent(this, SearchActivity::class.java)
+                intent.putExtra(SearchActivity.CAST_LIST, list)
+                startActivity(intent)
+            }
+
+            R.id.rss_settings -> {
+                val intent = Intent(this, SettingsActivity::class.java)
+                startActivityForResult(intent, RC_RSS_URL)
             }
         }
         return super.onOptionsItemSelected(item)
     }
 
-    private fun showUrlAddDialog() {
-        val frameLayout = FrameLayout(this)
-        val params = FrameLayout.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        params.leftMargin = resources.getDimensionPixelSize(R.dimen.dialog_margin)
-        params.rightMargin = resources.getDimensionPixelSize(R.dimen.dialog_margin)
-        val editText = EditText(this)
-        editText.hint = getString(R.string.add_url_hint)
-        editText.layoutParams = params
-        editText.validate(getString(R.string.url_validation_message)) {
-            it.isEmpty() || Patterns.WEB_URL.matcher(it).matches()
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (requestCode) {
+            RC_RSS_URL -> viewModel.getData()
         }
-        frameLayout.addView(editText)
-        AlertDialog.Builder(
-            this
-        ).setTitle(getString(R.string.url_dialog_title))
-            .setCancelable(true)
-            .setView(frameLayout)
-            .setPositiveButton(getString(R.string.alert_dialog_add)) { _, _ ->
-                if (editText.error != null) {
-                    Toast.makeText(
-                        this,
+        super.onActivityResult(requestCode, resultCode, data)
+    }
 
-                        getString(R.string.url_validation_message),
-                        Toast.LENGTH_SHORT
-                    )
-                        .show()
-                } else {
-                    viewModel.urlList.add(editText.text.toString())
-                    viewModel.getData()
-                }
-            }
-            .setNegativeButton(getString(R.string.alert_dialog_cancel)) { _, _ -> }
-            .show()
+    companion object {
+        const val RC_RSS_URL = 333
     }
 }
 

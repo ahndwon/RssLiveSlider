@@ -1,5 +1,6 @@
 package xyz.thingapps.rssliveslider.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,6 +12,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.jakewharton.rxbinding3.view.clicks
 import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -18,9 +20,11 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.fragment_channel.view.*
 import xyz.thingapps.rssliveslider.R
-import xyz.thingapps.rssliveslider.adapters.ItemListAdapter
-import xyz.thingapps.rssliveslider.api.Cast
-import xyz.thingapps.rssliveslider.viewholders.ItemViewHolder
+import xyz.thingapps.rssliveslider.activities.AllContentsActivity
+import xyz.thingapps.rssliveslider.activities.AllContentsActivity.Companion.RSS_CAST
+import xyz.thingapps.rssliveslider.adapters.ChannelItemListAdapter
+import xyz.thingapps.rssliveslider.models.Cast
+import xyz.thingapps.rssliveslider.viewholders.ChannelItemViewHolder
 import xyz.thingapps.rssliveslider.viewmodels.RssViewModel
 import java.util.concurrent.TimeUnit
 
@@ -40,6 +44,7 @@ class ChannelFragment : Fragment() {
         const val TAG = "ChannelFragment"
         const val FRAGMENT_TITLE = "fragment_title"
         const val FRAGMENT_INDEX = "fragment_index"
+        const val autoScrollDuration = 10000L
 
         fun newInstance(title: String, index: Int): ChannelFragment {
             return ChannelFragment().apply {
@@ -58,16 +63,20 @@ class ChannelFragment : Fragment() {
             viewModel = ViewModelProviders.of(it).get(RssViewModel::class.java)
         }
 
-        val adapter = ItemListAdapter(0, tag?.toInt() ?: 0)
+        val adapter = ChannelItemListAdapter(0, tag?.toInt() ?: 0)
         view?.recyclerView?.adapter = adapter
 
-        setupItems(adapter, viewModel.castList[index])
+        if (viewModel.castList.isNotEmpty())
+            setupItems(adapter, viewModel.castList[index])
 
         view?.recyclerView?.let { setupRecyclerView(it) }
 
         viewModel.castListPublisher.observeOn(AndroidSchedulers.mainThread())
             .subscribe({ castList ->
-                setupItems(adapter, castList[index])
+                view?.let {
+                    if (index < castList.size)
+                        setupItems(adapter, castList[index])
+                }
             }, { e ->
                 Log.d(TAG, "e : ", e)
             })
@@ -76,7 +85,7 @@ class ChannelFragment : Fragment() {
         if (tag?.toInt() == 0) {
             view?.let { view ->
                 autoScroll(
-                    view.recyclerView, view.slideProgressBar, adapter.items.size, 10000
+                    view.recyclerView, view.slideProgressBar, adapter.items.size, autoScrollDuration
                 )
             }
         }
@@ -91,31 +100,37 @@ class ChannelFragment : Fragment() {
                             view.recyclerView,
                             view.slideProgressBar,
                             adapter.items.size,
-                            6500
+                            autoScrollDuration
                         )
 
                         val currentFeed =
                             (view.recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
-                        (view.recyclerView.findViewHolderForLayoutPosition(currentFeed) as ItemViewHolder).animate()
+                        (view.recyclerView.findViewHolderForLayoutPosition(currentFeed) as ChannelItemViewHolder).animate()
                     }
                 } else {
                     view?.let { view ->
                         stopAutoScroll(view)
                         currentFeed =
                             (view.recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
-
                     }
-
                 }
 
             }, { e ->
                 e.printStackTrace()
             }).addTo(currentFragmentDisposeBag)
+
+        view?.allContentsButton?.clicks()?.subscribe({
+            val intent = Intent(this@ChannelFragment.context, AllContentsActivity::class.java)
+            intent.putExtra(RSS_CAST, viewModel.castList[index])
+            startActivity(intent)
+        }, { e ->
+            Log.d(TAG, "allContentsButton click failed : ", e)
+        })?.addTo(disposeBag)
     }
 
-    private fun setupItems(adapter: ItemListAdapter, cast: Cast) {
+    private fun setupItems(adapter: ChannelItemListAdapter, cast: Cast) {
         view?.fragmentTitle?.text = cast.title
-        adapter.items = cast.items
+        adapter.items = cast.items ?: emptyList()
         adapter.notifyDataSetChanged()
     }
 

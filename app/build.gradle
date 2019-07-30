@@ -24,6 +24,10 @@ android {
         }
     }
 
+    aaptOptions {
+        noCompress "tflite"
+    }
+
     android {
         compileOptions {
             sourceCompatibility JavaVersion.VERSION_1_8
@@ -34,41 +38,57 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    // androidx
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.core:core-ktx:1.0.2'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0'
-    implementation 'com.google.android.material:material:1.1.0-alpha08'
-
     kapt 'androidx.lifecycle:lifecycle-compiler:2.0.0'
+    implementation "androidx.room:room-runtime:2.1.0"
+    implementation "androidx.room:room-ktx:2.1.0"
+    kapt "androidx.room:room-compiler:2.1.0"
+
+    // google
+    implementation 'com.google.android.material:material:1.1.0-alpha08'
 
     // tikxml
     implementation "com.tickaroo.tikxml:annotation:$tikxml_version"
     implementation "com.tickaroo.tikxml:core:$tikxml_version"
     implementation "com.tickaroo.tikxml:retrofit-converter:$tikxml_version"
-
     kapt "com.tickaroo.tikxml:processor:$tikxml_version"
     kapt "com.tickaroo.tikxml:auto-value-tikxml:$tikxml_version"
 
+    // glide
     implementation 'com.github.bumptech.glide:glide:4.9.0'
     kapt 'com.github.bumptech.glide:compiler:4.9.0'
 
+    // rxjava
     implementation 'io.reactivex.rxjava2:rxjava:2.2.6'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
     implementation 'io.reactivex.rxjava2:rxkotlin:2.3.0'
     implementation 'com.jakewharton.rxbinding3:rxbinding:3.0.0-alpha2'
 
-    implementation 'com.jakewharton.threetenabp:threetenabp:1.2.1'
-
+    // okhttp3
     implementation 'com.squareup.okhttp3:okhttp:3.12.1'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.12.0'
 
+    // retrofit2
     implementation 'com.squareup.retrofit2:retrofit:2.6.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
 
+    // jsoup
     implementation 'org.jsoup:jsoup:1.12.1'
+
+    // tensorflow-lite
+    implementation 'org.tensorflow:tensorflow-lite:0.0.0-nightly'
+    implementation 'org.tensorflow:tensorflow-lite-gpu:0.0.0-nightly'
+
+    // threetenbp
+    implementation 'com.jakewharton.threetenabp:threetenabp:1.2.1'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
