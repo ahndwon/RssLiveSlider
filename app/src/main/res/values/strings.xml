@@ -23,4 +23,5 @@
     <string name="delete">delete</string>
 
     <string name="rss_add_at">Added at %s</string>
+    <string name="toast_no_url">No URL.</string>
 </resources>

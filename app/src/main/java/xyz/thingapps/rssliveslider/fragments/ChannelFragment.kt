@@ -65,7 +65,8 @@ class ChannelFragment : Fragment() {
         val adapter = ChannelItemListAdapter(0, tag?.toInt() ?: 0)
         view?.recyclerView?.adapter = adapter
 
-        setupItems(adapter, viewModel.castList[index])
+        if (viewModel.castList.isNotEmpty())
+            setupItems(adapter, viewModel.castList[index])
 
         view?.recyclerView?.let { setupRecyclerView(it) }
 

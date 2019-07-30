@@ -22,6 +22,7 @@ import xyz.thingapps.rssliveslider.utils.DividerItemDecoration
 import xyz.thingapps.rssliveslider.utils.validate
 
 class SettingsActivity : AppCompatActivity() {
+    val adapter = UrlListAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,18 +32,22 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        val adapter = UrlListAdapter()
         adapter.items = sharedApp.rssUrlList?.toList() ?: emptyList()
         adapter.onDeleteClick = { position ->
             showDeleteDialog {
                 val urlList = sharedApp.rssUrlList ?: ArrayList()
                 urlList.removeAt(position)
                 sharedApp.rssUrlList = urlList
+                adapter.items = urlList
+                adapter.notifyDataSetChanged()
             }
         }
         rssRecyclerView.adapter = adapter
         rssRecyclerView.addItemDecoration(DividerItemDecoration(this, R.color.lightGray))
-        rssRecyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+        rssRecyclerView.layoutManager =
+            LinearLayoutManager(this, RecyclerView.VERTICAL, true).apply {
+                stackFromEnd = true
+            }
     }
 
     private fun setupActionBar() {
@@ -85,20 +90,29 @@ class SettingsActivity : AppCompatActivity() {
             .setCancelable(true)
             .setView(frameLayout)
             .setPositiveButton(getString(R.string.alert_dialog_add)) { _, _ ->
-                if (editText.error != null) {
-                    Toast.makeText(
+                when {
+                    editText.error != null -> Toast.makeText(
                         this,
                         getString(R.string.url_validation_message),
                         Toast.LENGTH_SHORT
                     )
                         .show()
-                } else {
-                    sharedApp.addRssUrl(
-                        RssUrl(
-                            editText.text.toString(),
-                            Instant.now().toEpochMilli()
-                        )
+                    editText.text.isNullOrBlank() -> Toast.makeText(
+                        this,
+                        getString(R.string.toast_no_url),
+                        Toast.LENGTH_SHORT
                     )
+                        .show()
+                    else -> {
+                        sharedApp.addRssUrl(
+                            RssUrl(
+                                editText.text.toString(),
+                                Instant.now().toEpochMilli()
+                            )
+                        )
+                        adapter.items = sharedApp.rssUrlList?.toList() ?: emptyList()
+                        adapter.notifyDataSetChanged()
+                    }
                 }
             }
             .setNegativeButton(getString(R.string.alert_dialog_cancel)) { _, _ -> }
