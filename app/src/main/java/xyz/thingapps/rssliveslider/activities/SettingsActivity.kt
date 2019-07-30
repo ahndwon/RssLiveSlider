@@ -104,20 +104,24 @@ class SettingsActivity : AppCompatActivity() {
                     )
                         .show()
                     else -> {
-                        sharedApp.addRssUrl(
-                            RssUrl(
-                                editText.text.toString(),
-                                Instant.now().toEpochMilli()
-                            )
-                        )
-                        adapter.items = sharedApp.rssUrlList?.toList() ?: emptyList()
-                        adapter.notifyDataSetChanged()
-                        rssRecyclerView.smoothScrollToPosition(adapter.items.size)
+                        addRss(editText.text.toString())
                     }
                 }
             }
             .setNegativeButton(getString(R.string.alert_dialog_cancel)) { _, _ -> }
             .show()
+    }
+
+    private fun addRss(url: String) {
+        sharedApp.addRssUrl(
+            RssUrl(
+                url,
+                Instant.now().toEpochMilli()
+            )
+        )
+        adapter.items = sharedApp.rssUrlList?.toList() ?: emptyList()
+        adapter.notifyDataSetChanged()
+        rssRecyclerView.smoothScrollToPosition(adapter.items.size)
     }
 
     private fun showDeleteDialog(onDelete: (() -> Unit)) {
