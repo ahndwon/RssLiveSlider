@@ -27,53 +27,66 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <TextView
-        android:id="@+id/titleTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/basic_margin"
-        android:layout_marginStart="@dimen/double_margin"
-        android:layout_marginEnd="@dimen/double_margin"
-        android:layout_marginBottom="@dimen/basic_margin"
-        android:textColor="@android:color/black"
-        android:textStyle="bold"
-        android:theme="@style/AppTheme.Title"
-        app:layout_constraintTop_toBottomOf="@id/appbar"
-        tools:text="헤드라인" />
-
-    <TextView
-        android:id="@+id/itemInfoTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/double_margin"
-        android:layout_marginEnd="@dimen/double_margin"
-        android:layout_marginBottom="@dimen/basic_margin"
-        android:textColor="@color/colorTransparentBlack"
-        android:theme="@style/AppTheme.Body2"
-        app:layout_constraintTop_toBottomOf="@id/titleTextView"
-        tools:text="정보" />
-
-    <ImageView
-        android:id="@+id/itemImageView"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_margin="@dimen/double_margin"
-        android:contentDescription="@string/description_item_image"
-        app:layout_constraintTop_toBottomOf="@id/itemInfoTextView" />
-
-    <TextView
-        android:id="@+id/descriptionTextView"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:theme="@style/AppTheme.Body1"
-        android:layout_marginTop="@dimen/basic_margin"
-        android:layout_marginStart="@dimen/double_margin"
-        android:layout_marginEnd="@dimen/double_margin"
-        android:lineSpacingExtra="4dp"
-        android:ellipsize="end"
-        app:layout_constraintTop_toBottomOf="@id/itemImageView"
-        app:layout_constraintBottom_toTopOf="@id/buttonLayout"
-        tools:text="설명" />
+        app:layout_constraintTop_toBottomOf="@id/appbar"
+        app:layout_constraintBottom_toTopOf="@id/buttonLayout">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/titleTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/basic_margin"
+                android:layout_marginStart="@dimen/double_margin"
+                android:layout_marginEnd="@dimen/double_margin"
+                android:layout_marginBottom="@dimen/basic_margin"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                android:theme="@style/AppTheme.Title"
+                app:layout_constraintTop_toBottomOf="@id/appbar"
+                tools:text="헤드라인" />
+
+            <TextView
+                android:id="@+id/itemInfoTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/double_margin"
+                android:layout_marginEnd="@dimen/double_margin"
+                android:layout_marginBottom="@dimen/basic_margin"
+                android:textColor="@color/colorTransparentBlack"
+                android:theme="@style/AppTheme.Body2"
+                app:layout_constraintTop_toBottomOf="@id/titleTextView"
+                tools:text="정보" />
+
+            <ImageView
+                android:id="@+id/itemImageView"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_margin="@dimen/double_margin"
+                android:contentDescription="@string/description_item_image"
+                app:layout_constraintTop_toBottomOf="@id/itemInfoTextView" />
+
+            <TextView
+                android:id="@+id/descriptionTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:theme="@style/AppTheme.Body1"
+                android:layout_marginTop="@dimen/basic_margin"
+                android:layout_marginStart="@dimen/double_margin"
+                android:layout_marginEnd="@dimen/double_margin"
+                android:lineSpacingExtra="4dp"
+                android:ellipsize="end"
+                tools:text="설명" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </ScrollView>
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/buttonLayout"

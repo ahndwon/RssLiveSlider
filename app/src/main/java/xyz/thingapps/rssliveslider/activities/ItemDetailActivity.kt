@@ -28,6 +28,7 @@ class ItemDetailActivity : AppCompatActivity() {
         setContentView(R.layout.activity_item_detail)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = getString(R.string.feed)
 
         val item: Item? = intent.getParcelableExtra<Item>(RSS_ITEM) ?: return
 

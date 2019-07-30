@@ -41,4 +41,5 @@
     <string name="toast_no_url">No URL.</string>
     <string name="title_delete_rss">Delete RSS</string>
     <string name="message_delete_rss">Would you like to delete this RSS?</string>
+    <string name="feed">Feed</string>
 </resources>
