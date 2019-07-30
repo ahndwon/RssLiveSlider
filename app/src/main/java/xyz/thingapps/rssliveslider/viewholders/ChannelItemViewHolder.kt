@@ -13,6 +13,8 @@ import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.signature.ObjectKey
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -21,9 +23,7 @@ import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.item_feed.view.*
 import xyz.thingapps.rssliveslider.R
 import xyz.thingapps.rssliveslider.activities.ItemDetailActivity
-import xyz.thingapps.rssliveslider.api.provideJSoupApi
 import xyz.thingapps.rssliveslider.models.Item
-import xyz.thingapps.rssliveslider.models.Media
 import xyz.thingapps.rssliveslider.utils.PaddingBackgroundColorSpan
 import xyz.thingapps.rssliveslider.utils.ThumbnailTask
 import java.util.concurrent.TimeUnit
@@ -46,20 +46,9 @@ class ChannelItemViewHolder(private val view: View) : RecyclerView.ViewHolder(vi
     fun bind(item: Item, position: Int, itemCount: Int) {
         with(view) {
 
-            dispose()
-
-            var description = item.description
-
             item.description?.let { itemDescription ->
                 if (itemDescription.startsWith('<')) {
-                    description = itemDescription.substringAfterLast(">").trimStart()
-
-                    if (itemDescription.contains("src=\"")) {
-                        item.media = Media(
-                            parseImageUrl(itemDescription),
-                            "image"
-                        )
-                    }
+                    item.description = itemDescription.substringAfterLast(">").trimStart()
                 }
             }
 
@@ -67,56 +56,17 @@ class ChannelItemViewHolder(private val view: View) : RecyclerView.ViewHolder(vi
             feedTitle.text = item.title
             feedTime.text = item.pubDate
 
-            description?.let { setupDescription(it, position, itemCount) }
+            item.description?.let { setupDescription(it, position, itemCount) }
 
             item.media?.let { media ->
                 if (media.type.contains("image")) {
+                    this@ChannelItemViewHolder.setIsRecyclable(false)
                     showFeedImage(media.url)
                     view.feedVideoView.visibility = View.GONE
                 }
 
                 if (media.type.contains("video")) {
                     playVideo(media.url)
-                }
-            }
-
-            if (item.media == null) {
-                item.link?.let { link ->
-                    provideJSoupApi().getDocument(link)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe({ document ->
-                            val urlList = document.select("img").map { element ->
-                                when {
-//                                    element.hasAttr("src") -> element.attr("src")
-                                    element.hasAttr("data-src") -> element.attr("data-src")
-                                    else -> ""
-                                }
-                            }
-
-                            urlList.max()?.let { longestUrl ->
-                                showFeedImage(longestUrl)
-
-                                item.media = Media(
-                                    parseImageUrl(longestUrl),
-                                    "image"
-                                )
-
-                                this.setOnClickListener {
-                                    val intent = Intent(context, ItemDetailActivity::class.java)
-                                    intent.putExtra(ItemDetailActivity.RSS_ITEM, item)
-                                    context.startActivity(intent)
-                                }
-
-                                Log.i(
-                                    ChannelItemViewHolder::class.java.name,
-                                    "longestUrl : $longestUrl"
-                                )
-                            }
-
-
-                        }, { e ->
-                            Log.i(ChannelItemViewHolder::class.java.name, "getDocument error : ", e)
-                        })
                 }
             }
 
@@ -131,6 +81,9 @@ class ChannelItemViewHolder(private val view: View) : RecyclerView.ViewHolder(vi
     private fun showFeedImage(url: String) {
         Glide.with(view.context).load(url)
             .centerCrop()
+            .signature(ObjectKey(System.currentTimeMillis()))
+            .skipMemoryCache(true)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
             .into(view.feedImageView)
     }
 
@@ -155,25 +108,25 @@ class ChannelItemViewHolder(private val view: View) : RecyclerView.ViewHolder(vi
     private fun playVideo(url: String) {
         isVideo = true
 
-        var mediaPlayer = MediaPlayer()
+        var mediaPlayer: MediaPlayer? = null
 
         ThumbnailTask(url).execute(view.feedImageView)
+        view.feedVideoProgressBar.visibility = View.VISIBLE
 
         val callback = object : SurfaceHolder.Callback {
             override fun surfaceChanged(p0: SurfaceHolder?, p1: Int, p2: Int, p3: Int) {
-
             }
 
             override fun surfaceDestroyed(p0: SurfaceHolder?) {
-                mediaPlayer.release()
+                mediaPlayer?.let { stopPlayer(it) }
+                Log.i("destroyed", "yjh")
             }
 
             override fun surfaceCreated(p0: SurfaceHolder?) {
                 mediaPlayer = MediaPlayer()
-                mediaPlayer.reset()
 
                 try {
-                    mediaPlayer.apply {
+                    mediaPlayer?.apply {
                         setDataSource(url)
                         setVolume(0f, 0f)
                         setDisplay(p0)
@@ -184,6 +137,7 @@ class ChannelItemViewHolder(private val view: View) : RecyclerView.ViewHolder(vi
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({
                                     view.feedImageView.visibility = View.GONE
+                                    view.feedVideoProgressBar.visibility = View.GONE
                                 }, { e ->
                                     e.printStackTrace()
                                 })
@@ -202,8 +156,12 @@ class ChannelItemViewHolder(private val view: View) : RecyclerView.ViewHolder(vi
         view.feedVideoView.holder.addCallback(callback)
     }
 
-    private fun parseImageUrl(source: String): String {
-        return source.split("src=\"")[1].split("\"")[0]
+    private fun stopPlayer(mediaPlayer: MediaPlayer) {
+        mediaPlayer.let {
+            it.reset()
+            it.release()
+            null
+        }
     }
 
     fun animate() {
@@ -214,11 +172,6 @@ class ChannelItemViewHolder(private val view: View) : RecyclerView.ViewHolder(vi
             R.anim.animation_feed_image,
             0
         )
-    }
-
-    private fun dispose() {
-        disposeBag.dispose()
-        disposeBag = CompositeDisposable()
     }
 
     private fun String.createSpan(spans: Any): Spannable {
@@ -255,5 +208,8 @@ class ChannelItemViewHolder(private val view: View) : RecyclerView.ViewHolder(vi
 
     }
 
+    fun dispose() {
+        disposeBag.dispose()
+    }
 }
 

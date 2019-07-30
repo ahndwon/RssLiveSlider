@@ -9,24 +9,26 @@ import com.tickaroo.tikxml.annotation.Xml
 
 @Xml(name = "item")
 data class Item(
-    @PropertyElement(writeAsCData = true) val title: String = "",
-    @PropertyElement(writeAsCData = true) val description: String? = "",
+    @PropertyElement(writeAsCData = true) val title: String? = "",
+    @PropertyElement(writeAsCData = true) var description: String? = "",
     @Attribute val img: String? = "",
     @PropertyElement(writeAsCData = true) val link: String? = "",
     @PropertyElement(writeAsCData = true) val guid: String? = "",
     @PropertyElement(writeAsCData = true) val pubDate: String? = "",
     @PropertyElement(writeAsCData = true) val source: String? = "",
-    @Element var media: Media? = Media()
+    @Element var media: Media? = Media(),
+    @Attribute var recognition: String? = null
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
-        parcel.readString() ?: "",
-        parcel.readString() ?: "",
-        parcel.readString() ?: "",
-        parcel.readString() ?: "",
-        parcel.readString() ?: "",
-        parcel.readString() ?: "",
-        parcel.readString() ?: "",
-        parcel.readParcelable(Media::class.java.classLoader)
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readParcelable(Media::class.java.classLoader),
+        parcel.readString()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -38,6 +40,7 @@ data class Item(
         parcel.writeString(pubDate)
         parcel.writeString(source)
         parcel.writeParcelable(media, flags)
+        parcel.writeString(recognition)
     }
 
     override fun describeContents(): Int {

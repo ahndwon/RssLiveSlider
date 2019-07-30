@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <androidx.constraintlayout.widget.ConstraintLayout android:layout_height="match_parent"
     android:layout_width="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -83,6 +82,17 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="1/10" />
+
+    <ProgressBar
+        android:id="@+id/feedVideoProgressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/feedImageView"
+        app:layout_constraintEnd_toEndOf="@+id/feedImageView"
+        app:layout_constraintStart_toStartOf="@+id/feedImageView"
+        app:layout_constraintTop_toTopOf="@+id/feedImageView" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
