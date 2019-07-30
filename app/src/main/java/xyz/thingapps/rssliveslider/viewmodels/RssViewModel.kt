@@ -1,33 +1,25 @@
 package xyz.thingapps.rssliveslider.viewmodels
 
+import android.app.Application
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.subjects.PublishSubject
-import xyz.thingapps.rssliveslider.api.dao.Cast
 import xyz.thingapps.rssliveslider.api.provideRssApi
 import xyz.thingapps.rssliveslider.fragments.ChannelFragment
+import xyz.thingapps.rssliveslider.models.Cast
+import xyz.thingapps.rssliveslider.sharedApp
 
-class RssViewModel : ViewModel() {
-
+class RssViewModel(val app: Application) : AndroidViewModel(app) {
     private val disposeBag = CompositeDisposable()
     var currentFragmentPublisher = PublishSubject.create<Int>()
 
-    var urlList: ArrayList<String> = arrayListOf(
-        "https://rss.joins.com/joins_news_list.xml",
-        "http://www.chosun.com/site/data/rss/rss.xml",
-        "https://www.nasa.gov/rss/dyn/TWAN_vodcast.rss",
-        "https://www.nasa.gov/rss/dyn/breaking_news.rss",
-        "https://www.nasa.gov/rss/dyn/lg_image_of_the_day.rss",
-        "https://www.nasa.gov/rss/dyn/onthestation_rss.rss",
-        "https://www.nasa.gov/rss/dyn/mission_pages/kepler/news/kepler-newsandfeatures-RSS.rss",
-        "https://www.nasa.gov/rss/dyn/chandra_images.rss",
-        "https://www.nasa.gov/rss/dyn/shuttle_station.rss",
-        "https://www.nasa.gov/rss/dyn/solar_system.rss"
-    )
+    var urlList: List<String> = (app.sharedApp.rssUrlList ?: ArrayList()).map {
+        it.url
+    }
 
     var sortList: List<String> = listOf("Date Ascending")
 
@@ -52,12 +44,20 @@ class RssViewModel : ViewModel() {
     private fun setChannels(castList: List<Cast>) {
         val fragments = ArrayList<Fragment>()
         castList.forEachIndexed { index, cast ->
-            fragments.add(ChannelFragment.newInstance(cast.title, index))
+            fragments.add(ChannelFragment.newInstance(cast.title ?: "", index))
         }
         channelList = fragments.toList()
     }
 
+    private fun getRssUrlList(): List<String> {
+        return (app.sharedApp.rssUrlList ?: ArrayList()).map {
+            it.url
+        }
+    }
+
     fun getData(onSubscribe: (() -> Unit)? = null) {
+        urlList = getRssUrlList()
+
         Observable.zip(
             urlList.map {
                 provideRssApi().getCast(it)
@@ -68,8 +68,9 @@ class RssViewModel : ViewModel() {
             }
         }.observeOn(AndroidSchedulers.mainThread())
             .subscribe({
+                setRssTitle(it)
                 castList = it
-                castTitleList = (castList.map { cast -> cast.title }).toMutableList()
+                castTitleList = (castList.map { cast -> cast.title ?: "" }).toMutableList()
 
                 onSubscribe?.invoke()
             }, { e ->
@@ -98,10 +99,10 @@ class RssViewModel : ViewModel() {
         var list = this
 
         if (sort.contains("Add Ascending")) {
-            list = this.sortedBy { it.createCast }
+            list = this.sortedBy { it.createdAt }
         }
         if (sort.contains("Add Descending")) {
-            list = this.sortedByDescending { it.createCast }
+            list = this.sortedByDescending { it.createdAt }
         }
         if (sort.contains("Title Ascending")) {
             list = this.sortedBy { it.title }
@@ -111,6 +112,20 @@ class RssViewModel : ViewModel() {
         }
 
         return list
+    }
+
+    private fun setRssTitle(castList: List<Cast>) {
+        val rssUrlList = app.sharedApp.rssUrlList ?: ArrayList()
+        var isChange = false
+        for (i in 0.until(castList.size)) {
+            val rssUrl = rssUrlList[i]
+            if (rssUrl.title == null) {
+                rssUrl.title = castList[i].title
+                isChange = true
+            }
+        }
+
+        if (isChange) app.sharedApp.rssUrlList = rssUrlList
     }
 
     override fun onCleared() {

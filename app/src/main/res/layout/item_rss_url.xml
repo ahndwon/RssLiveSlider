@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/double_margin"
+    android:layout_marginEnd="@dimen/double_margin"
+    android:layout_marginTop="@dimen/basic_margin"
+    android:layout_marginBottom="@dimen/basic_margin">
+
+    <TextView
+        android:id="@+id/rssTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/deleteButton"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rssUrl"
+        style="@style/AppTheme.Body1"
+        tools:text="가나봐라 봐라봐라 하지나 마라" />
+
+    <TextView
+        android:id="@+id/rssUrl"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/half_margin"
+        android:textColor="@color/gray"
+        app:layout_constraintTop_toBottomOf="@id/rssTitle"
+        app:layout_constraintEnd_toStartOf="@id/deleteButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        tools:text="@string/add_url_hint" />
+
+    <TextView
+        android:id="@+id/rssCreatedAt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/half_margin"
+        android:layout_marginBottom="@dimen/half_margin"
+        android:textColor="@color/gray"
+        app:layout_constraintTop_toBottomOf="@id/rssUrl"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="3시간전" />
+
+    <ImageButton
+        android:id="@+id/deleteButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/ic_delete"
+        android:tint="#777777"
+        android:contentDescription="@string/description_rss_delete_button"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        style="@style/Widget.AppCompat.Button.Borderless" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

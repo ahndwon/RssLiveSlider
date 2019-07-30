@@ -34,7 +34,7 @@ class FilterDialogFragment : DialogFragment() {
         }
 
         val sortList = context?.resources?.getStringArray(R.array.sort_by)?.toList()
-        val filterRssList = viewModel.castList.map { it.title }
+        val filterRssList = viewModel.castList.map { it.title ?: "" }
         val filterSortList = viewModel.sortList
 
         view.channelSpinner.adapter = setAdapter(viewModel.castTitleList, filterRssList)

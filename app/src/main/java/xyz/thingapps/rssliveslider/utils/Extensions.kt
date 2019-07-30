@@ -1,8 +1,12 @@
 package xyz.thingapps.rssliveslider.utils
 
+import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -32,4 +36,13 @@ fun EditText.validate(message: String, validator: (String) -> Boolean) {
         this.error = if (validator(it)) null else message
     }
     this.error = if (validator(this.text.toString())) null else message
+}
+
+inline fun <reified T> Gson.fromJson(json: String): T =
+    this.fromJson(json, object : TypeToken<T>() {}.type)
+
+
+fun Context.showKeyboard() {
+    (this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
+        .toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS)
 }

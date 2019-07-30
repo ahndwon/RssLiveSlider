@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="basic_margin">8dp</dimen>
+    <dimen name="double_margin">16dp</dimen>
     <dimen name="item_margin">8dp</dimen>
     <dimen name="text_view_margin">8dp</dimen>
     <dimen name="item_corner_radius">8dp</dimen>
@@ -11,5 +12,7 @@
     <dimen name="feed_item_height">300dp</dimen>
 
     <dimen name="dialog_margin">24dp</dimen>
+    <dimen name="half_margin">4dp</dimen>
+    <dimen name="card_view_margin">2dp</dimen>
 
 </resources>

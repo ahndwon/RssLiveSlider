@@ -1,11 +1,11 @@
 package xyz.thingapps.rssliveslider.api
 
 import io.reactivex.Observable
+import org.jsoup.nodes.Document
 import retrofit2.http.GET
 import retrofit2.http.Url
-import xyz.thingapps.rssliveslider.models.Cast
 
-interface RssApi {
+interface JSoupApi {
     @GET
-    fun getCast(@Url url: String): Observable<Cast>
+    fun getDocument(@Url url: String): Observable<Document>
 }

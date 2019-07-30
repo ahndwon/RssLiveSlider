@@ -30,7 +30,10 @@ class HomeFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
         fragmentAdapter = FragmentListAdapter(childFragmentManager)
-        view.homeRecyclerView.layoutManager = LinearLayoutManager(view.context)
+        view.homeRecyclerView.layoutManager =
+            LinearLayoutManager(view.context, RecyclerView.VERTICAL, true).apply {
+                stackFromEnd = true
+            }
 
         return view
     }
@@ -83,8 +86,6 @@ class HomeFragment : Fragment() {
 
     private fun setupRecyclerView(recyclerView: RecyclerView) {
         recyclerView.apply {
-            this.layoutManager = LinearLayoutManager(recyclerView.context)
-
             this.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     super.onScrollStateChanged(recyclerView, newState)
