@@ -13,7 +13,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.activity_main.*
 import xyz.thingapps.rssliveslider.R
-import xyz.thingapps.rssliveslider.fragments.FilterDialogFragment
+import xyz.thingapps.rssliveslider.dialog.FilterDialogFragment
 import xyz.thingapps.rssliveslider.fragments.HomeFragment
 import xyz.thingapps.rssliveslider.models.Cast
 import xyz.thingapps.rssliveslider.viewmodels.RssViewModel
@@ -34,6 +34,8 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_search)
+
+        viewModel.imageRecognizer.setClassifier(this)
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.frameContainer, HomeFragment())

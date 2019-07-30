@@ -18,23 +18,23 @@
             android:layout_width="match_parent"
             android:layout_height="?android:actionBarSize"
             android:layout_gravity="center"
-            app:titleMarginStart="0dp"
-            app:contentInsetStartWithNavigation="0dp"
+            app:contentInsetEnd="0dp"
             app:contentInsetEndWithActions="0dp"
             app:contentInsetStart="0dp"
-            app:contentInsetEnd="0dp"
+            app:contentInsetStartWithNavigation="0dp"
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/AppTheme.PopupOverlay"
-            app:theme="@style/AppTheme.Toolbar">
+            app:theme="@style/AppTheme.Toolbar"
+            app:titleMarginStart="0dp">
 
             <SearchView
                 android:id="@+id/searchView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:focusable="true"
-                app:searchIcon="@null"
                 app:iconifiedByDefault="false"
-                app:queryHint="@string/hint_search" />
+                app:queryHint="@string/hint_search"
+                app:searchIcon="@null" />
 
         </androidx.appcompat.widget.Toolbar>
 
@@ -45,7 +45,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@color/white"
-        app:layout_constraintTop_toBottomOf="@id/appbar"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/appbar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

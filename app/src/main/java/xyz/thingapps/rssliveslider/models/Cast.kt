@@ -2,10 +2,7 @@ package xyz.thingapps.rssliveslider.models
 
 import android.os.Parcel
 import android.os.Parcelable
-import com.tickaroo.tikxml.annotation.Element
-import com.tickaroo.tikxml.annotation.Path
-import com.tickaroo.tikxml.annotation.PropertyElement
-import com.tickaroo.tikxml.annotation.Xml
+import com.tickaroo.tikxml.annotation.*
 
 
 @Xml(name = "rss")
@@ -13,15 +10,15 @@ data class Cast(
     @Path("channel") @PropertyElement(writeAsCData = true) val title: String? = "",
     @Path("channel") @PropertyElement(writeAsCData = true) val description: String? = "",
     @Path("channel") @PropertyElement(writeAsCData = true) val link: String? = "",
-    @Path("channel") @Element val items: List<Item>? = mutableListOf()
+    @Path("channel") @Element val items: List<Item>? = mutableListOf(),
+    @Attribute var createdAt: Long = 0
 ) : Parcelable {
-    var createdAt: Long = 0
-
     constructor(parcel: Parcel) : this(
-        parcel.readString() ?: "",
         parcel.readString(),
         parcel.readString(),
-        parcel.createTypedArrayList(Item) ?: ArrayList<Item>()
+        parcel.readString(),
+        parcel.createTypedArrayList(Item),
+        parcel.readLong()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -29,6 +26,7 @@ data class Cast(
         parcel.writeString(description)
         parcel.writeString(link)
         parcel.writeTypedList(items)
+        parcel.writeLong(createdAt)
     }
 
     override fun describeContents(): Int {
@@ -44,7 +42,6 @@ data class Cast(
             return arrayOfNulls(size)
         }
     }
-
 }
 
 

@@ -10,12 +10,12 @@
         android:id="@+id/groupTextView"
         android:layout_width="match_parent"
         android:layout_height="26dp"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:maxLines="1"
         android:paddingStart="21dp"
         android:paddingEnd="21dp"
-        android:maxLines="1"
-        android:ellipsize="end"
         android:textSize="12sp"
-        android:gravity="center_vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -25,7 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/groupTextView"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/groupTextView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

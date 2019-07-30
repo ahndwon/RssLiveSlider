@@ -24,6 +24,10 @@ android {
         }
     }
 
+    aaptOptions {
+        noCompress "tflite"
+    }
+
     android {
         compileOptions {
             sourceCompatibility JavaVersion.VERSION_1_8
@@ -79,6 +83,10 @@ dependencies {
 
     // jsoup
     implementation 'org.jsoup:jsoup:1.12.1'
+
+    // tensorflow-lite
+    implementation 'org.tensorflow:tensorflow-lite:0.0.0-nightly'
+    implementation 'org.tensorflow:tensorflow-lite-gpu:0.0.0-nightly'
 
     // threetenbp
     implementation 'com.jakewharton.threetenabp:threetenabp:1.2.1'

@@ -160,25 +160,25 @@ class ChannelItemViewHolder(private val view: View) : RecyclerView.ViewHolder(vi
     private fun playVideo(url: String) {
         isVideo = true
 
-        var mediaPlayer = MediaPlayer()
+        var mediaPlayer: MediaPlayer? = null
 
         ThumbnailTask(url).execute(view.feedImageView)
+        view.feedVideoProgressBar.visibility = View.VISIBLE
 
         val callback = object : SurfaceHolder.Callback {
             override fun surfaceChanged(p0: SurfaceHolder?, p1: Int, p2: Int, p3: Int) {
-
             }
 
             override fun surfaceDestroyed(p0: SurfaceHolder?) {
-                mediaPlayer.release()
+                mediaPlayer?.let { stopPlayer(it) }
+                Log.i("destroyed", "yjh")
             }
 
             override fun surfaceCreated(p0: SurfaceHolder?) {
                 mediaPlayer = MediaPlayer()
-                mediaPlayer.reset()
 
                 try {
-                    mediaPlayer.apply {
+                    mediaPlayer?.apply {
                         setDataSource(url)
                         setVolume(0f, 0f)
                         setDisplay(p0)
@@ -189,6 +189,7 @@ class ChannelItemViewHolder(private val view: View) : RecyclerView.ViewHolder(vi
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({
                                     view.feedImageView.visibility = View.GONE
+                                    view.feedVideoProgressBar.visibility = View.GONE
                                 }, { e ->
                                     e.printStackTrace()
                                 })
@@ -205,6 +206,14 @@ class ChannelItemViewHolder(private val view: View) : RecyclerView.ViewHolder(vi
         }
 
         view.feedVideoView.holder.addCallback(callback)
+    }
+
+    private fun stopPlayer(mediaPlayer: MediaPlayer) {
+        mediaPlayer.let {
+            it.reset()
+            it.release()
+            null
+        }
     }
 
     private fun parseImageUrl(source: String): String {

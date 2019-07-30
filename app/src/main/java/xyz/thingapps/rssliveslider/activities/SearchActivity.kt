@@ -2,7 +2,6 @@ package xyz.thingapps.rssliveslider.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,10 +19,7 @@ import java.util.concurrent.TimeUnit
 
 class SearchActivity : AppCompatActivity() {
 
-    companion object {
-        const val CAST_LIST = "cast_list"
-    }
-
+    val adapter = SearchGroupListAdapter()
     private val disposeBag = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,43 +30,55 @@ class SearchActivity : AppCompatActivity() {
         val castList: ArrayList<Cast> =
             intent?.getParcelableArrayListExtra(CAST_LIST) ?: ArrayList()
 
-        val adapter = SearchGroupListAdapter()
-        adapter.onItemClick = { item ->
-            val intent = Intent(this@SearchActivity, ItemDetailActivity::class.java)
-            intent.putExtra(ItemDetailActivity.RSS_ITEM, item)
-            this@SearchActivity.startActivity(intent)
-        }
-        adapter.onGroupClick = { cast ->
-            val intent = Intent(this@SearchActivity, AllContentsActivity::class.java)
-            intent.putExtra(AllContentsActivity.RSS_CAST, cast)
-            this@SearchActivity.startActivity(intent)
-        }
+        setupAdapter()
+        setupRecyclerView()
 
-        searchRecyclerView.adapter = adapter
-        searchRecyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+        setSearch(castList)
+    }
 
+    private fun setSearch(castList: ArrayList<Cast>) {
         searchView?.queryTextChanges()
             ?.debounce(500, TimeUnit.MILLISECONDS)
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe({ search ->
                 if (search.isBlank()) return@subscribe
-                val result = castList.map { cast ->
-                    val filtered = cast.items?.filter { item ->
-                        item.title.contains(search)
-                    } ?: emptyList()
-                    val filteredCast = Cast(cast.title, cast.description, cast.link, filtered)
-                    filteredCast
-                }.filter {
-                    it.items?.isNotEmpty() ?: false
-                }
 
-                Log.d(SearchActivity::class.java.name, "result : $result")
-
-                adapter.items = result
+                adapter.items = query(castList, search.toString())
                 adapter.notifyDataSetChanged()
             }, { e ->
                 e.printStackTrace()
             })?.addTo(disposeBag)
+    }
+
+    private fun query(castList: List<Cast>, search: String): List<Cast> {
+        return castList.map { cast ->
+            val filtered = cast.items?.filter { item ->
+                item.title?.contains(search) ?: false || item.recognition == search
+            } ?: emptyList()
+            val filteredCast = Cast(cast.title, cast.description, cast.link, filtered)
+            filteredCast
+        }.filter {
+            it.items?.isNotEmpty() ?: false
+        }
+    }
+
+    private fun setupAdapter() {
+        adapter.onItemClick = { item ->
+            val intent = Intent(this@SearchActivity, ItemDetailActivity::class.java)
+            intent.putExtra(ItemDetailActivity.RSS_ITEM, item)
+            this@SearchActivity.startActivity(intent)
+        }
+
+        adapter.onGroupClick = { cast ->
+            val intent = Intent(this@SearchActivity, AllContentsActivity::class.java)
+            intent.putExtra(AllContentsActivity.RSS_CAST, cast)
+            this@SearchActivity.startActivity(intent)
+        }
+    }
+
+    private fun setupRecyclerView() {
+        searchRecyclerView.adapter = adapter
+        searchRecyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
     }
 
     private fun setupActionBar() {
@@ -87,5 +95,9 @@ class SearchActivity : AppCompatActivity() {
             android.R.id.home -> onBackPressed()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    companion object {
+        const val CAST_LIST = "cast_list"
     }
 }
