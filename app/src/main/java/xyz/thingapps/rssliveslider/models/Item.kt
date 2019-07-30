@@ -10,7 +10,7 @@ import com.tickaroo.tikxml.annotation.Xml
 @Xml(name = "item")
 data class Item(
     @PropertyElement(writeAsCData = true) val title: String? = "",
-    @PropertyElement(writeAsCData = true) val description: String? = "",
+    @PropertyElement(writeAsCData = true) var description: String? = "",
     @Attribute val img: String? = "",
     @PropertyElement(writeAsCData = true) val link: String? = "",
     @PropertyElement(writeAsCData = true) val guid: String? = "",
