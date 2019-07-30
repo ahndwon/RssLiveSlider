@@ -1,10 +1,13 @@
 package xyz.thingapps.rssliveslider.activities
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Patterns
 import android.view.Menu
 import android.view.MenuItem
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.SearchView
@@ -16,8 +19,11 @@ import com.jakewharton.rxbinding3.widget.queryTextChanges
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.activity_main.*
+import org.threeten.bp.Instant
 import xyz.thingapps.rssliveslider.R
 import xyz.thingapps.rssliveslider.fragments.HomeFragment
+import xyz.thingapps.rssliveslider.models.RssUrl
+import xyz.thingapps.rssliveslider.sharedApp
 import xyz.thingapps.rssliveslider.utils.validate
 import xyz.thingapps.rssliveslider.viewmodels.RssViewModel
 import java.util.concurrent.TimeUnit
@@ -58,7 +64,7 @@ class MainActivity : AppCompatActivity() {
             ?.subscribe({ search ->
                 viewModel.getData {
                     viewModel.castList = viewModel.castList.filter {
-                        it.title.contains(search)
+                        it.title?.contains(search) ?: false
                     }
                 }
             }, { e ->
@@ -67,6 +73,9 @@ class MainActivity : AppCompatActivity() {
 
         searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(menuItem: MenuItem?): Boolean {
+                searchView?.isIconifiedByDefault = false
+                searchView?.requestFocus()
+                showKeyboard()
                 return true
             }
 
@@ -75,6 +84,11 @@ class MainActivity : AppCompatActivity() {
                 return true
             }
         })
+    }
+
+    private fun showKeyboard() {
+        (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
+            .toggleSoftInput(0, HIDE_NOT_ALWAYS)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -116,7 +130,13 @@ class MainActivity : AppCompatActivity() {
                     )
                         .show()
                 } else {
-                    viewModel.urlList.add(editText.text.toString())
+//                    viewModel.urlList.add(editText.text.toString())
+                    sharedApp.addRssUrl(
+                        RssUrl(
+                            editText.text.toString(),
+                            Instant.now().toEpochMilli()
+                        )
+                    )
                     viewModel.getData()
                 }
             }
