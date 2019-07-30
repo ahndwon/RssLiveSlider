@@ -15,6 +15,8 @@ data class Cast(
     @Path("channel") @PropertyElement(writeAsCData = true) val link: String? = "",
     @Path("channel") @Element val items: List<Item>? = mutableListOf()
 ) : Parcelable {
+    var createdAt: Long = 0
+
     constructor(parcel: Parcel) : this(
         parcel.readString() ?: "",
         parcel.readString(),

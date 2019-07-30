@@ -38,7 +38,6 @@ class HomeFragment : Fragment() {
         return view
     }
 
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
@@ -50,10 +49,34 @@ class HomeFragment : Fragment() {
 
             viewModel.channelListPublisher
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
+                .subscribe({
                     fragmentAdapter.fragments = viewModel.channelList
                     view?.homeRecyclerView?.adapter = fragmentAdapter
-                }.addTo(disposeBag)
+
+
+                    viewModel.channelList.forEach { fragment ->
+
+                        val index = viewModel.channelList.indexOf(fragment)
+
+                        val fragmentViewHolder =
+                            view?.homeRecyclerView?.findViewHolderForLayoutPosition(index)
+
+                        fragmentViewHolder?.let { holder ->
+                            childFragmentManager.beginTransaction()
+                                .replace(
+                                    holder.itemView.id,
+                                    viewModel.channelList[index],
+                                    index.toString()
+                                )
+                                .commit()
+                        }
+
+                    }
+
+
+                }, { e ->
+                    e.printStackTrace()
+                }).addTo(disposeBag)
         }
 
         view?.homeRecyclerView?.let { setupRecyclerView(it) }

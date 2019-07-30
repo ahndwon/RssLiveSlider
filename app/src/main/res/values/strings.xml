@@ -14,6 +14,17 @@
     <string name="description_clear_filter">clear filter</string>
     <string name="filter_sorted_by_title">sorted by title</string>
     <string name="filter_all_rss">All RSS</string>
+    <string name="filter">Filter</string>
+    <string name="description_sort_icon_image">sortIconImage</string>
+    <string name="apply">APPLY</string>
+    <string name="description_channel_icon">channel_icon</string>
+
+    <string-array name="sort_by">
+        <item>"Date Ascending"</item>
+        <item>"Date Descending"</item>
+        <item>"Title Ascending"</item>
+        <item>"Title Descending"</item>
+    </string-array>
     <string name="description_item_image">item image</string>
     <string name="share">share</string>
     <string name="visit_website">visit website</string>
