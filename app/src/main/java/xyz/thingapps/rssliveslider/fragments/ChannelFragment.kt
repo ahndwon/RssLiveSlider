@@ -21,7 +21,7 @@ import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.fragment_channel.view.*
 import xyz.thingapps.rssliveslider.R
 import xyz.thingapps.rssliveslider.activities.AllContentsActivity
-import xyz.thingapps.rssliveslider.activities.AllContentsActivity.Companion.CAST
+import xyz.thingapps.rssliveslider.activities.AllContentsActivity.Companion.RSS_CAST
 import xyz.thingapps.rssliveslider.adapters.ChannelItemListAdapter
 import xyz.thingapps.rssliveslider.models.Cast
 import xyz.thingapps.rssliveslider.viewholders.ChannelItemViewHolder
@@ -65,7 +65,8 @@ class ChannelFragment : Fragment() {
         val adapter = ChannelItemListAdapter(0, tag?.toInt() ?: 0)
         view?.recyclerView?.adapter = adapter
 
-        setupItems(adapter, viewModel.castList[index])
+        if (viewModel.castList.isNotEmpty())
+            setupItems(adapter, viewModel.castList[index])
 
         view?.recyclerView?.let { setupRecyclerView(it) }
 
@@ -116,7 +117,7 @@ class ChannelFragment : Fragment() {
 
         view?.allContentsButton?.clicks()?.subscribe({
             val intent = Intent(this@ChannelFragment.context, AllContentsActivity::class.java)
-            intent.putExtra(CAST, viewModel.castList[index])
+            intent.putExtra(RSS_CAST, viewModel.castList[index])
             startActivity(intent)
         }, { e ->
             Log.d(TAG, "allContentsButton click failed : ", e)

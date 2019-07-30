@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
+import com.jakewharton.threetenabp.AndroidThreeTen
 import org.threeten.bp.Instant
 import xyz.thingapps.rssliveslider.models.RssUrl
 import xyz.thingapps.rssliveslider.utils.fromJson
@@ -36,6 +37,7 @@ class SharedApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        AndroidThreeTen.init(this)
 
         if (rssUrlList == null) {
             populateRssList()

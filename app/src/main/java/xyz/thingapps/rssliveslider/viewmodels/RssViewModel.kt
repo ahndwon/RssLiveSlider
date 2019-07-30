@@ -1,6 +1,7 @@
 package xyz.thingapps.rssliveslider.viewmodels
 
 import android.app.Application
+import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.AndroidViewModel
 import io.reactivex.Observable
@@ -16,19 +17,6 @@ import xyz.thingapps.rssliveslider.sharedApp
 class RssViewModel(val app: Application) : AndroidViewModel(app) {
     private val disposeBag = CompositeDisposable()
     var currentFragmentPublisher = PublishSubject.create<Int>()
-
-//    var urlList: ArrayList<String> = arrayListOf(
-//        "https://rss.joins.com/joins_news_list.xml",
-//        "http://www.chosun.com/site/data/rss/rss.xml",
-//        "https://www.nasa.gov/rss/dyn/TWAN_vodcast.rss",
-//        "https://www.nasa.gov/rss/dyn/breaking_news.rss",
-//        "https://www.nasa.gov/rss/dyn/lg_image_of_the_day.rss",
-//        "https://www.nasa.gov/rss/dyn/onthestation_rss.rss",
-//        "https://www.nasa.gov/rss/dyn/mission_pages/kepler/news/kepler-newsandfeatures-RSS.rss",
-//        "https://www.nasa.gov/rss/dyn/chandra_images.rss",
-//        "https://www.nasa.gov/rss/dyn/shuttle_station.rss",
-//        "https://www.nasa.gov/rss/dyn/solar_system.rss"
-//    )
 
     var urlList: List<String> = (app.sharedApp.rssUrlList ?: ArrayList()).map {
         it.url
@@ -77,11 +65,28 @@ class RssViewModel(val app: Application) : AndroidViewModel(app) {
             }
         }.observeOn(AndroidSchedulers.mainThread())
             .subscribe({
+                setRssTitle(it)
                 castList = it
                 onSubscribe?.invoke()
             }, { e ->
                 e.printStackTrace()
             }).addTo(disposeBag)
+    }
+
+    private fun setRssTitle(castList: List<Cast>) {
+        val rssUrlList = app.sharedApp.rssUrlList ?: ArrayList()
+        var isChange = false
+        for (i in 0.until(castList.size)) {
+            val rssUrl = rssUrlList[i]
+            if (rssUrl.title == null) {
+                rssUrl.title = castList[i].title
+                isChange = true
+            }
+        }
+
+        Log.d(RssViewModel::class.java.name, "setRssTitle: $rssUrlList")
+
+        if (isChange) app.sharedApp.rssUrlList = rssUrlList
     }
 
     override fun onCleared() {

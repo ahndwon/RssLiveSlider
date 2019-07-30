@@ -2,7 +2,7 @@
     <string name="app_name">RssLiveSlider</string>
     <string name="see_all_contents">전체 콘텐츠 보기</string>
     <string name="description_feed_image">feed image</string>
-    <string name="title_search">search</string>
+    <string name="rss_settings">rss settings</string>
     <string name="description_feed_video">feed video</string>
     <string name="alert_dialog_add">Add</string>
     <string name="alert_dialog_cancel">Cancel</string>
@@ -17,4 +17,13 @@
     <string name="description_item_image">item image</string>
     <string name="share">share</string>
     <string name="visit_website">visit website</string>
+    <string name="hint_search">subject, location, source</string>
+    <string name="title_add_rss">add rss</string>
+    <string name="description_rss_delete_button">rss delete button</string>
+    <string name="delete">delete</string>
+
+    <string name="rss_add_at">Added at %s</string>
+    <string name="toast_no_url">No URL.</string>
+    <string name="title_delete_rss">Delete RSS</string>
+    <string name="message_delete_rss">Would you like to delete this RSS?</string>
 </resources>
