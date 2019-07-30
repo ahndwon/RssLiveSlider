@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
 import com.jakewharton.rxbinding3.view.clicks
 import com.jakewharton.rxbinding3.widget.queryTextChanges
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.activity_main.*
@@ -60,6 +61,17 @@ class MainActivity : AppCompatActivity() {
             }, { e ->
                 Log.d(MainActivity::class.java.name, "e : ", e)
             }).addTo(disposeBag)
+
+
+        viewModel.castListPublisher.observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ castList ->
+                textCurrentSearch.text = castList.joinToString(separator = ", ") { it.title }
+                textCurrentSortBy.text = viewModel.sortList.joinToString(separator = ", ")
+
+            }, { e ->
+                Log.d(MainActivity::class.java.name, "e : ", e)
+            })
+            .addTo(disposeBag)
     }
 
 

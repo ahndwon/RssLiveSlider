@@ -12,6 +12,7 @@ import xyz.thingapps.rssliveslider.api.provideRssApi
 import xyz.thingapps.rssliveslider.fragments.ChannelFragment
 
 class RssViewModel : ViewModel() {
+
     private val disposeBag = CompositeDisposable()
     var currentFragmentPublisher = PublishSubject.create<Int>()
 
@@ -27,6 +28,8 @@ class RssViewModel : ViewModel() {
         "https://www.nasa.gov/rss/dyn/shuttle_station.rss",
         "https://www.nasa.gov/rss/dyn/solar_system.rss"
     )
+
+    var sortList: List<String> = listOf("Date Ascending")
 
     var castList: List<Cast> = emptyList()
         set(value) {
@@ -67,7 +70,7 @@ class RssViewModel : ViewModel() {
             .subscribe({
                 castList = it
                 castTitleList = (castList.map { cast -> cast.title }).toMutableList()
-                castTitleList.add(0, "All RSS")
+
                 onSubscribe?.invoke()
             }, { e ->
                 e.printStackTrace()
@@ -81,12 +84,13 @@ class RssViewModel : ViewModel() {
                 rss.contains(it.title)
             }
         }
-
         getData {
             if (!rss.contains("All RSS"))
                 onSubscribe.invoke()
 
             castList = castList.sort(sort)
+            sortList = sort.toList()
+
         }
     }
 

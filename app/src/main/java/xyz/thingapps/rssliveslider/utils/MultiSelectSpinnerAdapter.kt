@@ -9,24 +9,11 @@ import kotlinx.android.synthetic.main.item_spinner.view.*
 import xyz.thingapps.rssliveslider.R
 
 
-class MultiSelectSpinnerAdapter(context: Context, private val list: List<String>) :
+class MultiSelectSpinnerAdapter(context: Context, list: List<String>, filterList: List<String>) :
     ArrayAdapter<String>(context, R.layout.item_spinner, R.id.spinnerText, list) {
 
-    var selectSet: MutableSet<String> = list.toSet().toMutableSet()
+    var selectSet: MutableSet<String> = filterList.toSet().toMutableSet()
 
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-
-        val view = convertView ?: LayoutInflater.from(context).inflate(
-            R.layout.item_spinner,
-            parent,
-            false
-        )
-
-        view.spinnerText.text = getItem(position)
-
-
-        return view
-    }
 
     override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
 
@@ -36,15 +23,9 @@ class MultiSelectSpinnerAdapter(context: Context, private val list: List<String>
             false
         )
 
-
         view.spinnerText.text = getItem(position)
+        view.spinnerCheckBox.isChecked = selectSet.contains(view.spinnerText.text)
 
-        if (selectSet.contains(view.spinnerText.text)) {
-            view.spinnerCheckBox.isChecked = true
-
-            println("contains" + view.spinnerText.text)
-            println(selectSet)
-        }
 
         view.spinnerText.setOnClickListener {
             view.spinnerCheckBox.isChecked = !view.spinnerCheckBox.isChecked
@@ -57,10 +38,6 @@ class MultiSelectSpinnerAdapter(context: Context, private val list: List<String>
             } else {
                 selectSet.remove(view.spinnerText.text.toString())
 
-            }
-
-            if (selectSet.contains("All RSS")) {
-                selectSet = list.toSet().toMutableSet()
             }
         }
 

@@ -32,7 +32,8 @@
             android:id="@+id/channelSpinner"
             style="@style/AppTheme.FilterSpinner"
             android:layout_centerVertical="true"
-            android:layout_toEndOf="@+id/channelIcon" />
+            android:layout_toEndOf="@+id/channelIcon"
+            android:spinnerMode="dropdown" />
 
     </RelativeLayout>
 
@@ -53,7 +54,8 @@
             android:id="@+id/sortSpinner"
             style="@style/AppTheme.FilterSpinner"
             android:layout_centerVertical="true"
-            android:layout_toEndOf="@+id/sortIcon" />
+            android:layout_toEndOf="@+id/sortIcon"
+            android:spinnerMode="dropdown" />
     </RelativeLayout>
 
     <!-- Cancel and apply buttons -->

@@ -68,15 +68,10 @@ class ChannelFragment : Fragment() {
 
         viewModel.castListPublisher.observeOn(AndroidSchedulers.mainThread())
             .subscribe({ castList ->
-                println("viewModelIndex" + index)
-                println("castListPublisher")
-
                 view?.let {
                     if (index < castList.size)
                         setupItems(adapter, castList[index])
                 }
-
-
             }, { e ->
                 Log.d(TAG, "e : ", e)
             })

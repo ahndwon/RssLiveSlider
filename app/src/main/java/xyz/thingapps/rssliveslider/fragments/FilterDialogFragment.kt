@@ -34,9 +34,11 @@ class FilterDialogFragment : DialogFragment() {
         }
 
         val sortList = context?.resources?.getStringArray(R.array.sort_by)?.toList()
+        val filterRssList = viewModel.castList.map { it.title }
+        val filterSortList = viewModel.sortList
 
-        view.channelSpinner.adapter = setArrayAdapter(viewModel.castTitleList)
-        view.sortSpinner.adapter = sortList?.let { setArrayAdapter(it) }
+        view.channelSpinner.adapter = setAdapter(viewModel.castTitleList, filterRssList)
+        view.sortSpinner.adapter = sortList?.let { setAdapter(it, filterSortList) }
 
 
         view.cancelButton.setOnClickListener {
@@ -60,11 +62,8 @@ class FilterDialogFragment : DialogFragment() {
         return view
     }
 
-    private fun setArrayAdapter(list: List<String>): ArrayAdapter<String>? {
-        val adapter = context?.let { MultiSelectSpinnerAdapter(it, list) }
-        adapter?.setDropDownViewResource(R.layout.item_spinner)
-
-        return adapter
+    private fun setAdapter(list: List<String>, filterList: List<String>): ArrayAdapter<String>? {
+        return context?.let { MultiSelectSpinnerAdapter(it, list, filterList) }
     }
 
 
