@@ -3,6 +3,8 @@ package xyz.thingapps.rssliveslider.utils
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -33,3 +35,6 @@ fun EditText.validate(message: String, validator: (String) -> Boolean) {
     }
     this.error = if (validator(this.text.toString())) null else message
 }
+
+inline fun <reified T> Gson.fromJson(json: String): T =
+    this.fromJson(json, object : TypeToken<T>() {}.type)

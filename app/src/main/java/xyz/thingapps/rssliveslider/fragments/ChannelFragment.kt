@@ -23,7 +23,7 @@ import xyz.thingapps.rssliveslider.R
 import xyz.thingapps.rssliveslider.activities.AllContentsActivity
 import xyz.thingapps.rssliveslider.activities.AllContentsActivity.Companion.CAST
 import xyz.thingapps.rssliveslider.adapters.ChannelItemListAdapter
-import xyz.thingapps.rssliveslider.api.Cast
+import xyz.thingapps.rssliveslider.models.Cast
 import xyz.thingapps.rssliveslider.viewholders.ChannelItemViewHolder
 import xyz.thingapps.rssliveslider.viewmodels.RssViewModel
 import java.util.concurrent.TimeUnit
@@ -125,7 +125,7 @@ class ChannelFragment : Fragment() {
 
     private fun setupItems(adapter: ChannelItemListAdapter, cast: Cast) {
         view?.fragmentTitle?.text = cast.title
-        adapter.items = cast.items
+        adapter.items = cast.items ?: emptyList()
         adapter.notifyDataSetChanged()
     }
 

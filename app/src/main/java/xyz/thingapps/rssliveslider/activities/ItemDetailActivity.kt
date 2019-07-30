@@ -12,7 +12,7 @@ import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.activity_item_detail.*
 import xyz.thingapps.rssliveslider.R
 import xyz.thingapps.rssliveslider.activities.WebViewActivity.Companion.ITEM_URL
-import xyz.thingapps.rssliveslider.api.Item
+import xyz.thingapps.rssliveslider.models.Item
 import java.util.concurrent.TimeUnit
 
 class ItemDetailActivity : AppCompatActivity() {

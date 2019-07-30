@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_all_contents.*
 import xyz.thingapps.rssliveslider.R
 import xyz.thingapps.rssliveslider.adapters.ContentItemListAdapter
-import xyz.thingapps.rssliveslider.api.Cast
+import xyz.thingapps.rssliveslider.models.Cast
 
 class AllContentsActivity : AppCompatActivity() {
 
@@ -28,7 +28,7 @@ class AllContentsActivity : AppCompatActivity() {
 
         val adapter = ContentItemListAdapter()
         cast?.let {
-            adapter.items = it.items
+            adapter.items = it.items ?: emptyList()
         }
 
         contentRecyclerView.adapter = adapter

@@ -8,7 +8,7 @@ import com.bumptech.glide.Glide
 import com.jakewharton.rxbinding3.view.clicks
 import kotlinx.android.synthetic.main.item_content.view.*
 import xyz.thingapps.rssliveslider.activities.ItemDetailActivity
-import xyz.thingapps.rssliveslider.api.Item
+import xyz.thingapps.rssliveslider.models.Item
 import java.util.concurrent.TimeUnit
 
 class ContentItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
