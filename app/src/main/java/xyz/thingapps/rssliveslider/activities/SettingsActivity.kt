@@ -112,6 +112,7 @@ class SettingsActivity : AppCompatActivity() {
                         )
                         adapter.items = sharedApp.rssUrlList?.toList() ?: emptyList()
                         adapter.notifyDataSetChanged()
+                        rssRecyclerView.smoothScrollToPosition(adapter.items.size)
                     }
                 }
             }
