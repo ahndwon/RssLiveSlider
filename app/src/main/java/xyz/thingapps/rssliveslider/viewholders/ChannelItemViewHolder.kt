@@ -21,14 +21,14 @@ import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.item_feed.view.*
 import xyz.thingapps.rssliveslider.R
 import xyz.thingapps.rssliveslider.activities.ItemDetailActivity
-import xyz.thingapps.rssliveslider.api.Item
-import xyz.thingapps.rssliveslider.api.Media
 import xyz.thingapps.rssliveslider.api.provideJSoupApi
+import xyz.thingapps.rssliveslider.models.Item
+import xyz.thingapps.rssliveslider.models.Media
 import xyz.thingapps.rssliveslider.utils.PaddingBackgroundColorSpan
 import xyz.thingapps.rssliveslider.utils.ThumbnailTask
 import java.util.concurrent.TimeUnit
 
-class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
+class ChannelItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
     private var disposeBag = CompositeDisposable()
     private val padding = 20
     private val descriptionBackgroundColor =
@@ -94,7 +94,7 @@ class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
                             }
 
                             Log.i(
-                                ItemViewHolder::class.java.name,
+                                ChannelItemViewHolder::class.java.name,
                                 "urlList : $urlList"
                             )
 
@@ -113,14 +113,14 @@ class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
                                 }
 
                                 Log.i(
-                                    ItemViewHolder::class.java.name,
+                                    ChannelItemViewHolder::class.java.name,
                                     "longestUrl : $longestUrl"
                                 )
                             }
 
 
                         }, { e ->
-                            Log.i(ItemViewHolder::class.java.name, "getDocument error : ", e)
+                            Log.i(ChannelItemViewHolder::class.java.name, "getDocument error : ", e)
                         })
                 }
             }
@@ -199,7 +199,7 @@ class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
                     }
 
                 } catch (e: Exception) {
-                    Log.i(ItemViewHolder::class.java.name, "video play failed ", e)
+                    Log.i(ChannelItemViewHolder::class.java.name, "video play failed ", e)
                 }
             }
 

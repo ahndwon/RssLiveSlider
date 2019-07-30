@@ -12,7 +12,7 @@ import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.activity_item_detail.*
 import xyz.thingapps.rssliveslider.R
 import xyz.thingapps.rssliveslider.activities.WebViewActivity.Companion.ITEM_URL
-import xyz.thingapps.rssliveslider.api.Item
+import xyz.thingapps.rssliveslider.models.Item
 import java.util.concurrent.TimeUnit
 
 class ItemDetailActivity : AppCompatActivity() {
@@ -49,6 +49,19 @@ class ItemDetailActivity : AppCompatActivity() {
                     val intent = Intent(this, WebViewActivity::class.java)
                     intent.putExtra(ITEM_URL, item.link)
                     startActivity(intent)
+                }
+            }, { e ->
+                Log.d(ItemDetailActivity::class.java.name, "click button failed : ", e)
+            }).addTo(disposeBag)
+
+        shareButton.clicks().throttleFirst(600, TimeUnit.MILLISECONDS)
+            .subscribe({
+                item?.let {
+                    val intent = Intent(Intent.ACTION_SEND)
+                    intent.type = "text/plain"
+                    intent.putExtra(Intent.EXTRA_SUBJECT, item.title)
+                    intent.putExtra(Intent.EXTRA_TEXT, "Check this out - ${item.link}")
+                    startActivity(Intent.createChooser(intent, "Share via"))
                 }
             }, { e ->
                 Log.d(ItemDetailActivity::class.java.name, "click button failed : ", e)

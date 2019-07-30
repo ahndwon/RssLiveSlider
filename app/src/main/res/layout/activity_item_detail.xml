@@ -69,6 +69,7 @@
         android:layout_marginTop="@dimen/basic_margin"
         android:layout_marginStart="@dimen/double_margin"
         android:layout_marginEnd="@dimen/double_margin"
+        android:lineSpacingExtra="4dp"
         android:ellipsize="end"
         app:layout_constraintTop_toBottomOf="@id/itemImageView"
         app:layout_constraintBottom_toTopOf="@id/buttonLayout"

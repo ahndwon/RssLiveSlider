@@ -1,17 +1,11 @@
-package xyz.thingapps.rssliveslider.api
+package xyz.thingapps.rssliveslider.models
 
 import android.os.Parcel
 import android.os.Parcelable
-import com.tickaroo.tikxml.annotation.*
-
-
-@Xml(name = "rss")
-data class Cast(
-    @Path("channel") @PropertyElement(writeAsCData = true) val title: String = "",
-    @Path("channel") @PropertyElement(writeAsCData = true) val description: String? = "",
-    @Path("channel") @PropertyElement(writeAsCData = true) val link: String? = "",
-    @Path("channel") @Element val items: List<Item> = mutableListOf()
-)
+import com.tickaroo.tikxml.annotation.Attribute
+import com.tickaroo.tikxml.annotation.Element
+import com.tickaroo.tikxml.annotation.PropertyElement
+import com.tickaroo.tikxml.annotation.Xml
 
 @Xml(name = "item")
 data class Item(
@@ -56,36 +50,6 @@ data class Item(
         }
 
         override fun newArray(size: Int): Array<Item?> {
-            return arrayOfNulls(size)
-        }
-    }
-}
-
-@Xml(name = "enclosure")
-data class Media(
-    @Attribute val url: String = "",
-    @Attribute val type: String = ""
-) : Parcelable {
-    constructor(parcel: Parcel) : this(
-        parcel.readString() ?: "",
-        parcel.readString() ?: ""
-    )
-
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(url)
-        parcel.writeString(type)
-    }
-
-    override fun describeContents(): Int {
-        return 0
-    }
-
-    companion object CREATOR : Parcelable.Creator<Media> {
-        override fun createFromParcel(parcel: Parcel): Media {
-            return Media(parcel)
-        }
-
-        override fun newArray(size: Int): Array<Media?> {
             return arrayOfNulls(size)
         }
     }
