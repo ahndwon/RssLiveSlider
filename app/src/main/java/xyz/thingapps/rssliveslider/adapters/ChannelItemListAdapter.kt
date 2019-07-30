@@ -32,4 +32,9 @@ class ChannelItemListAdapter(var currentChannel: Int, private val tag: Int) :
             holder.animate()
         }
     }
+
+    override fun onViewDetachedFromWindow(holder: ChannelItemViewHolder) {
+        super.onViewDetachedFromWindow(holder)
+        holder.dispose()
+    }
 }
