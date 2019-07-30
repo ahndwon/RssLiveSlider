@@ -8,11 +8,11 @@
     android:padding="16dp">
 
     <TextView
-        style="@style/AppTheme.Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:text="@string/filter" />
+        android:text="@string/filter"
+        style="@style/AppTheme.Title" />
 
     <RelativeLayout
         android:id="@+id/rssLayout"
@@ -21,19 +21,19 @@
 
         <ImageView
             android:id="@+id/channelIcon"
-            style="@style/AppTheme.FilterIcon"
             android:layout_centerVertical="true"
             android:tint="@color/greySecondary"
             android:padding="1.5dp"
+            android:contentDescription="@string/description_channel_icon"
             app:srcCompat="@drawable/ic_rss_white"
-            android:contentDescription="@string/description_channel_icon" />
+            style="@style/AppTheme.FilterIcon" />
 
         <Spinner
             android:id="@+id/channelSpinner"
-            style="@style/AppTheme.FilterSpinner"
             android:layout_centerVertical="true"
             android:layout_toEndOf="@+id/channelIcon"
-            android:spinnerMode="dropdown" />
+            android:spinnerMode="dropdown"
+            style="@style/AppTheme.FilterSpinner" />
 
     </RelativeLayout>
 
@@ -44,11 +44,11 @@
 
         <ImageView
             android:id="@+id/sortIcon"
-            style="@style/AppTheme.FilterIcon"
             android:layout_centerVertical="true"
             android:tint="@color/greySecondary"
+            android:contentDescription="@string/description_sort_icon_image"
             app:srcCompat="@drawable/ic_sort_white_24px"
-            android:contentDescription="@string/description_sort_icon_image" />
+            style="@style/AppTheme.FilterIcon" />
 
         <Spinner
             android:id="@+id/sortSpinner"

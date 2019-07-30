@@ -1,17 +1,20 @@
 package xyz.thingapps.rssliveslider.viewmodels
 
 import android.app.Application
+import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.AndroidViewModel
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
+import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import xyz.thingapps.rssliveslider.api.provideRssApi
 import xyz.thingapps.rssliveslider.fragments.ChannelFragment
 import xyz.thingapps.rssliveslider.models.Cast
 import xyz.thingapps.rssliveslider.sharedApp
+import xyz.thingapps.rssliveslider.tflite.ImageRecognizer
 
 class RssViewModel(val app: Application) : AndroidViewModel(app) {
     private val disposeBag = CompositeDisposable()
@@ -23,7 +26,7 @@ class RssViewModel(val app: Application) : AndroidViewModel(app) {
 
     var sortList: List<String> = listOf("Date Ascending")
 
-    val recognitionList: ArrayList<String> = ArrayList()
+    val imageRecognizer = ImageRecognizer(getApplication())
 
 
     var castList: List<Cast> = emptyList()
@@ -32,15 +35,7 @@ class RssViewModel(val app: Application) : AndroidViewModel(app) {
             field = value
             castListPublisher.onNext(value)
 
-//            ImageRecognizer(getApplication()).getRecognitions(value[0]!!.items[0]!!.media!!.url!!)
-//                .subscribe({ results ->
-//                    val labels = results.map {
-//                        it.title
-//                    }
-//                    recognitionList.addAll(labels)
-//                }, {
-//
-//                }).addTo(disposeBag)
+            setImageRecognitions(castList)
         }
 
     var castTitleList = mutableListOf<String>()
@@ -60,6 +55,31 @@ class RssViewModel(val app: Application) : AndroidViewModel(app) {
             fragments.add(ChannelFragment.newInstance(cast.title ?: "", index))
         }
         channelList = fragments.toList()
+    }
+
+    private fun setImageRecognitions(castList: List<Cast>) {
+        castList.forEach { cast ->
+            cast.items?.forEach { item ->
+                if (item.media?.type?.contains("image") == true) {
+                    item.media?.url?.let { url ->
+                        imageRecognizer.getRecognitions(url)
+                            .subscribeOn(Schedulers.io())
+                            .subscribe({ results ->
+                                val label = results.maxBy {
+                                    it.confidence
+                                }?.title ?: ""
+
+                                Log.d("ImageRecognizer", "label : $label")
+
+                                if (label.isNotBlank())
+                                    item.recognition = label
+                            }, { e ->
+                                Log.e("ImageRecognizer", "recognize image failed : ", e)
+                            }).addTo(disposeBag)
+                    }
+                }
+            }
+        }
     }
 
     private fun getRssUrlList(): List<String> {

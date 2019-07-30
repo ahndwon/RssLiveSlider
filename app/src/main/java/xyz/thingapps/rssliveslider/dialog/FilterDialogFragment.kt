@@ -1,4 +1,4 @@
-package xyz.thingapps.rssliveslider.fragments
+package xyz.thingapps.rssliveslider.dialog
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -39,16 +39,13 @@ class FilterDialogFragment : DialogFragment() {
         view.channelSpinner.adapter = setAdapter(viewModel.castTitleList, filterRssList)
         view.sortSpinner.adapter = sortList?.let { setAdapter(it, filterSortList) }
 
-
         view.cancelButton.setOnClickListener {
             dismiss()
         }
 
         view.applyButton.setOnClickListener {
-
             val channelSpinnerAdapter = view.channelSpinner.adapter as MultiSelectSpinnerAdapter
             val sortSpinnerAdapter = view.sortSpinner.adapter as MultiSelectSpinnerAdapter
-
 
             viewModel.filter(
                 channelSpinnerAdapter.selectSet,

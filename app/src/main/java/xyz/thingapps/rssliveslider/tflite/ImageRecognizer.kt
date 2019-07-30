@@ -102,14 +102,12 @@ class ImageRecognizer(private val context: Context) {
         }
     }
 
-    private fun setClassifier(
-        activity: Activity,
-        model: Classifier.Model,
-        device: Classifier.Device,
-        numThreads: Int
+    fun setClassifier(
+        activity: Activity
     ) {
         try {
-            classifier = Classifier.create(activity, model, device, numThreads)
+            classifier =
+                Classifier.create(activity, Classifier.Model.QUANTIZED, Classifier.Device.CPU, 1)
         } catch (e: IOException) {
             e.printStackTrace()
         }
