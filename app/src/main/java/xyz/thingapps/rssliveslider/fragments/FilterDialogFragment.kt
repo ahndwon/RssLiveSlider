@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProviders
-import kotlinx.android.synthetic.main.dialog_filters.view.*
+import kotlinx.android.synthetic.main.dialog_filter.view.*
 import xyz.thingapps.rssliveslider.R
 import xyz.thingapps.rssliveslider.utils.MultiSelectSpinnerAdapter
 import xyz.thingapps.rssliveslider.viewmodels.RssViewModel
@@ -21,13 +21,12 @@ class FilterDialogFragment : DialogFragment() {
         const val TAG = "FilterDialogFragment"
     }
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.dialog_filters, container, false)
+        val view = inflater.inflate(R.layout.dialog_filter, container, false)
 
         activity?.let {
             viewModel = ViewModelProviders.of(it).get(RssViewModel::class.java)

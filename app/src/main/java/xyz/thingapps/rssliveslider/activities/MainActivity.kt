@@ -58,11 +58,8 @@ class MainActivity : AppCompatActivity() {
         viewModel.castListPublisher.observeOn(AndroidSchedulers.mainThread())
             .subscribe({ castList ->
                 //                textCurrentSearch.text = castList.joinToString(separator = ", ") { it.title }
-
                 textCurrentSearch.text = castList.map { it.title }.joinToString(separator = ", ")
-
                 textCurrentSortBy.text = viewModel.sortList.joinToString(separator = ", ")
-
             }, { e ->
                 Log.d(MainActivity::class.java.name, "e : ", e)
             })
