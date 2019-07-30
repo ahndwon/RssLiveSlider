@@ -50,7 +50,7 @@ class WebViewActivity : AppCompatActivity() {
                 useWideViewPort = true
                 setSupportMultipleWindows(true)
                 builtInZoomControls = false
-                layoutAlgorithm = WebSettings.LayoutAlgorithm.SINGLE_COLUMN
+                layoutAlgorithm = WebSettings.LayoutAlgorithm.NORMAL
                 cacheMode = WebSettings.LOAD_NO_CACHE
                 domStorageEnabled = true
             }
