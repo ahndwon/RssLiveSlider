@@ -57,11 +57,20 @@ class MainActivity : AppCompatActivity() {
             }).addTo(disposeBag)
 
 
+        buttonClearFilter.setOnClickListener {
+            viewModel.getData()
+            viewModel.sort = "Date Ascending"
+
+        }
+
         viewModel.castListPublisher.observeOn(AndroidSchedulers.mainThread())
             .subscribe({ castList ->
-                //                textCurrentSearch.text = castList.joinToString(separator = ", ") { it.title }
-                textCurrentSearch.text = castList.map { it.title }.joinToString(separator = ", ")
-                textCurrentSortBy.text = viewModel.sortList.joinToString(separator = ", ")
+                val currentRssText =
+                    if (viewModel.castTitleList.size == castList.size) "All RSS"
+                    else castList.map { it.title }.reversed().joinToString(separator = ", ")
+
+                textCurrentSearch.text = currentRssText
+                textCurrentSortBy.text = viewModel.sort
             }, { e ->
                 Log.d(MainActivity::class.java.name, "e : ", e)
             })
