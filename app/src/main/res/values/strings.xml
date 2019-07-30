@@ -21,4 +21,6 @@
     <string name="title_add_rss">add rss</string>
     <string name="description_rss_delete_button">rss delete button</string>
     <string name="delete">delete</string>
+
+    <string name="rss_add_at">Added at %s</string>
 </resources>
