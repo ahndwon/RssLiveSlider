@@ -13,7 +13,7 @@ import xyz.thingapps.rssliveslider.models.Cast
 class AllContentsActivity : AppCompatActivity() {
 
     companion object {
-        const val CAST = "cast"
+        const val RSS_CAST = "cast"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,7 +22,7 @@ class AllContentsActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val cast: Cast? = intent?.getParcelableExtra(CAST)
+        val cast: Cast? = intent?.getParcelableExtra(RSS_CAST)
 
         supportActionBar?.title = cast?.title
 

@@ -1,13 +1,11 @@
 package xyz.thingapps.rssliveslider.activities
 
-import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Patterns
 import android.view.Menu
 import android.view.MenuItem
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
-import android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.SearchView
@@ -22,8 +20,10 @@ import kotlinx.android.synthetic.main.activity_main.*
 import org.threeten.bp.Instant
 import xyz.thingapps.rssliveslider.R
 import xyz.thingapps.rssliveslider.fragments.HomeFragment
+import xyz.thingapps.rssliveslider.models.Cast
 import xyz.thingapps.rssliveslider.models.RssUrl
 import xyz.thingapps.rssliveslider.sharedApp
+import xyz.thingapps.rssliveslider.utils.showKeyboard
 import xyz.thingapps.rssliveslider.utils.validate
 import xyz.thingapps.rssliveslider.viewmodels.RssViewModel
 import java.util.concurrent.TimeUnit
@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_add)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_search)
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.frameContainer, HomeFragment())
@@ -75,7 +75,7 @@ class MainActivity : AppCompatActivity() {
             override fun onMenuItemActionExpand(menuItem: MenuItem?): Boolean {
                 searchView?.isIconifiedByDefault = false
                 searchView?.requestFocus()
-                showKeyboard()
+                this@MainActivity.showKeyboard()
                 return true
             }
 
@@ -86,15 +86,15 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    private fun showKeyboard() {
-        (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
-            .toggleSoftInput(0, HIDE_NOT_ALWAYS)
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                showUrlAddDialog()
+//                showUrlAddDialog()
+                val list = ArrayList<Cast>()
+                list.addAll(viewModel.castList)
+                val intent = Intent(this, SearchActivity::class.java)
+                intent.putExtra(SearchActivity.CAST_LIST, list)
+                startActivity(intent)
             }
         }
         return super.onOptionsItemSelected(item)
