@@ -42,6 +42,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/half_margin"
+        android:layout_marginBottom="@dimen/half_margin"
         android:textColor="@color/gray"
         app:layout_constraintTop_toBottomOf="@id/rssUrl"
         app:layout_constraintBottom_toBottomOf="parent"

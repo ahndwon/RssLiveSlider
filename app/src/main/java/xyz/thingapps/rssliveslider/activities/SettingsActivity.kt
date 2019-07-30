@@ -18,6 +18,7 @@ import xyz.thingapps.rssliveslider.R
 import xyz.thingapps.rssliveslider.adapters.UrlListAdapter
 import xyz.thingapps.rssliveslider.models.RssUrl
 import xyz.thingapps.rssliveslider.sharedApp
+import xyz.thingapps.rssliveslider.utils.DividerItemDecoration
 import xyz.thingapps.rssliveslider.utils.validate
 
 class SettingsActivity : AppCompatActivity() {
@@ -40,6 +41,7 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
         rssRecyclerView.adapter = adapter
+        rssRecyclerView.addItemDecoration(DividerItemDecoration(this, R.color.lightGray))
         rssRecyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
     }
 
