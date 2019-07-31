@@ -48,7 +48,6 @@ class SharedApplication : Application() {
         rssUrlList = arrayListOf(
             RssUrl("https://rss.joins.com/joins_news_list.xml", Instant.now().toEpochMilli()),
             RssUrl("http://www.chosun.com/site/data/rss/rss.xml", Instant.now().toEpochMilli()),
-            RssUrl("https://www.nasa.gov/rss/dyn/TWAN_vodcast.rss", Instant.now().toEpochMilli()),
             RssUrl("https://www.nasa.gov/rss/dyn/breaking_news.rss", Instant.now().toEpochMilli()),
             RssUrl(
                 "https://www.nasa.gov/rss/dyn/lg_image_of_the_day.rss",
@@ -67,6 +66,7 @@ class SharedApplication : Application() {
                 "https://www.nasa.gov/rss/dyn/shuttle_station.rss",
                 Instant.now().toEpochMilli()
             ),
+            RssUrl("https://www.nasa.gov/rss/dyn/TWAN_vodcast.rss", Instant.now().toEpochMilli()),
             RssUrl("https://www.nasa.gov/rss/dyn/solar_system.rss", Instant.now().toEpochMilli())
         )
     }
