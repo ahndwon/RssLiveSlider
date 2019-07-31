@@ -29,29 +29,29 @@ import xyz.thingapps.rssliveslider.models.Item
 import xyz.thingapps.rssliveslider.models.Media
 import xyz.thingapps.rssliveslider.sharedApp
 import xyz.thingapps.rssliveslider.tflite.ImageRecognizer
+import xyz.thingapps.rssliveslider.utils.CastJSoupParser
 import xyz.thingapps.rssliveslider.viewholders.ChannelItemViewHolder
 
 
 class RssViewModel(val app: Application) : AndroidViewModel(app) {
-    private val disposeBag = CompositeDisposable()
-    var currentFragmentPublisher = PublishSubject.create<Int>()
-
     private var urlList: List<String> = (app.sharedApp.rssUrlList ?: ArrayList()).map {
         it.url
     }
 
     var sort = ADD_ASCENDING
-
     val imageRecognizer = ImageRecognizer(getApplication())
+    var currentFragmentPublisher = PublishSubject.create<Int>()
+
+    private val disposeBag = CompositeDisposable()
+    private val jSoupParser = CastJSoupParser(disposeBag)
 
     var castList: List<Cast> = emptyList()
         set(value) {
             setChannels(value)
             field = value
             castListPublisher.onNext(value)
-
-//            setImageRecognitions(castList)
-            parseJSoup(castList)
+//            parseJSoup(castList)
+//            jSoupParser.parseCastList(app, castList)
         }
 
     var castTitleList = mutableListOf<String>()
