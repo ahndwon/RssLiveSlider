@@ -79,4 +79,9 @@ class ItemDetailActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
+
+    override fun onDestroy() {
+        disposeBag.dispose()
+        super.onDestroy()
+    }
 }

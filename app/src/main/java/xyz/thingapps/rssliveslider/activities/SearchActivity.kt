@@ -102,6 +102,11 @@ class SearchActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    override fun onDestroy() {
+        disposeBag.dispose()
+        super.onDestroy()
+    }
+
     companion object {
         const val CAST_LIST = "cast_list"
         const val QUERY_TIMEOUT = 500L
