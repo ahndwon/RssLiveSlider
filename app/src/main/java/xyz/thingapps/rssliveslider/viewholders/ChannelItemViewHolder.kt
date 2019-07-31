@@ -24,6 +24,7 @@ import kotlinx.android.synthetic.main.item_feed.view.*
 import xyz.thingapps.rssliveslider.R
 import xyz.thingapps.rssliveslider.activities.ItemDetailActivity
 import xyz.thingapps.rssliveslider.models.Item
+import xyz.thingapps.rssliveslider.utils.CastJSoupParser
 import xyz.thingapps.rssliveslider.utils.PaddingBackgroundColorSpan
 import xyz.thingapps.rssliveslider.utils.ThumbnailTask
 import java.util.concurrent.TimeUnit
@@ -68,6 +69,14 @@ class ChannelItemViewHolder(private val view: View) : RecyclerView.ViewHolder(vi
                 if (media.type.contains("video")) {
                     playVideo(media.url)
                 }
+            }
+
+            if (item.media == null) CastJSoupParser(CompositeDisposable()).parseLink(
+                view.context,
+                item.link ?: "",
+                item
+            ) { max ->
+                showFeedImage(max)
             }
 
             setOnClickListener {

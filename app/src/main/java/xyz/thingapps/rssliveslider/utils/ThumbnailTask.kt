@@ -5,8 +5,8 @@ import android.media.MediaMetadataRetriever
 import android.os.AsyncTask
 import android.widget.ImageView
 
-class ThumbnailTask(videoUrl: String) : AsyncTask<ImageView, Void, Pair<Bitmap, ImageView>>() {
-    private val url = videoUrl
+class ThumbnailTask(val url: String) :
+    AsyncTask<ImageView, Void, Pair<Bitmap, ImageView>>() {
 
     override fun doInBackground(vararg imageViews: ImageView): Pair<Bitmap, ImageView>? {
 
@@ -30,7 +30,7 @@ class ThumbnailTask(videoUrl: String) : AsyncTask<ImageView, Void, Pair<Bitmap, 
     override fun onPostExecute(result: Pair<Bitmap, ImageView>?) {
         super.onPostExecute(result)
         result.let {
-            result?.second?.setImageBitmap(result.first)
+            it?.second?.setImageBitmap(it.first)
         }
     }
 

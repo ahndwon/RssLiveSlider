@@ -19,6 +19,7 @@ class ItemDetailActivity : AppCompatActivity() {
 
     companion object {
         const val RSS_ITEM = "rss_item"
+        const val WINDOW_DURATION = 600L
     }
 
     private val disposeBag = CompositeDisposable()
@@ -28,6 +29,7 @@ class ItemDetailActivity : AppCompatActivity() {
         setContentView(R.layout.activity_item_detail)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = getString(R.string.feed)
 
         val item: Item? = intent.getParcelableExtra<Item>(RSS_ITEM) ?: return
 
@@ -43,7 +45,7 @@ class ItemDetailActivity : AppCompatActivity() {
             }
         }
 
-        visitButton.clicks().throttleFirst(600, TimeUnit.MILLISECONDS)
+        visitButton.clicks().throttleFirst(WINDOW_DURATION, TimeUnit.MILLISECONDS)
             .subscribe({
                 item?.let {
                     val intent = Intent(this, WebViewActivity::class.java)
@@ -54,7 +56,7 @@ class ItemDetailActivity : AppCompatActivity() {
                 Log.d(ItemDetailActivity::class.java.name, "click button failed : ", e)
             }).addTo(disposeBag)
 
-        shareButton.clicks().throttleFirst(600, TimeUnit.MILLISECONDS)
+        shareButton.clicks().throttleFirst(WINDOW_DURATION, TimeUnit.MILLISECONDS)
             .subscribe({
                 item?.let {
                     val intent = Intent(Intent.ACTION_SEND)
@@ -76,5 +78,10 @@ class ItemDetailActivity : AppCompatActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onDestroy() {
+        disposeBag.dispose()
+        super.onDestroy()
     }
 }

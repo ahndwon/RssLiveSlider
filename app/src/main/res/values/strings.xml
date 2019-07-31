@@ -23,8 +23,8 @@
 
 
     <string-array name="sort_by">
-        <item>"Add Ascending"</item>
-        <item>"Add Descending"</item>
+        <item>"Add Date Ascending"</item>
+        <item>"Add Date Descending"</item>
         <item>"Title Ascending"</item>
         <item>"Title Descending"</item>
 
@@ -41,4 +41,6 @@
     <string name="toast_no_url">No URL.</string>
     <string name="title_delete_rss">Delete RSS</string>
     <string name="message_delete_rss">Would you like to delete this RSS?</string>
+    <string name="feed">Feed</string>
+    <string name="add_date_ascending">Add Date Ascending</string>
 </resources>

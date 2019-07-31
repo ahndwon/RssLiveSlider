@@ -27,12 +27,15 @@
 
     <TextView
         android:id="@+id/feedTime"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/half_margin"
+        android:layout_marginEnd="@dimen/basic_margin"
         android:textColor="@color/gray"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/feedImageCardView"
         app:layout_constraintTop_toBottomOf="@id/feedTitle"
+        app:layout_constraintHorizontal_bias="0"
         tools:text="3시간전" />
 
     <androidx.cardview.widget.CardView

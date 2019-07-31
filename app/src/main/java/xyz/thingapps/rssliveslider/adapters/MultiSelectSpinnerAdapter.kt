@@ -1,4 +1,4 @@
-package xyz.thingapps.rssliveslider.utils
+package xyz.thingapps.rssliveslider.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -60,7 +60,6 @@ class MultiSelectSpinnerAdapter(context: Context, list: List<String>, filterList
     }
 
     private fun setSpinnerText(): String {
-
         return if (selectSet.size == count) {
             context.getString(R.string.all_rss)
         } else
