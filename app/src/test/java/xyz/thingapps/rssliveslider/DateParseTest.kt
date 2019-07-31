@@ -11,7 +11,7 @@ class DateParseTest {
 
     @Test
     fun parseDate() {
-
+//        AndroidThreeTen.init(this)
         val date = "Thu, 28 Mar 2019 14:00 EDT"
         val format = "E, dd MMM yyyy HH:mm zzz"
         val locale = Locale.ENGLISH
