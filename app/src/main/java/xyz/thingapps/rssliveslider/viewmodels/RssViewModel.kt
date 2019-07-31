@@ -44,7 +44,6 @@ class RssViewModel(val app: Application) : AndroidViewModel(app) {
 
     val imageRecognizer = ImageRecognizer(getApplication())
 
-
     var castList: List<Cast> = emptyList()
         set(value) {
             setChannels(value)

@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
             .replace(R.id.frameContainer, HomeFragment())
             .commit()
 
-        filterBar.clicks().throttleFirst(600, TimeUnit.MILLISECONDS)
+        filterBar.clicks().throttleFirst(FILTER_DURATION, TimeUnit.MILLISECONDS)
             .subscribe({
                 if (viewModel.castList.isNullOrEmpty()) {
                     return@subscribe
@@ -59,14 +59,13 @@ class MainActivity : AppCompatActivity() {
 
         buttonClearFilter.setOnClickListener {
             viewModel.getData()
-            viewModel.sort = "Date Ascending"
-
+            viewModel.sort = FilterDialogFragment.ADD_ASCENDING
         }
 
         viewModel.castListPublisher.observeOn(AndroidSchedulers.mainThread())
             .subscribe({ castList ->
                 val currentRssText =
-                    if (viewModel.castTitleList.size == castList.size) "All RSS"
+                    if (viewModel.castTitleList.size == castList.size) getString(R.string.all_rss)
                     else castList.map { it.title }.reversed().joinToString(separator = ", ")
 
                 textCurrentSearch.text = currentRssText
@@ -110,6 +109,7 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val RC_RSS_URL = 333
+        const val FILTER_DURATION = 600L
     }
 }
 
