@@ -39,7 +39,6 @@ fun isValidFormat(format: String, value: String, locale: Locale): Boolean {
             }
 
         }
-
     } catch (e: UnsupportedTemporalTypeException) {
         e.printStackTrace()
     } catch (e: DateTimeException) {

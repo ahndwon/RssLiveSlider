@@ -13,7 +13,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
 
     lateinit var castList: ArrayList<Cast>
     private val disposeBag = CompositeDisposable()
-    val imageRecognizer = ImageRecognizer(getApplication())
+    val imageRecognizer by lazy { ImageRecognizer(getApplication()) }
 
     fun setImageRecognitions() {
         castList.forEach { cast ->
