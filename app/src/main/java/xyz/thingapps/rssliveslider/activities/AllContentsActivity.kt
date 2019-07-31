@@ -46,10 +46,6 @@ class AllContentsActivity : AppCompatActivity() {
             }
         }
 
-        val jSoupParser = CastJSoupParser(disposeBag)
-
-
-
         contentRecyclerView.adapter = adapter
         contentRecyclerView.layoutManager =
             LinearLayoutManager(this, RecyclerView.VERTICAL, false)
