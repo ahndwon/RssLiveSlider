@@ -5,7 +5,7 @@ RssLiveSlider android app
 tikxml 라이브러리를 사용해 xml 데이터 파싱한다.
 
 ## Slide View 및 Live Animation
-<img src="./image/SlideView.png" height="350"></img>
+<img src="./image/SlideView.png" height="350"></img>   
 각각의 RSS 데이터를 보여주는 Vertical RecyclerView의 아이템들을   
 프래그먼트로 구성하여 확장성이 용이하다.  
 ![LiveAnimation](./image/LiveAnimation.gif)   
