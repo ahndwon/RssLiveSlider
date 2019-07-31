@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.activity_search.*
 import xyz.thingapps.rssliveslider.R
 import xyz.thingapps.rssliveslider.adapters.SearchGroupListAdapter
 import xyz.thingapps.rssliveslider.models.Cast
+import xyz.thingapps.rssliveslider.utils.CastJSoupParser
 import xyz.thingapps.rssliveslider.viewmodels.SearchViewModel
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -24,6 +25,7 @@ class SearchActivity : AppCompatActivity() {
     val adapter = SearchGroupListAdapter()
     private val disposeBag = CompositeDisposable()
     private lateinit var viewModel: SearchViewModel
+    private val jSoupParser = CastJSoupParser(disposeBag)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,9 +49,19 @@ class SearchActivity : AppCompatActivity() {
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe({ search ->
                 if (search.isBlank()) return@subscribe
-
-                adapter.items = query(castList, search.toString())
-                adapter.notifyDataSetChanged()
+                val result = query(castList, search.toString())
+                result.forEach { cast ->
+                    cast.items?.forEach { item ->
+                        if (item.media == null) {
+                            item.link?.let { link ->
+                                jSoupParser.parseLink(this@SearchActivity, link, item) {
+                                    adapter.notifyDataSetChanged()
+                                }
+                            }
+                        }
+                    }
+                }
+                adapter.items = result
             }, { e ->
                 e.printStackTrace()
             })?.addTo(disposeBag)
