@@ -49,7 +49,6 @@ class CastJSoupParser(private val disposeBag: CompositeDisposable) {
         onGetMax: ((String) -> Unit)? = null
     ) {
         provideJSoupApi().getDocument(link)
-            .subscribeOn(Schedulers.io())
             .subscribe({ document ->
                 val urlList =
                     document.select("img").map { element ->

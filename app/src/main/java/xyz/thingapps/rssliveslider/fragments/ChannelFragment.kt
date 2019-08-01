@@ -18,6 +18,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.addTo
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_channel.view.*
 import xyz.thingapps.rssliveslider.R
 import xyz.thingapps.rssliveslider.activities.AllContentsActivity
@@ -95,6 +96,7 @@ class ChannelFragment : Fragment() {
         }
 
         viewModel.currentFragmentPublisher.observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
             .subscribe({
                 adapter.currentChannel = it
 
@@ -214,6 +216,7 @@ class ChannelFragment : Fragment() {
             .map { (it + 1 + currentFeed) % listSize }
             .onBackpressureBuffer()
             .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
             .subscribe({
                 recyclerView.smoothScrollToPosition(it.toInt())
 
@@ -224,15 +227,16 @@ class ChannelFragment : Fragment() {
         progressDisposable =
             Flowable.interval(intervalInMillis / PROGRESS_MAX, TimeUnit.MILLISECONDS)
                 .map { it % PROGRESS_MAX }
-            .onBackpressureBuffer()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                progressBar.progress = it.toInt()
-                progressBar.visibility = View.VISIBLE
+                .onBackpressureBuffer()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe({
+                    progressBar.progress = it.toInt()
+                    progressBar.visibility = View.VISIBLE
 
-            }, { e ->
-                e.printStackTrace()
-            }).addTo(animationDisposeBag)
+                }, { e ->
+                    e.printStackTrace()
+                }).addTo(animationDisposeBag)
 
     }
 

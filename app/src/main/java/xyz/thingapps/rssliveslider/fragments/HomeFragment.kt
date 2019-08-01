@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_home.view.*
 import xyz.thingapps.rssliveslider.R
 import xyz.thingapps.rssliveslider.adapters.FragmentListAdapter
@@ -49,6 +50,7 @@ class HomeFragment : Fragment() {
 
             viewModel.channelListPublisher
                 .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
                 .subscribe({
                     fragmentAdapter.fragments = viewModel.channelList
                     view?.homeRecyclerView?.adapter = fragmentAdapter
