@@ -1,6 +1,7 @@
 package xyz.thingapps.rssliveslider.viewmodels
 
 import android.app.Application
+import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.AndroidViewModel
 import io.reactivex.Observable
@@ -75,6 +76,7 @@ class RssViewModel(val app: Application) : AndroidViewModel(app) {
                 data as Cast
             }
         }.observeOn(AndroidSchedulers.mainThread())
+//            .subscribeOn(Schedulers.io())
             .subscribe({
                 setRssTitle(it)
                 castList = it
@@ -102,14 +104,44 @@ class RssViewModel(val app: Application) : AndroidViewModel(app) {
     }
 
     private fun List<Cast>.sort(sort: String): List<Cast> {
+        Log.d("RssViewModel", "sort category : ${sort}")
+
         return when (sort) {
-            ADD_ASCENDING -> this.sortedBy { it.createdAt }
+            ADD_ASCENDING -> {
+                Log.d("RssViewModel", "sort ADD_ASCENDING : ${this.sortedBy { it.createdAt }}")
+                this.sortedBy {
+                    Log.d("RssViewModel", "sort createdAt : ${it.createdAt}}}")
 
-            ADD_DESCENDING -> this.sortedByDescending { it.createdAt }
+                    it.createdAt
+                }
+            }
 
-            TITLE_ASCENDING -> this.sortedBy { it.title }
+            ADD_DESCENDING -> {
+                Log.d(
+                    "RssViewModel",
+                    "sort ADD_DESCENDING :  ${this.sortedByDescending { it.createdAt }}"
+                )
+                this.sortedByDescending {
+                    Log.d("RssViewModel", "sort createdAt : ${it.createdAt}}}")
+                    it.createdAt
+                }
+            }
 
-            TITLE_DESCENDING -> this.sortedByDescending { it.title }
+            TITLE_ASCENDING -> {
+                Log.d(
+                    "RssViewModel",
+                    "sort TITLE_ASCENDING :  ${this.sortedByDescending { it.title }}"
+                )
+                this.sortedBy { it.title }
+            }
+
+            TITLE_DESCENDING -> {
+                Log.d(
+                    "RssViewModel",
+                    "sort TITLE_DESCENDING :  ${this.sortedBy { it.title }}"
+                )
+                this.sortedByDescending { it.title }
+            }
 
             else -> this
         }

@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
+import io.reactivex.schedulers.Schedulers
 import xyz.thingapps.rssliveslider.models.Cast
 import xyz.thingapps.rssliveslider.tflite.ImageRecognizer
 import java.util.*
@@ -21,7 +22,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
                 if (item.media?.type?.contains("image") == true) {
                     item.media?.url?.let { url ->
                         imageRecognizer.getRecognitions(url)
-//                            .subscribeOn(Schedulers.io())
+                            .subscribeOn(Schedulers.io())
                             .subscribe({ results ->
                                 val label = results.maxBy {
                                     it.confidence
