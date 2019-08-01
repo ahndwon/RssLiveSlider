@@ -62,6 +62,7 @@ class SearchActivity : AppCompatActivity() {
                     }
                 }
                 adapter.items = result
+                adapter.notifyDataSetChanged()
             }, { e ->
                 e.printStackTrace()
             })?.addTo(disposeBag)
