@@ -8,6 +8,7 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
+import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import xyz.thingapps.rssliveslider.api.provideRssApi
 import xyz.thingapps.rssliveslider.dialog.FilterDialogFragment.Companion.ADD_ASCENDING
@@ -76,7 +77,7 @@ class RssViewModel(val app: Application) : AndroidViewModel(app) {
                 data as Cast
             }
         }.observeOn(AndroidSchedulers.mainThread())
-//            .subscribeOn(Schedulers.io())
+            .subscribeOn(Schedulers.io())
             .subscribe({
                 setRssTitle(it)
                 castList = it
