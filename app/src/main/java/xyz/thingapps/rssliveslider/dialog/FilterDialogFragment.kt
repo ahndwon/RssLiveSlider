@@ -21,8 +21,8 @@ class FilterDialogFragment : DialogFragment() {
         const val TAG = "FilterDialogFragment"
         const val ADD_ASCENDING = "Add Date Ascending"
         const val ADD_DESCENDING = "Add Date Descending"
-        const val TITLE_ASCENDING = "Title Date Ascending"
-        const val TITLE_DESCENDING = "Title Date Descending"
+        const val TITLE_ASCENDING = "Title Ascending"
+        const val TITLE_DESCENDING = "Title Descending"
     }
 
     override fun onCreateView(
