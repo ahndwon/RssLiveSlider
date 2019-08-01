@@ -9,8 +9,10 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.request.target.SimpleTarget
 import io.reactivex.Observable
+import io.reactivex.schedulers.Schedulers
 import java.io.IOException
 
+@Suppress("DEPRECATION")
 class ImageRecognizer(private val context: Context) {
     private var classifier: Classifier? = null
     private var rgbFrameBitmap: Bitmap? = null
@@ -45,21 +47,23 @@ class ImageRecognizer(private val context: Context) {
 
     fun getRecognitions(url: String): Observable<List<Classifier.Recognition>> {
         return Observable.create { emitter ->
-            getBitmap(url).subscribe {
-                Glide.with(context).asBitmap()
-                    .format(DecodeFormat.PREFER_ARGB_8888)
-                    .load(url)
-                    .into(object : SimpleTarget<Bitmap>() {
-                        override fun onResourceReady(
-                            resource: Bitmap,
-                            transition: com.bumptech.glide.request.transition.Transition<in Bitmap>?
-                        ) {
-                            val results = recognizeImage(resource)
-                            emitter.onNext(results)
-                            emitter.onComplete()
-                        }
-                    })
-            }
+            getBitmap(url)
+                .subscribeOn(Schedulers.io())
+                .subscribe {
+                    Glide.with(context).asBitmap()
+                        .format(DecodeFormat.PREFER_ARGB_8888)
+                        .load(url)
+                        .into(object : SimpleTarget<Bitmap>() {
+                            override fun onResourceReady(
+                                resource: Bitmap,
+                                transition: com.bumptech.glide.request.transition.Transition<in Bitmap>?
+                            ) {
+                                val results = recognizeImage(resource)
+                                emitter.onNext(results)
+                                emitter.onComplete()
+                            }
+                        })
+                }
         }
     }
 

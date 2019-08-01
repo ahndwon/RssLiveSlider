@@ -42,6 +42,7 @@ class MainActivity : AppCompatActivity() {
             .commit()
 
         filterBar.clicks().throttleFirst(FILTER_DURATION, TimeUnit.MILLISECONDS)
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 if (viewModel.castList.isNullOrEmpty()) {
                     return@subscribe
@@ -62,7 +63,8 @@ class MainActivity : AppCompatActivity() {
             viewModel.sort = FilterDialogFragment.ADD_ASCENDING
         }
 
-        viewModel.castListPublisher.observeOn(AndroidSchedulers.mainThread())
+        viewModel.castListPublisher
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ castList ->
                 val currentRssText =
                     if (viewModel.castTitleList.size == castList.size) getString(R.string.all_rss)
