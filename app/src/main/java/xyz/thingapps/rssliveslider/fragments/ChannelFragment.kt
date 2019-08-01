@@ -44,7 +44,8 @@ class ChannelFragment : Fragment() {
         const val TAG = "ChannelFragment"
         const val FRAGMENT_TITLE = "fragment_title"
         const val FRAGMENT_INDEX = "fragment_index"
-        const val autoScrollDuration = 10000L
+        const val AUTO_SCROLL_DURATION = 10000L
+        const val PROGRESS_MAX = 1000
 
         fun newInstance(title: String, index: Int): ChannelFragment {
             return ChannelFragment().apply {
@@ -85,7 +86,10 @@ class ChannelFragment : Fragment() {
         if (tag?.toInt() == 0) {
             view?.let { view ->
                 autoScroll(
-                    view.recyclerView, view.slideProgressBar, adapter.items.size, autoScrollDuration
+                    view.recyclerView,
+                    view.slideProgressBar,
+                    adapter.items.size,
+                    AUTO_SCROLL_DURATION
                 )
             }
         }
@@ -100,7 +104,7 @@ class ChannelFragment : Fragment() {
                             view.recyclerView,
                             view.slideProgressBar,
                             adapter.items.size,
-                            autoScrollDuration
+                            AUTO_SCROLL_DURATION
                         )
 
                         val currentFeed =
@@ -217,8 +221,9 @@ class ChannelFragment : Fragment() {
                 e.printStackTrace()
             }).addTo(animationDisposeBag)
 
-        progressDisposable = Flowable.interval(intervalInMillis / 100, TimeUnit.MILLISECONDS)
-            .map { it % 100 }
+        progressDisposable =
+            Flowable.interval(intervalInMillis / PROGRESS_MAX, TimeUnit.MILLISECONDS)
+                .map { it % PROGRESS_MAX }
             .onBackpressureBuffer()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
