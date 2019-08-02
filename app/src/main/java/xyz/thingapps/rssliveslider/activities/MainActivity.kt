@@ -2,7 +2,6 @@ package xyz.thingapps.rssliveslider.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -54,7 +53,7 @@ class MainActivity : AppCompatActivity() {
 
                 filterDialog.show(supportFragmentManager, FilterDialogFragment.TAG)
             }, { e ->
-                Log.d(MainActivity::class.java.name, "e : ", e)
+                e.printStackTrace()
             }).addTo(disposeBag)
 
 
@@ -73,7 +72,7 @@ class MainActivity : AppCompatActivity() {
                 textCurrentSearch.text = currentRssText
                 textCurrentSortBy.text = viewModel.sort
             }, { e ->
-                Log.d(MainActivity::class.java.name, "e : ", e)
+                e.printStackTrace()
             })
             .addTo(disposeBag)
     }

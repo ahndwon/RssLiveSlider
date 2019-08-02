@@ -1,7 +1,6 @@
 package xyz.thingapps.rssliveslider.viewmodels
 
 import android.app.Application
-import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.AndroidViewModel
 import io.reactivex.Observable
@@ -17,14 +16,13 @@ import xyz.thingapps.rssliveslider.dialog.FilterDialogFragment.Companion.TITLE_A
 import xyz.thingapps.rssliveslider.dialog.FilterDialogFragment.Companion.TITLE_DESCENDING
 import xyz.thingapps.rssliveslider.fragments.ChannelFragment
 import xyz.thingapps.rssliveslider.models.Cast
+import xyz.thingapps.rssliveslider.models.RssUrl
 import xyz.thingapps.rssliveslider.sharedApp
 import xyz.thingapps.rssliveslider.tflite.ImageRecognizer
 
 
 class RssViewModel(val app: Application) : AndroidViewModel(app) {
-    private var urlList: List<String> = (app.sharedApp.rssUrlList ?: ArrayList()).map {
-        it.url
-    }
+    private var urlList: List<RssUrl> = (app.sharedApp.rssUrlList ?: ArrayList())
 
     var sort = ADD_ASCENDING
 
@@ -59,10 +57,8 @@ class RssViewModel(val app: Application) : AndroidViewModel(app) {
         channelList = fragments.toList()
     }
 
-    private fun getRssUrlList(): List<String> {
-        return (app.sharedApp.rssUrlList ?: ArrayList()).map {
-            it.url
-        }
+    private fun getRssUrlList(): List<RssUrl> {
+        return (app.sharedApp.rssUrlList ?: ArrayList())
     }
 
     fun getData(onSubscribe: (() -> Unit)? = null) {
@@ -70,11 +66,13 @@ class RssViewModel(val app: Application) : AndroidViewModel(app) {
 
         Observable.zip(
             urlList.map {
-                provideRssApi().getCast(it)
+                provideRssApi().getCast(it.url)
             }
         ) {
             it.map { data ->
-                data as Cast
+                (data as Cast).apply {
+                    data.createdAt = urlList[it.indexOf(data)].createdAt
+                }
             }
         }.observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
@@ -83,7 +81,6 @@ class RssViewModel(val app: Application) : AndroidViewModel(app) {
                 castList = it
                 castTitleList =
                     (castList.map { cast -> cast.title ?: "" }).reversed().toMutableList()
-
                 onSubscribe?.invoke()
             }, { e ->
                 e.printStackTrace()
@@ -105,44 +102,14 @@ class RssViewModel(val app: Application) : AndroidViewModel(app) {
     }
 
     private fun List<Cast>.sort(sort: String): List<Cast> {
-        Log.d("RssViewModel", "sort category : ${sort}")
-
         return when (sort) {
-            ADD_ASCENDING -> {
-                Log.d("RssViewModel", "sort ADD_ASCENDING : ${this.sortedBy { it.createdAt }}")
-                this.sortedBy {
-                    Log.d("RssViewModel", "sort createdAt : ${it.createdAt}}}")
+            ADD_ASCENDING -> this.sortedBy { it.createdAt }
 
-                    it.createdAt
-                }
-            }
+            ADD_DESCENDING -> this.sortedByDescending { it.createdAt }
 
-            ADD_DESCENDING -> {
-                Log.d(
-                    "RssViewModel",
-                    "sort ADD_DESCENDING :  ${this.sortedByDescending { it.createdAt }}"
-                )
-                this.sortedByDescending {
-                    Log.d("RssViewModel", "sort createdAt : ${it.createdAt}}}")
-                    it.createdAt
-                }
-            }
+            TITLE_ASCENDING -> this.sortedBy { it.title }
 
-            TITLE_ASCENDING -> {
-                Log.d(
-                    "RssViewModel",
-                    "sort TITLE_ASCENDING :  ${this.sortedByDescending { it.title }}"
-                )
-                this.sortedBy { it.title }
-            }
-
-            TITLE_DESCENDING -> {
-                Log.d(
-                    "RssViewModel",
-                    "sort TITLE_DESCENDING :  ${this.sortedBy { it.title }}"
-                )
-                this.sortedByDescending { it.title }
-            }
+            TITLE_DESCENDING -> this.sortedByDescending { it.title }
 
             else -> this
         }

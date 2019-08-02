@@ -1,7 +1,6 @@
 package xyz.thingapps.rssliveslider.viewmodels
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
@@ -28,12 +27,10 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
                                     it.confidence
                                 }?.title ?: ""
 
-                                Log.d("ImageRecognizer", "label : $label")
-
                                 if (label.isNotBlank())
                                     item.recognition = label
                             }, { e ->
-                                Log.e("ImageRecognizer", "recognize image failed : ", e)
+                                e.printStackTrace()
                             }).addTo(disposeBag)
                     }
                 }
