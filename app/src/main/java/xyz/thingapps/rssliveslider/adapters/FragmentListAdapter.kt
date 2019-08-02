@@ -29,11 +29,9 @@ class FragmentListAdapter(private val fragmentManager: FragmentManager)
     }
 
     override fun onBindViewHolder(holder: FragmentViewHolder, position: Int) {
-
         fragmentManager.beginTransaction()
             .replace(holder.itemView.id, fragments[position], position.toString())
-            .commit()
-
+            .commitAllowingStateLoss()
     }
 
 }

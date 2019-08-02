@@ -2,7 +2,6 @@ package xyz.thingapps.rssliveslider.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
@@ -53,7 +52,7 @@ class ItemDetailActivity : AppCompatActivity() {
                     startActivity(intent)
                 }
             }, { e ->
-                Log.d(ItemDetailActivity::class.java.name, "click button failed : ", e)
+                e.printStackTrace()
             }).addTo(disposeBag)
 
         shareButton.clicks().throttleFirst(WINDOW_DURATION, TimeUnit.MILLISECONDS)
@@ -66,7 +65,7 @@ class ItemDetailActivity : AppCompatActivity() {
                     startActivity(Intent.createChooser(intent, "Share via"))
                 }
             }, { e ->
-                Log.d(ItemDetailActivity::class.java.name, "click button failed : ", e)
+                e.printStackTrace()
             }).addTo(disposeBag)
 
     }
