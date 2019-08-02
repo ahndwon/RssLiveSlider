@@ -2,7 +2,6 @@ package xyz.thingapps.rssliveslider.fragments
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -80,7 +79,7 @@ class ChannelFragment : Fragment() {
                         setupItems(adapter, castList[index])
                 }
             }, { e ->
-                Log.d(TAG, "e : ", e)
+                e.printStackTrace()
             })
             .addTo(disposeBag)
 
@@ -130,7 +129,7 @@ class ChannelFragment : Fragment() {
             intent.putExtra(RSS_CAST, viewModel.castList[index])
             startActivity(intent)
         }, { e ->
-            Log.d(TAG, "allContentsButton click failed : ", e)
+            e.printStackTrace()
         })?.addTo(disposeBag)
     }
 

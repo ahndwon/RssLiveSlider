@@ -116,6 +116,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
+        jSoupParser.dispose()
         disposeBag.dispose()
         super.onDestroy()
     }

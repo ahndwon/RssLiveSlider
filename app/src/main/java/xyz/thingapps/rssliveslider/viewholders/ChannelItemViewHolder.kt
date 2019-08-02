@@ -128,7 +128,6 @@ class ChannelItemViewHolder(private val view: View) : RecyclerView.ViewHolder(vi
 
             override fun surfaceDestroyed(p0: SurfaceHolder?) {
                 mediaPlayer?.let { stopPlayer(it) }
-                Log.i("destroyed", "yjh")
             }
 
             override fun surfaceCreated(p0: SurfaceHolder?) {
