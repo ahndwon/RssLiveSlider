@@ -9,7 +9,6 @@ import com.bumptech.glide.Glide
 import com.jakewharton.rxbinding3.view.clicks
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_item_detail.*
 import xyz.thingapps.rssliveslider.R
 import xyz.thingapps.rssliveslider.activities.WebViewActivity.Companion.ITEM_URL
@@ -47,7 +46,6 @@ class ItemDetailActivity : AppCompatActivity() {
         }
 
         visitButton.clicks().throttleFirst(WINDOW_DURATION, TimeUnit.MILLISECONDS)
-            .subscribeOn(Schedulers.io())
             .subscribe({
                 item?.let {
                     val intent = Intent(this, WebViewActivity::class.java)
@@ -59,7 +57,6 @@ class ItemDetailActivity : AppCompatActivity() {
             }).addTo(disposeBag)
 
         shareButton.clicks().throttleFirst(WINDOW_DURATION, TimeUnit.MILLISECONDS)
-            .subscribeOn(Schedulers.io())
             .subscribe({
                 item?.let {
                     val intent = Intent(Intent.ACTION_SEND)

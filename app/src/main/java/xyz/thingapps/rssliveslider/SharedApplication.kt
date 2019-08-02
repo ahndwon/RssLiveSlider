@@ -62,11 +62,11 @@ class SharedApplication : Application() {
                 Instant.now().toEpochMilli()
             ),
             RssUrl("https://www.nasa.gov/rss/dyn/chandra_images.rss", Instant.now().toEpochMilli()),
+            RssUrl("https://www.nasa.gov/rss/dyn/TWAN_vodcast.rss", Instant.now().toEpochMilli()),
             RssUrl(
                 "https://www.nasa.gov/rss/dyn/shuttle_station.rss",
                 Instant.now().toEpochMilli()
             ),
-            RssUrl("https://www.nasa.gov/rss/dyn/TWAN_vodcast.rss", Instant.now().toEpochMilli()),
             RssUrl("https://www.nasa.gov/rss/dyn/solar_system.rss", Instant.now().toEpochMilli())
         )
     }
