@@ -47,8 +47,31 @@ RxJava를 사용해 이벤트를 간단하게 처리하고 불필요한 이벤�
 유의미한 데이터 제공을 위해 불필요한 html 태그 제거 등을 통한 데이터 최적화   
 RxJava를 사용해 코드의 가독성을 높이고 다양한 쓰레드 관리가 가능   
 
+## Installation
+Clone this repository and import into **Android Studio**
+```bash
+git clone https://github.com/ahndwon/RssLiveSlider.git
+```
 
 
+## Maintainers
+This project is mantained by:
+* [Dongwon Ahn](https://github.com/ahndwon)
+* [Hanna Jang](https://github.com/hannaS2)
+* [eunjeong](https://github.com/eunjeongS2)
+
+
+## Contributing
+
+1. Fork it
+2. Create your feature branch (git checkout -b my-new-feature)
+3. Commit your changes (git commit -m 'Add some feature')
+4. Run the linter (ruby lint.rb').
+5. Push your branch (git push origin my-new-feature)
+6. Create a new Pull Request
+
+## License
+Please see [LICENSE](./LICENSE)
 
 
 
