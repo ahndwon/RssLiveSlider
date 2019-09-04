@@ -5,7 +5,7 @@ RssLiveSlider android app
 
 참가 주제 : 6. 라이브 슬라이더 안드로이드 앱 만들기 
 
-## 수상
+## 🎊🎉 수상 🎊🎉 
 <img src="./image/award.png" height="200"></img>
 
 
