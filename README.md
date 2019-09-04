@@ -1,5 +1,11 @@
 # RssLiveSlider
-RssLiveSlider android app  
+RssLiveSlider android app
+2019 여름 D2Campus Fest Mini 참가를 위한 앱.
+참가 주제 : 6. 라이브 슬라이더 안드로이드 앱 만들기 
+
+## 수상
+<img src="./image/award.png" />
+2019 여름 D2Campus Fest Mini에서 최우수상을 수상했습니다.
 
 ## 데이터 모델링
 tikxml 라이브러리를 사용해 xml 데이터 파싱한다.
