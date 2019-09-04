@@ -4,7 +4,7 @@ RssLiveSlider android app
 참가 주제 : 6. 라이브 슬라이더 안드로이드 앱 만들기 
 
 ## 수상
-<img src="./image/award.png" />
+<img src="./image/award.png" height="200"></img>
 2019 여름 D2Campus Fest Mini에서 최우수상을 수상했습니다.
 
 ## 데이터 모델링
