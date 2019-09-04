@@ -1,6 +1,8 @@
 # RssLiveSlider
 RssLiveSlider android app
+
 2019 여름 D2Campus Fest Mini 참가를 위한 앱.
+
 참가 주제 : 6. 라이브 슬라이더 안드로이드 앱 만들기 
 
 ## 수상
