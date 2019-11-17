@@ -18,14 +18,22 @@ tikxml 라이브러리를 사용해 xml 데이터 파싱한다.
 <img src="./image/SlideView.png" height="350"></img>   
 각각의 RSS 데이터를 보여주는 Vertical RecyclerView의 아이템들을   
 프래그먼트로 구성하여 확장성이 용이하다.  
+
+## Slide auto scroll
 ![LiveAnimation](./image/LiveAnimation.gif)   
 현재 사용자에게 보여지는 RSS 데이터만 자동재생이 되고,   
-보이지 않는 RSS 데이터는 재생을 안하거나 멈춘다.  
-이미지 스케일 애니메이션과 텍스트 애니메이션을 적용했다.    
+보이지 않는 RSS 데이터는 재생을 안하거나 멈춤. 
+이미지 스케일 애니메이션과 텍스트 애니메이션을 적용.
+
+## Stop Auto Scroll
 ![AutoScrollStop](./image/AutoScrollStop.gif)   
 사용자가 직접 슬라이드를 넘기면 자동 재생을 멈춘다.  
+
+## Refocus
 ![FocusChange](./image/FocusChange.gif)   
 슬라이드가 다시 포커스되면 이전에 보던 피드부터 자동 재생 및 애니메이션이 다시 시작된다.  
+
+## Video auto play
 ![video](./image/video.gif)   
 피드에 동영상이 포함되어 있다면 자동 재생되고, 로딩 시간이 있다면 썸네일을 띄워준다.
 
@@ -33,11 +41,11 @@ tikxml 라이브러리를 사용해 xml 데이터 파싱한다.
 ![subscribe](./image/subscribe.png)  
 사용자가 직접 RSS url을 추가하면 슬라이더 뷰로 보여준다.
 
-## 검색
+## Search
 ![search](./image/search.png)  
 제목과 이미지 내의 객체 정보로 검색 결과 목록을 보여준다.
 
-## 필터
+## Filter
 ![filter](./image/filter.png)  
 RSS 목록과 정렬 방법로 필터링한 결과 목록을 슬라이더 뷰로 보여준다.
 
